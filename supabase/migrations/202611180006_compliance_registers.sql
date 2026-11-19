@@ -1,0 +1,110 @@
+create table if not exists public.compliance_register_entries (
+  id uuid primary key default gen_random_uuid(),
+  register_type text not null check (register_type in (
+    'complaints',
+    'conflicts',
+    'gifts_entertainment',
+    'fit_proper',
+    'compliance_calendar',
+    'policy_document',
+    'incident_breach'
+  )),
+  title text not null check (char_length(btrim(title)) between 1 and 160),
+  details jsonb not null default '{}'::jsonb,
+  object_path text,
+  is_active boolean not null default true,
+  created_by uuid not null references auth.users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.compliance_register_history (
+  id bigint generated always by default as identity primary key,
+  entry_id uuid not null,
+  register_type text not null,
+  action text not null check (action in ('insert', 'update', 'deactivate')),
+  old_values jsonb,
+  new_values jsonb not null,
+  changed_by uuid not null references auth.users(id),
+  changed_at timestamptz not null default now()
+);
+
+create table if not exists public.compliance_monthly_signoffs (
+  id uuid primary key default gen_random_uuid(),
+  register_type text not null,
+  review_month date not null,
+  reviewed_by uuid not null references auth.users(id),
+  completed_at timestamptz not null default now(),
+  note text check (note is null or char_length(note) <= 2000),
+  unique (register_type, review_month)
+);
+
+create index if not exists compliance_register_type_updated_idx
+  on public.compliance_register_entries(register_type, updated_at desc);
+create index if not exists compliance_register_history_entry_idx
+  on public.compliance_register_history(entry_id, changed_at desc);
+
+create or replace function public.record_compliance_register_history()
+returns trigger language plpgsql security definer set search_path = pg_catalog, public as $$
+begin
+  insert into public.compliance_register_history (
+    entry_id, register_type, action, old_values, new_values, changed_by
+  ) values (
+    coalesce(new.id, old.id),
+    coalesce(new.register_type, old.register_type),
+    case when tg_op = 'DELETE' then 'deactivate'
+         when tg_op = 'INSERT' then 'insert'
+         else 'update' end,
+    case when tg_op = 'INSERT' then null else to_jsonb(old) end,
+    to_jsonb(coalesce(new, old)),
+    coalesce(auth.uid(), coalesce(new.created_by, old.created_by))
+  );
+  return coalesce(new, old);
+end;
+$$;
+
+create or replace function public.reject_compliance_history_mutation()
+returns trigger language plpgsql as $$
+begin
+  raise exception 'Compliance register history is append-only';
+end;
+$$;
+
+drop trigger if exists compliance_register_history_insert on public.compliance_register_entries;
+create trigger compliance_register_history_insert
+  after insert or update on public.compliance_register_entries
+  for each row execute function public.record_compliance_register_history();
+
+drop trigger if exists compliance_register_history_immutable on public.compliance_register_history;
+create trigger compliance_register_history_immutable
+  before update or delete on public.compliance_register_history
+  for each row execute function public.reject_compliance_history_mutation();
+
+alter table public.compliance_register_entries enable row level security;
+alter table public.compliance_register_history enable row level security;
+alter table public.compliance_monthly_signoffs enable row level security;
+
+revoke all on public.compliance_register_entries,
+  public.compliance_register_history, public.compliance_monthly_signoffs
+  from public, anon, authenticated;
+grant all on public.compliance_register_entries,
+  public.compliance_register_history, public.compliance_monthly_signoffs
+  to service_role;
+
+drop policy if exists compliance_register_staff_read on public.compliance_register_entries;
+create policy compliance_register_staff_read
+  on public.compliance_register_entries for select to authenticated
+  using ((auth.jwt() -> 'app_metadata' ->> 'role') in ('admin', 'compliance'));
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'compliance-private',
+  'compliance-private',
+  false,
+  52428800,
+  array['application/pdf']
+)
+on conflict (id) do update set
+  public = false,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
