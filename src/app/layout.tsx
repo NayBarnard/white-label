@@ -14,7 +14,7 @@ import { APP_MODE } from "@/config/deployment";
 import { headers } from "next/headers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.placeholder-am.co.za"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
     default: `${company.legalName} | Independent Fund Management`,
     template: `%s | ${company.legalName}`,

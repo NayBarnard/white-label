@@ -56,7 +56,7 @@ export default function ResourcesPage() {
                         />
                       ) : null}
                       <a
-                        href={"file" in document ? document.file : `/api/documents/${document.slug}`}
+                        href={"file" in document && typeof document.file === "string" ? document.file : `/api/documents/${document.slug}`}
                         download={`${document.slug}.pdf`}
                         className="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-[var(--accent)] hover:underline"
                       >

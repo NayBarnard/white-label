@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { isAal2Claims } from "@/lib/staff/mfa";
-import { getPostLoginDestination } from "@/lib/staff/routing";
-import { AdvisorLoginForm } from "@/components/AdvisorLoginForm";
-import { canAccessAdviserPortal } from "@/lib/adviser/access";
-import type { PortalDatabase } from "@/lib/supabase/portal";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Staff sign-in",
@@ -16,30 +9,19 @@ export const metadata: Metadata = {
 
 export const instant = false;
 
-export default async function AdvisorLoginPage() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return <AdvisorLoginForm />;
-  }
-
-  const cookieStore = await cookies();
-  const supabase = createServerClient<PortalDatabase>(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: () => {},
-    },
-  });
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error) {
-    console.error("Could not verify the advisor login session.", error);
-  } else if (user && canAccessAdviserPortal(user.app_metadata.role)) {
-    const claims = await supabase.auth.getClaims();
-    if (!claims.error && isAal2Claims(claims.data?.claims)) {
-      const destination = getPostLoginDestination(user.app_metadata.role);
-      if (destination) redirect(destination);
-    }
-  }
-
-  return <AdvisorLoginForm />;
+export default function AdvisorLoginPage() {
+  return (
+    <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-5 py-16 text-center">
+      <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">LOCAL DEMONSTRATION</p>
+      <h1 className="mt-3 text-4xl font-semibold">Staff access</h1>
+      <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
+        Choose a demonstration workspace. This local role selection is not authentication
+        and must not be used with real or sensitive data.
+      </p>
+      <div className="mt-7 grid w-full gap-3 sm:grid-cols-2">
+        <Link href="/advisor" className="min-h-12 rounded-xl bg-[var(--accent-fill)] px-5 py-3 text-sm font-bold text-[var(--button-text)]">Open adviser demo</Link>
+        <Link href="/admin" className="min-h-12 rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-bold">Open admin demo</Link>
+      </div>
+    </main>
+  );
 }

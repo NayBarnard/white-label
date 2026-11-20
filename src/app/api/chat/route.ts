@@ -20,11 +20,12 @@ type ChatLink = {
   download?: boolean;
 };
 
-const downloadableFiles: ChatLink[] = documents.map((document) => ({
-  label: document.name,
-  href: "file" in document ? document.file : `/api/documents/${document.slug}`,
-  download: true,
-}));
+const downloadableFiles: ChatLink[] = documents.map((document) => {
+  const href = "file" in document && typeof document.file === "string"
+    ? document.file
+    : `/api/documents/${document.slug}`;
+  return { label: document.name, href, download: true };
+});
 
 const resourcePageLink: ChatLink = { label: "Browse all website resources", href: "/resources" };
 const portalLink: ChatLink = { label: "Open the secure client portal", href: "/portal" };

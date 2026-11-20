@@ -79,9 +79,9 @@ export function OnboardingWizard() {
   }
 
   async function submitQuestionnaire() {
-    if (!features.onboardingSubmit || submitting || submitted) return;
-    if (!popiConsent || !profile.phone.trim()) {
-      setStatus("Add your phone number and consent before submitting the questionnaire.");
+    if (submitting || submitted) return;
+    if (!popiConsent) {
+      setStatus("Add your consent before saving the demonstration questionnaire.");
       return;
     }
     const message = [
@@ -99,26 +99,14 @@ export function OnboardingWizard() {
     setSubmitting(true);
     setStatus("");
     try {
-      const response = await fetch("/api/enquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: profile.fullName,
-          email: profile.email,
-          phone: profile.phone,
-          company: "",
-          website,
-          inquiryType: "Onboarding questionnaire",
-          message,
-          popiConsent,
-        }),
-      });
-      if (!response.ok) {
-        setStatus("Unable to submit the questionnaire right now. Please try again later.");
-        return;
-      }
+      window.localStorage.setItem("example-wealth.onboarding", JSON.stringify({
+        profile,
+        investment,
+        message,
+        createdAt: new Date().toISOString(),
+      }));
       setSubmitted(true);
-      setStatus("Your questionnaire has been sent to PLACEHOLDER BRAND for review. This is not a KYC/AML check or an application.");
+      setStatus("Your questionnaire was saved locally. This is not a submission, KYC/AML check or application.");
     } catch (error) {
       console.error("Onboarding questionnaire could not be submitted.", error);
       setStatus("Unable to submit the questionnaire right now. Please try again later.");

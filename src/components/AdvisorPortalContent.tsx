@@ -317,7 +317,7 @@ export function AdvisorPortalContent() {
           {filteredDocuments.length ? (
             <ul className="divide-y divide-[var(--border)]">
               {filteredDocuments.map((document) => {
-                const href = "file" in document && document.file
+                const href = "file" in document && typeof document.file === "string"
                   ? document.file
                   : `/api/documents/${document.slug}`;
                 const requestCopy = document.category === "Compliance & Regulatory";

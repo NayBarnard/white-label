@@ -1,5 +1,23 @@
 # PLACEHOLDER BRAND delivery status
 
+## Standalone completion status
+
+- Local client portal: implemented with fictional values, charts, holdings,
+  searchable transactions, goals, local support requests and persisted browser
+  state.
+- Local adviser portal: implemented with fictional clients, search, profiles,
+  notes and persistent tasks.
+- Local administration: implemented with people CRUD, role controls, document
+  overview, compliance demonstrations and reset-demo-data.
+- Central brand configuration: added at `src/config/brand.ts`.
+- Local browser persistence: added through reusable localStorage helpers.
+- Public enquiry and onboarding: replaced remote submissions with local demo
+  saves and explicit feedback.
+- Supabase-dependent primary portal routes: replaced with standalone routes.
+
+Database migrations and Supabase provider code remain in the repository for
+historical reference, but are not required to run or build this demonstration.
+
 This repository contains software only; it does not certify legal or
 regulatory compliance. The firm's compliance officer must review every
 workflow before real client data is used.

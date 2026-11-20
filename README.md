@@ -1,4 +1,29 @@
-# PLACEHOLDER-BRAND-WEB
+# White-Label Wealth Management Platform
+
+## Standalone demonstration
+
+This project runs locally without a database, Supabase, API keys, authentication
+provider, or cloud storage. Client, adviser, and administration workflows use
+fictional data and browser localStorage.
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`. Start with `/portal`, `/advisor`, or `/admin`.
+Use `/admin` to reset browser demo data.
+
+## Customisation
+
+Central neutral defaults live in `src/config/brand.ts`. Shared illustrative
+financial records live in `src/data/`. Update these configuration modules rather
+than individual pages for future branding.
+
+The existing public website remains available. Forms, uploads, documents,
+portfolios, goals, support, adviser tasks, people management and compliance
+screens operate as clearly labelled local demonstrations. No real submission,
+identity verification, regulatory check, or financial transaction occurs.
 
 ## Deployments
 

@@ -361,7 +361,9 @@ test("pending initial connection shows only the backup logo and requests no anim
 for (const document of documents) {
   test(`download: ${document.name}`, async ({ request }) => {
     const href =
-      "file" in document ? document.file : `/api/documents/${document.slug}`;
+      "file" in document && typeof document.file === "string"
+        ? document.file
+        : `/api/documents/${document.slug}`;
     const response = await request.get(href);
 
     expect(response.ok(), `${document.name} should be downloadable`).toBe(true);

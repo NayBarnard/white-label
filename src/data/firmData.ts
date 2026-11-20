@@ -1,17 +1,17 @@
 export const company = {
-  legalName: "PLACEHOLDER BRAND",
+  legalName: "Example Wealth",
   tagline:
     "Genuinely diversified, cost-conscious fund management, so you can focus on relations, and not portfolio construction.",
   regulatoryNotice:
-    "PLACEHOLDER BRAND is an authorised FSP in terms of the FAIS Act of South Africa | FSP No. 622 | Category: Discretionary Investment Management",
+    "Example Wealth is an illustrative brand with no regulatory licence or FSP authorisation.",
   publicFooterNotice:
-    "Authorised FSP in terms of the FAIS Act of South Africa - FSP No. 622",
-  workspaceFooterNotice: "Authorised FSP No. 622 (Discretionary Investment Management)",
-  phone: "021 300 1582",
-  email: "info@placeholder-am.co.za",
+    "Illustrative demonstration only - no financial service is offered.",
+  workspaceFooterNotice: "Illustrative local demonstration.",
+  phone: "+27 10 000 0000",
+  email: "hello@examplewealth.example",
   responseTime: "2 business days",
   address:
-    "Clubhouse, Golf Village Somerset West, 2 De Beers Ave, Firgrove Rural, Cape Town, 7130",
+    "100 Demonstration Avenue, Example City",
 };
 
 export const returnSummary = {

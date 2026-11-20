@@ -14,23 +14,20 @@ export function EnquiryForm({ compact = false }: { compact?: boolean }) {
     const form = event.currentTarget;
     const data = new FormData(form);
     try {
-      const response = await fetch("/api/enquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const submissions = JSON.parse(window.localStorage.getItem("example-wealth.enquiries") ?? "[]") as unknown[];
+      window.localStorage.setItem("example-wealth.enquiries", JSON.stringify([
+        ...submissions,
+        {
           name: data.get("name"),
           email: data.get("email"),
           phone: data.get("phone"),
           company: data.get("company"),
-          website: data.get("website"),
           inquiryType: data.get("inquiryType"),
           message,
-          popiConsent: data.get("popiConsent") === "on",
-        }),
-      });
-      const result: { message?: string; error?: string } = await response.json();
-      if (!response.ok) throw new Error(result.error ?? "Unable to submit your enquiry.");
-      setStatus(result.message ?? "Your enquiry has been received.");
+          createdAt: new Date().toISOString(),
+        },
+      ]));
+      setStatus("Your demo enquiry was saved locally. No message was sent.");
       form.reset();
       setMessage("");
     } catch (error) {

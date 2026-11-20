@@ -123,7 +123,7 @@ describe("public API validation", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body.answer).toContain("622");
+    expect(body.answer).toContain("no regulatory licence");
     expect(body.disclaimer).toContain("does not provide personalized financial advice");
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -203,7 +203,7 @@ describe("public API validation", () => {
 
     expect(response.status).toBe(200);
     expect(body.answer).not.toContain("access to all the data");
-    expect(body.answer).toContain("published PLACEHOLDER BRAND information");
+    expect(body.answer).toContain("published information");
   });
 
   it("rejects oversized JSON before parsing or persistence", async () => {

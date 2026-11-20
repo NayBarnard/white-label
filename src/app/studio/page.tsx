@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HomePageStudio } from "@/components/home/HomePageStudio";
+import { LocalContentStudio } from "@/components/local/LocalContentStudio";
 
 export const metadata: Metadata = {
   title: "Website studio",
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function StudioPage() {
-  return <HomePageStudio />;
+  return <LocalContentStudio />;
 }

@@ -17,7 +17,7 @@ export default function OnboardingPage() {
     <div className="flex-1">
       <LargeTitle
         eyebrow="INVESTOR SERVICES"
-        title="Start a conveplaceholdertion about investing."
+        title="Start a conversation about investing."
         description={
           <>
             Prepare a local, preliminary investor summary to review with your financial

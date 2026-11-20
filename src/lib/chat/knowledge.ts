@@ -38,11 +38,12 @@ const portalLink: ChatLink = { label: "Open the secure client portal", href: "/p
 const portfolioLink: ChatLink = { label: "View published portfolio information", href: "/portfolios" };
 const insightLink: ChatLink = { label: "Browse insights", href: "/insights" };
 const onboardingLink: ChatLink = { label: "Open the preliminary onboarding questionnaire", href: "/onboarding" };
-const documentLinks: ChatLink[] = documents.map((document) => ({
-  label: document.name,
-  href: "file" in document ? document.file : `/api/documents/${document.slug}`,
-  download: true,
-}));
+const documentLinks: ChatLink[] = documents.map((document) => {
+  const href = "file" in document && typeof document.file === "string"
+    ? document.file
+    : `/api/documents/${document.slug}`;
+  return { label: document.name, href, download: true };
+});
 
 const supportAnswer = () =>
   `${company.legalName} is a self-service website assistant, not a live-agent service. You can contact the team at ${company.phone}, ${company.email}, or ${company.address}. The team aims to respond within ${company.responseTime}.`;

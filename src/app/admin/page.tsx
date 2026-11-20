@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { AdminBackOffice } from "@/components/AdminBackOffice";
-import { getAdminPageUser } from "@/lib/admin/server";
+import { LocalAdminPortal } from "@/components/local/LocalAdminPortal";
 
 export const metadata: Metadata = {
   title: "Client administration",
@@ -16,8 +14,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AdminPage() {
-  const user = await getAdminPageUser();
-  if (!user) notFound();
-  return <AdminBackOffice />;
+export default function AdminPage() {
+  return <LocalAdminPortal />;
 }
