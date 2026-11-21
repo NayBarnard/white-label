@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ArrowLeft, FileText, StickyNote } from "lucide-react";
+import { RenewalPackManager } from "@/components/adviser/RenewalPackManager";
 
 type ProfileData = {
   client: { id: string; email: string; name: string; isActive: boolean; createdAt: string; lastSignInAt: string | null };
@@ -108,7 +109,7 @@ export function AdviserClientProfile({ clientId }: { clientId: string }) {
     .map((portfolio) => portfolio.valuation_zar)
     .filter((value): value is number => value !== null);
   const totalValue = reportedValues.reduce((total, value) => total + value, 0);
-  const tabs = ["overview", "investments", "documents", "requests", "notes", "tasks", "timeline"];
+  const tabs = ["overview", "investments", "documents", "requests", "notes", "tasks", "timeline", "renewal packs"];
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 py-10 lg:px-8">
@@ -223,6 +224,7 @@ export function AdviserClientProfile({ clientId }: { clientId: string }) {
           </ol>
         </section>
       ) : null}
+      {tab === "renewal packs" ? <RenewalPackManager clientId={clientId} /> : null}
     </main>
   );
 }

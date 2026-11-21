@@ -131,6 +131,26 @@ vault uses the private `client-documents` Storage bucket and signed links; store
 each object under a first-level folder matching the client's Auth user ID, then
 add its metadata to `client_documents` through a trusted administrative process.
 
+### Evidence renewal packs and tax allowances
+
+For Supabase deployments, apply the renewal-pack migration
+[`supabase/migrations/202611210002_renewal_packs.sql`](./supabase/migrations/202611210002_renewal_packs.sql)
+after the client portal and adviser/client relationship migrations. Apply
+[`supabase/migrations/202611220001_tax_allowance_tracker.sql`](./supabase/migrations/202611220001_tax_allowance_tracker.sql)
+to seed the default South African TFSA tax years and create tenant-scoped
+allowance and contribution tables. The shared authenticated API rate-limit
+migration
+[`supabase/migrations/202611160002_api_rate_limits.sql`](./supabase/migrations/202611160002_api_rate_limits.sql)
+must also be applied for contribution and rule writes.
+
+Renewal links are time-limited, revocable bearer credentials; share them only
+with the intended client. Evidence uploads are private and accessed through
+short-lived signed URLs. The tax tracker combines completed on-platform
+transactions with externally declared contributions. Default rules are
+system-wide; an administrator can save a tenant override from the secure
+allowance-rule API. Verify configured limits and declared external amounts
+before using the estimate to make a financial decision.
+
 ## Website studio
 
 The existing staff Puck homepage editor remains available through its

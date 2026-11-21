@@ -59,7 +59,7 @@ export function getDaysUntilTaxYearEnd(date: Date): number {
   return Math.max(0, Math.floor((end.getTime() - today.getTime()) / 86_400_000));
 }
 
-function transactionDateInSouthAfrica(value: string): string | null {
+export function getSouthAfricanDate(value: string): string | null {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -72,7 +72,7 @@ export function calculateTfsaContributions(
   period: Pick<TaxYearPeriod, "startDate" | "endDate">,
 ): number {
   return transactions.reduce((total, transaction) => {
-    const date = transactionDateInSouthAfrica(transaction.transacted_at);
+    const date = getSouthAfricanDate(transaction.transacted_at);
     if (
       transaction.account_type !== "TFSA" ||
       transaction.status !== "Completed" ||

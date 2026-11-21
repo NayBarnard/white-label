@@ -36,10 +36,9 @@ import {
   type PortalDatabase,
   type SupabaseClient,
 } from "@/lib/supabase/portal";
-import { company, feeInformation, performanceDisclosures, strategies, taxYearLimits } from "@/data/firmData";
+import { company, feeInformation, performanceDisclosures, strategies } from "@/data/firmData";
 import { features } from "@/config/features";
-import { TaxYearSummary } from "@/components/TaxYearSummary";
-import { getSouthAfricanToday } from "@/lib/tax/tax-year";
+import { TaxAllowanceTracker } from "@/components/TaxAllowanceTracker";
 import {
   calculateGoalProgress,
   monthsUntilGoalDate,
@@ -1797,11 +1796,9 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
             title="Tax Centre"
             detail="Tax-year limits and certificates assigned to your account."
           />
-          <TaxYearSummary
-            transactions={transactions}
-            limits={taxYearLimits}
-            date={getSouthAfricanToday()}
-          />
+          <div className="mb-5">
+            <TaxAllowanceTracker />
+          </div>
           <section className={`${panelClass} mt-5`} aria-labelledby="tax-certificates-heading">
             <h2 id="tax-certificates-heading" className="font-semibold">Tax certificates</h2>
             <p className="mt-1 text-xs text-[var(--muted)]">Certificates currently available in your Document Vault.</p>

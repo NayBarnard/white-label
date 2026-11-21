@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   calculateTfsaContributions,
   getDaysUntilTaxYearEnd,
+  getSouthAfricanDate,
   getTaxYearPeriod,
   isTaxYearEndSeason,
   remainingTfsaAnnualLimit,
@@ -47,5 +48,10 @@ describe("South African tax-year calculations", () => {
     expect(contributions).toBe(10_000);
     expect(remainingTfsaAnnualLimit(46_000, contributions)).toBe(36_000);
     expect(remainingTfsaAnnualLimit(46_000, 50_000)).toBe(0);
+  });
+
+  it("normalizes timestamp boundaries to the South African calendar date", () => {
+    expect(getSouthAfricanDate("2026-02-28T22:30:00Z")).toBe("2026-03-01");
+    expect(getSouthAfricanDate("not-a-date")).toBeNull();
   });
 });
