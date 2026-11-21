@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Client portal login",
+  title: "Client portal",
   description: "Open the local demonstration client portal.",
   openGraph: {
     title: "Client portal login | PLACEHOLDER BRAND",

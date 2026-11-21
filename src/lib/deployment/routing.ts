@@ -2,6 +2,14 @@ export type AppMode = "public" | "staff";
 
 export type RouteDisposition = "allow" | "not-found" | "redirect-to-login";
 
+export function isStandaloneLocalMode(
+  appMode: string | undefined,
+  supabaseUrl: string | undefined,
+  supabaseAnonKey: string | undefined,
+) {
+  return !appMode && !supabaseUrl && !supabaseAnonKey;
+}
+
 export function getAppMode(value: string | undefined): AppMode {
   return value === "staff" ? "staff" : "public";
 }
@@ -10,11 +18,19 @@ export function getRouteDisposition(
   mode: AppMode,
   pathname: string,
   allowLocalStudioDemo = false,
+  allowStandaloneLocalRoutes = false,
 ): RouteDisposition {
   const normalizedPath = normalizePath(pathname);
   if (!normalizedPath) return "not-found";
 
   if (mode === "public" && allowLocalStudioDemo && normalizedPath === "/studio") {
+    return "allow";
+  }
+  if (mode === "public" && allowStandaloneLocalRoutes && (
+    normalizedPath === "/client" ||
+    normalizedPath === "/planning" ||
+    isUnderPath(normalizedPath, ["/admin", "/advisor", "/studio", "/planning"])
+  )) {
     return "allow";
   }
 

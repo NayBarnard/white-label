@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { LocalAdviserPortal } from "@/components/local/LocalAdviserPortal";
 
 export const metadata: Metadata = {
-  title: "Advisor Portal",
-  description: "Published PLACEHOLDER BRAND fund information and resources for financial advisors.",
+  title: "Adviser demonstration portal",
+  description: "A local, fictional-data adviser portal demonstration for PLACEHOLDER BRAND.",
   robots: { index: false, follow: false },
 };
 

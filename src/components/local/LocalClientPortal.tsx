@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from "recharts";
 import { demoAllocation, demoDocuments, demoTransactions } from "@/data/demo";
 import { useLocalState } from "@/lib/local-store";
 
-const tabs = ["Overview", "Holdings", "Transactions", "Goals", "Documents", "Profile", "Support"] as const;
+const tabs = ["Overview", "Holdings", "Transactions", "Goals", "Planning", "Documents", "Profile", "Support"] as const;
 type Tab = (typeof tabs)[number];
 const colors = ["#805c0a", "#64748b", "#17786c", "#5865a8", "#94a3b8"];
 const history = [
@@ -15,6 +16,9 @@ const history = [
 
 export function LocalClientPortal() {
   const [tab, setTab] = useState<Tab>("Overview");
+  const [features] = useLocalState<Record<string, boolean>>("wealth-os.admin.features", {
+    planning: true, documents: true, adviserCrm: true, compliance: true, research: true,
+  });
   const [query, setQuery] = useState("");
   const [transactions, setTransactions] = useLocalState("example-wealth.transactions", demoTransactions);
   const [documents, setDocuments] = useLocalState("example-wealth.documents", demoDocuments);
@@ -44,7 +48,7 @@ export function LocalClientPortal() {
       </header>
 
       <nav className="mt-7 flex gap-2 overflow-x-auto pb-2" aria-label="Client sections">
-        {tabs.map((item) => (
+        {tabs.filter((item) => (item !== "Planning" || features.planning) && (item !== "Documents" || features.documents)).map((item) => (
           <button key={item} type="button" onClick={() => setTab(item)} className={`min-h-11 shrink-0 rounded-full px-4 text-sm font-semibold ${tab === item ? "bg-[var(--accent-fill)] text-[var(--button-text)]" : "border border-[var(--border)] text-[var(--muted)]"}`}>
             {item}
           </button>
@@ -120,7 +124,15 @@ export function LocalClientPortal() {
         </section>
       )}
 
-      {tab === "Documents" && (
+      {tab === "Planning" && features.planning && (
+        <section className="glass mt-6 rounded-3xl p-5 sm:p-7">
+          <h2 className="text-xl font-semibold">Wealth planning illustrations</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">Explore transparent compound-growth assumptions, save sample scenarios locally and compare purchasing power after inflation.</p>
+          <Link href="/planning" className="mt-5 inline-flex min-h-11 items-center rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Open planning lab</Link>
+        </section>
+      )}
+
+      {tab === "Documents" && features.documents && (
         <section className="glass mt-6 rounded-3xl p-5 sm:p-7">
           <h2 className="text-xl font-semibold">Document vault</h2>
           <div className="mt-5 divide-y divide-[var(--border)]">{documents.map((doc) => <div key={doc.id} className="flex items-center justify-between gap-3 py-4"><div><p className="font-semibold">{doc.name}</p><p className="text-xs text-[var(--muted)]">{doc.category} · v{doc.version} · {doc.date}</p></div><button type="button" onClick={() => setMessage(`Preview is available for ${doc.name} in this local demo.`)} className="min-h-11 rounded-full border border-[var(--border)] px-4 text-sm">Preview</button></div>)}</div>

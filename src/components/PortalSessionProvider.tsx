@@ -38,8 +38,7 @@ export function PortalSessionProvider({ children }: { children: ReactNode }) {
 
     try {
       supabase = getPortalSupabaseClient();
-    } catch (error) {
-      console.error("Portal session could not be initialized.", error);
+    } catch {
       queueMicrotask(() => {
         if (active) setSession({ ...initialState, status: "signed-out" });
       });

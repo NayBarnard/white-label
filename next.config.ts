@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const isStaffDeployment = process.env.APP_MODE === "staff";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
   cacheComponents: true,
   partialPrefetching: !isStaffDeployment,
   env: {

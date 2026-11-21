@@ -849,6 +849,42 @@ type PortalDatabase = {
         };
         Relationships: [];
       };
+      wealth_os_tenants: {
+        Row: { id: string; name: string; trading_name: string; configuration: Json; created_at: string; updated_at: string; updated_by: string | null };
+        Insert: { id: string; name: string; trading_name: string; configuration: Json; created_at?: string; updated_at?: string; updated_by?: string | null };
+        Update: { name?: string; trading_name?: string; configuration?: Json; updated_at?: string; updated_by?: string | null };
+        Relationships: [];
+      };
+      wealth_os_projects: {
+        Row: { id: string; tenant_id: string; status: "draft" | "published"; configuration: Json; published_at: string | null; created_at: string; updated_at: string; updated_by: string | null };
+        Insert: { id: string; tenant_id: string; status: "draft" | "published"; configuration: Json; published_at?: string | null; created_at?: string; updated_at?: string; updated_by?: string | null };
+        Update: { tenant_id?: string; status?: "draft" | "published"; configuration?: Json; published_at?: string | null; updated_at?: string; updated_by?: string | null };
+        Relationships: [];
+      };
+      wealth_os_scenarios: {
+        Row: { id: string; tenant_id: string; user_id: string; name: string; assumptions: Json; result: Json; created_at: string; updated_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; name: string; assumptions: Json; result: Json; created_at?: string; updated_at?: string };
+        Update: { name?: string; assumptions?: Json; result?: Json; updated_at?: string };
+        Relationships: [];
+      };
+      wealth_os_requests: {
+        Row: { id: string; tenant_id: string; user_id: string; request_type: string; details: Json; status: "submitted" | "reviewing" | "completed" | "declined"; created_at: string; updated_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; request_type: string; details: Json; status?: "submitted" | "reviewing" | "completed" | "declined"; created_at?: string; updated_at?: string };
+        Update: { request_type?: string; details?: Json; status?: "submitted" | "reviewing" | "completed" | "declined"; updated_at?: string };
+        Relationships: [];
+      };
+      wealth_os_tasks: {
+        Row: { id: string; tenant_id: string; adviser_id: string; client_id: string | null; title: string; details: string | null; due_at: string | null; completed_at: string | null; created_at: string; updated_at: string };
+        Insert: { id?: string; tenant_id: string; adviser_id: string; client_id?: string | null; title: string; details?: string | null; due_at?: string | null; completed_at?: string | null; created_at?: string; updated_at?: string };
+        Update: { client_id?: string | null; title?: string; details?: string | null; due_at?: string | null; completed_at?: string | null; updated_at?: string };
+        Relationships: [];
+      };
+      wealth_os_notes: {
+        Row: { id: string; tenant_id: string; adviser_id: string; client_id: string; content: string; created_at: string; updated_at: string };
+        Insert: { id?: string; tenant_id: string; adviser_id: string; client_id: string; content: string; created_at?: string; updated_at?: string };
+        Update: { content?: string; updated_at?: string };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

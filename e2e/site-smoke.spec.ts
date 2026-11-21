@@ -34,14 +34,14 @@ test("public header groups client and advisor portal access in desktop and mobil
   const header = page.locator("header");
   await header.getByRole("button", { name: "PORTALS" }).click();
   const portalMenu = header.getByRole("navigation", { name: "Portal access" });
-  await expect(portalMenu.getByRole("link", { name: "CLIENT PORTAL" })).toHaveAttribute("href", "/portal/login");
+  await expect(portalMenu.getByRole("link", { name: "CLIENT PORTAL" })).toHaveAttribute("href", "/portal/dashboard");
   await expect(portalMenu.getByRole("link", { name: "ADVISOR PORTAL" })).toHaveAttribute("href", "/advisor/login");
   await expect(header.getByText("ENQUIRE NOW")).toHaveCount(0);
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Open navigation menu" }).click();
   const mobileMenu = page.getByRole("navigation", { name: "Mobile navigation" });
-  await expect(mobileMenu.getByRole("link", { name: "CLIENT PORTAL" })).toHaveAttribute("href", "/portal/login");
+  await expect(mobileMenu.getByRole("link", { name: "CLIENT PORTAL" })).toHaveAttribute("href", "/portal/dashboard");
   await expect(mobileMenu.getByRole("link", { name: "ADVISOR PORTAL" })).toHaveAttribute("href", "/advisor/login");
   await expect(mobileMenu.getByText("ENQUIRE NOW")).toHaveCount(0);
 });
@@ -56,7 +56,7 @@ test("firm statement ticker appears on public pages but not portal routes", asyn
   await expect(page.getByRole("region", { name: "Firm statement" })).toBeVisible();
   await expect(page.locator("main").getByText(statement, { exact: true })).toHaveCount(0);
 
-  await page.goto("/portal/login");
+  await page.goto("/portal/dashboard");
   await expect(page.getByRole("region", { name: "Firm statement" })).toHaveCount(0);
 
   await page.goto("/advisor/login");

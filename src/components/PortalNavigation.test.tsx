@@ -61,10 +61,10 @@ describe("PortalNavigation", () => {
       "Holdings & Simulator",
       "Document Vault",
       "Requests & Adviser",
+      "Statements",
+      "Performance Reports",
+      "Messages",
     ]);
-    for (const label of ["Statements", "Performance Reports", "Tax Centre", "Messages"]) {
-      expect(within(dialog).getByText(label).closest("[aria-disabled='true']")).toBeInTheDocument();
-    }
     expect(within(dialog).getByRole("button", { name: "Chat with PLACEHOLDER BRAND AI Assistant" })).toBeInTheDocument();
     expect(within(dialog).getByRole("button", { name: "Install app" })).toBeDisabled();
     expect(within(dialog).getByText("Account")).toBeInTheDocument();

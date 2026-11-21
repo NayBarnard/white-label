@@ -15,6 +15,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { company, returnSummary } from "@/data/firmData";
 import { LargeTitle } from "@/components/IOSKit";
 import { getPublishedHomePage } from "@/lib/supabase/site-pages";
+import { LocalStudioHomepage } from "@/components/studio/LocalStudioHomepage";
 
 export const metadata: Metadata = {
   title: "PLACEHOLDER BRAND | Independent Fund Management",
@@ -29,11 +30,23 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
+  // The browser-only Studio publishes to this local preview component.
+  // Server-side/Puck publishing remains an optional fallback.
   const publishedContent = await getPublishedHomePage();
   if (isHomePageData(publishedContent)) {
-    return <Render config={homePageConfig} data={publishedContent} />;
+    return (
+      <>
+        <LocalStudioHomepage />
+        <Render config={homePageConfig} data={publishedContent} />
+      </>
+    );
   }
-  return <CurrentHomePage />;
+  return (
+    <>
+      <LocalStudioHomepage />
+      <CurrentHomePage />
+    </>
+  );
 }
 
 function CurrentHomePage() {

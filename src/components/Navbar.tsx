@@ -371,7 +371,7 @@ export function Navbar() {
                     transition={reduceMotion ? { duration: 0 } : IOS_SPRING}
                   >
                     <Link
-                      href="/portal/login"
+                      href="/portal/dashboard"
                       aria-label="CLIENT PORTAL"
                       className="portal-access-link"
                       onClick={() => setPortalMenuOpen(false)}
@@ -379,7 +379,7 @@ export function Navbar() {
                       <span className="portal-access-icon"><UserRound size={18} aria-hidden="true" /></span>
                       <span>
                         <span className="portal-access-title">Client Portal</span>
-                        <span className="portal-access-description">View your investments and documents</span>
+                        <span className="portal-access-description">Open the client workspace</span>
                       </span>
                     </Link>
                     <Link
@@ -391,7 +391,7 @@ export function Navbar() {
                       <span className="portal-access-icon"><BriefcaseBusiness size={18} aria-hidden="true" /></span>
                       <span>
                         <span className="portal-access-title">Advisor Portal</span>
-                        <span className="portal-access-description">Secure access for advisors</span>
+                        <span className="portal-access-description">Open the adviser workspace</span>
                       </span>
                     </Link>
                   </motion.nav>
@@ -452,7 +452,7 @@ export function Navbar() {
               <div className="mobile-portal-access mt-2 border-t border-white/20 pt-3">
                 <p className="px-3 pb-2 text-[10px] font-bold tracking-[0.14em] text-white/65">PORTALS</p>
                 <Link
-                  href="/portal/login"
+                  href="/portal/dashboard"
                   onClick={() => setMenuOpen(false)}
                   aria-label="CLIENT PORTAL"
                   className="mobile-portal-link"
@@ -460,7 +460,7 @@ export function Navbar() {
                   <UserRound size={18} aria-hidden="true" />
                   <span>
                     <span className="portal-access-title">Client Portal</span>
-                    <span className="portal-access-description">View your investments and documents</span>
+                    <span className="portal-access-description">Open the client workspace</span>
                   </span>
                 </Link>
                 <Link
@@ -472,7 +472,7 @@ export function Navbar() {
                   <BriefcaseBusiness size={18} aria-hidden="true" />
                   <span>
                     <span className="portal-access-title">Advisor Portal</span>
-                    <span className="portal-access-description">Secure access for advisors</span>
+                    <span className="portal-access-description">Open the adviser workspace</span>
                   </span>
                 </Link>
               </div>

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { demoClients } from "@/data/demo";
 import { useLocalState } from "@/lib/local-store";
+import { downloadPdfReport } from "@/lib/pdf-report";
 
 type Task = { id: string; title: string; client: string; done: boolean };
 
@@ -19,6 +20,38 @@ export function LocalAdviserPortal() {
     () => demoClients.filter((client) => `${client.name} ${client.email}`.toLowerCase().includes(query.toLowerCase())),
     [query],
   );
+
+  function exportClientPack() {
+    const blob = new Blob([JSON.stringify({
+      sample: true,
+      reportType: "Local adviser client review pack",
+      client: selected,
+      tasks,
+      note: notes[selected.id] ?? "",
+      disclaimer: "Fictional local demonstration. No investment recommendation or transaction instruction.",
+    }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${selected.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-review-pack.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function exportClientPdf() {
+    await downloadPdfReport(
+      `${selected.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-review-pack.pdf`,
+      "WEALTH OS · LOCAL ADVISER DEMONSTRATION",
+      "Client review pack",
+      [
+        { title: "Client", lines: [`${selected.name}`, `${selected.email}`, `Adviser: ${selected.adviser}`] },
+        { title: "Illustrative profile", lines: [`Status: ${selected.status}`, `Risk profile: ${selected.risk}`, `Illustrative value: R ${selected.value.toLocaleString("en-ZA")}`] },
+        { title: "Adviser notes", lines: [notes[selected.id]?.trim() || "No local adviser notes recorded."] },
+        { title: "Follow-up tasks", lines: tasks.filter((task) => task.client === selected.name).map((task) => `${task.done ? "Complete" : "Open"} — ${task.title}`) },
+      ],
+      "Fictional local demonstration. No investment recommendation, approved outcome or transaction instruction.",
+    );
+  }
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 py-10 lg:px-8">
@@ -48,7 +81,7 @@ export function LocalAdviserPortal() {
         <div className="flex items-center justify-between"><h2 className="text-lg font-semibold">Tasks and follow-ups</h2><button type="button" onClick={() => setTasks((current) => [...current, { id: `task-${Date.now()}`, title: "New demonstration task", client: selected.name, done: false }])} className="min-h-11 rounded-full border border-[var(--border)] px-4 text-sm font-semibold">Add task</button></div>
         <div className="mt-4 space-y-2">{tasks.map((task) => <label key={task.id} className="flex items-center gap-3 rounded-xl border border-[var(--border)] p-3"><input type="checkbox" checked={task.done} onChange={() => setTasks((current) => current.map((item) => item.id === task.id ? { ...item, done: !item.done } : item))} /><span className={task.done ? "text-[var(--muted)] line-through" : ""}>{task.title} · {task.client}</span></label>)}</div>
       </section>
-      <button type="button" onClick={() => setMessage("A local demonstration notification was recorded.")} className="mt-5 min-h-11 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Send local reminder</button>
+      <div className="mt-5 flex flex-wrap gap-3"><button type="button" onClick={() => setMessage("A local demonstration notification was recorded.")} className="min-h-11 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Send local reminder</button><button type="button" onClick={exportClientPack} className="min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Export review pack JSON</button><button type="button" onClick={() => void exportClientPdf()} className="min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Export review pack PDF</button></div>
       {message && <p role="status" className="mt-4 text-sm text-[var(--accent)]">{message}</p>}
     </main>
   );

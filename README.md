@@ -3,24 +3,36 @@
 ## Standalone demonstration
 
 This project runs locally without a database, Supabase, API keys, authentication
-provider, or cloud storage. Client, adviser, and administration workflows use
-fictional data and browser localStorage. The Studio can be opened as an explicit
-local-only placeholder demo without Supabase or Vercel.
+provider, or cloud storage. Client, adviser, administration and website projects
+use clearly labelled browser-local demonstration data.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. Start with `/portal`, `/advisor`, or `/admin`.
-Use `/admin` to reset browser demo data. To open the Studio locally without
-Supabase authentication, run `STUDIO_DEMO_MODE=true npm run dev` and open
-`/studio`. This bypass is development-only; production still requires the
-server-verified administrator and AAL2 checks.
+Open `http://localhost:3000`. Product demonstration routes are `/product`,
+`/welcome`, `/licensing` and `/studio`. Portal and adviser demos are available
+at `/client`, `/portal`, `/advisor`, `/admin` and `/planning` when no deployment
+mode or Supabase credentials are configured. Do not enter real or sensitive
+information into browser-only demonstrations.
 
-The Studio uses generic editable placeholders and browser storage only. It
-does not load existing site/customer data, write to Supabase, or publish. Do
-not enter real or sensitive information into the local demo.
+The Studio supports multiple local website projects, visual page and section
+editing, responsive previews, browser-local undo/version history, reusable
+sections, starter and custom templates, deterministic creative suggestions,
+quality checks, and validated JSON project import. Uploaded image/PDF binaries
+are kept in IndexedDB (2 MB per file, 50 MB per project); project metadata stays
+in localStorage. Older embedded media is migrated on load when browser storage
+is available.
+
+Use **Export site** in Studio to download a standalone website ZIP containing
+HTML pages, responsive CSS, menu JavaScript, local image assets, SEO metadata,
+a generated favicon, deployment instructions, and an editable
+`wealth-os-project.json` backup. Extract it and upload the folder contents to
+ordinary static hosting. Import the JSON backup from Studio to resume editing.
+Studio **Publish** is a browser-local preview snapshot; it does not deploy to a
+public domain. Browser storage is not authentication, tenant isolation, or
+cross-device synchronization.
 
 ## Customisation
 
@@ -121,26 +133,36 @@ add its metadata to `client_documents` through a trusted administrative process.
 
 ## Website studio
 
-The protected Puck-based Studio is available at `/studio` on the staff
-deployment. It uses the existing Supabase project and requires a signed-in
-administrator with trusted `app_metadata.role = "admin"` and AAL2 MFA.
-Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and
-server-only `SUPABASE_SERVICE_ROLE_KEY`. Never assign roles through editable
-`user_metadata` or expose the service-role key to browser code.
+The existing staff Puck homepage editor remains available through its
+authenticated deployment configuration. The standalone WEALTH OS Studio
+demonstration at `/studio` runs without external credentials in standalone
+mode. These are distinct workflows.
 
-Apply [`supabase/puck-studio.sql`](./supabase/puck-studio.sql), then apply
-[`supabase/migrations/202611200001_white_label_studio_versions.sql`](./supabase/migrations/202611200001_white_label_studio_versions.sql).
-The editor saves a private draft, previews unpublished changes, publishes on
-request, and keeps published snapshots for restoration. The public homepage
-uses the latest valid published Puck configuration and retains the existing
-built-in homepage as a safe fallback. The prior `site_pages` homepage row
-remains readable as a migration fallback.
+The local website builder supports independent browser projects, pages,
+navigation, brand tokens, responsive section layouts, media management,
+reusable sections and local template save/duplicate/import/export. Static
+website exports are independent of Studio and include an editable JSON source
+backup. Templates are stored in the browser; built-in wealth-management
+templates are starter content, not approved financial or compliance language.
 
-The current Studio release manages the homepage only. Brand/theme management,
-media uploads, customer-created pages, template management, and tenant
-provisioning are not yet implemented. See
-[`docs/WHITE_LABEL_STUDIO.md`](./docs/WHITE_LABEL_STUDIO.md) for verified
-scope and [`docs/STUDIO_USER_GUIDE.md`](./docs/STUDIO_USER_GUIDE.md) for use.
+Product details and boundaries are at `/product` and `/licensing`; new-business
+setup is at `/welcome`. Local mode does not provide production login, tenant
+isolation, secure client-data hosting, commercial licence terms, domain
+deployment, transactional forms, or public publishing infrastructure.
+
+## Optional WEALTH OS Supabase storage
+
+The browser-only application remains the default. To enable authenticated
+Supabase persistence, configure `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
+`STUDIO_STORAGE_MODE=supabase`, and
+`NEXT_PUBLIC_STUDIO_STORAGE_MODE=supabase`; apply
+`supabase/migrations/202611210001_wealth_os_local_sync.sql`.
+
+The migration provides tenant, Studio project, scenario, request, task and
+adviser-note tables with tenant/user-scoped RLS foundations. Supabase is
+optional: if credentials or the migration are absent, Studio saves and planning
+remain in browser localStorage and the application continues to function.
 
 The onboarding questionnaire generates a preliminary PDF locally in the
 browser. It does not collect identity or banking details, perform KYC/AML

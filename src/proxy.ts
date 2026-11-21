@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { getAppMode, getRouteDisposition } from "@/lib/deployment/routing";
+import { getAppMode, getRouteDisposition, isStandaloneLocalMode } from "@/lib/deployment/routing";
 import type { PortalDatabase } from "@/lib/supabase/portal";
 import { isLocalStudioDemoAllowed } from "@/lib/studio/mode";
 
@@ -20,7 +20,18 @@ function addStaffSecurityHeaders(response: NextResponse, csp: string) {
 export async function proxy(request: NextRequest) {
   const mode = getAppMode(process.env.APP_MODE);
   const localStudioDemo = isLocalStudioDemoAllowed(process.env.NODE_ENV, process.env.STUDIO_DEMO_MODE);
-  const disposition = getRouteDisposition(mode, request.nextUrl.pathname, localStudioDemo);
+  const standaloneLocalRoutes = isStandaloneLocalMode(
+    process.env.APP_MODE,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+  if (standaloneLocalRoutes && request.nextUrl.pathname === "/portal/dashboard") {
+    return NextResponse.redirect(new URL("/portal", request.url));
+  }
+  if (standaloneLocalRoutes && request.nextUrl.pathname === "/advisor/login") {
+    return NextResponse.redirect(new URL("/advisor", request.url));
+  }
+  const disposition = getRouteDisposition(mode, request.nextUrl.pathname, localStudioDemo, standaloneLocalRoutes);
 
   if (disposition === "not-found") {
     const response = request.nextUrl.pathname.startsWith("/api/")

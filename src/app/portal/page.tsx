@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { LocalClientPortal } from "@/components/local/LocalClientPortal";
 
 export const metadata: Metadata = {
-  title: "Client portal",
-  description: "Secure access to client portfolio information and documents from PLACEHOLDER BRAND.",
+  title: "Client demonstration portal",
+  description: "A local client portal demonstration using fictional browser-only data.",
   openGraph: {
-    title: "Client portal | PLACEHOLDER BRAND",
-    description: "Secure access to client portfolio information and documents from PLACEHOLDER BRAND.",
+    title: "Client demonstration portal | PLACEHOLDER BRAND",
+    description: "A local client portal demonstration using fictional browser-only data.",
     url: "/portal",
     siteName: "PLACEHOLDER BRAND",
     type: "website",

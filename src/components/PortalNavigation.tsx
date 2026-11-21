@@ -51,10 +51,9 @@ function getPortalLinks(pathname: string): PortalLink[] {
       ...(features.taxYearCard
         ? [{ label: "Tax Centre", href: "/portal#taxCentre", section: "taxCentre" }]
         : []),
-      { label: "Statements", href: "", disabled: true, badge: "Soon" },
-      { label: "Performance Reports", href: "", disabled: true, badge: "Soon" },
-      ...(!features.taxYearCard ? [{ label: "Tax Centre", href: "", disabled: true, badge: "Soon" }] : []),
-      { label: "Messages", href: "", disabled: true, badge: "Soon" },
+      { label: "Statements", href: "/portal#documents", section: "documents" },
+      { label: "Performance Reports", href: "/portal#holdings", section: "holdings" },
+      { label: "Messages", href: "/portal#support", section: "support" },
     ];
   }
   if (pathname.startsWith("/admin") || pathname.startsWith("/studio")) {
