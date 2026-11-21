@@ -813,6 +813,42 @@ type PortalDatabase = {
         };
         Relationships: [];
       };
+      site_studio_versions: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          slug: string;
+          status: "draft" | "published";
+          content: Json;
+          created_by: string | null;
+          created_at: string;
+          published_by: string | null;
+          published_at: string | null;
+          source_version_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          tenant_id?: string;
+          slug?: string;
+          status: "draft" | "published";
+          content: Json;
+          created_by?: string | null;
+          created_at?: string;
+          published_by?: string | null;
+          published_at?: string | null;
+          source_version_id?: string | null;
+        };
+        Update: {
+          status?: "draft" | "published";
+          content?: Json;
+          created_by?: string | null;
+          created_at?: string;
+          published_by?: string | null;
+          published_at?: string | null;
+          source_version_id?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

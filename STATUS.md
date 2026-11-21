@@ -17,10 +17,40 @@
 
 Database migrations and Supabase provider code remain in the repository for
 historical reference, but are not required to run or build this demonstration.
+The White Label Studio is an exception: persistent homepage editing requires
+the Studio migration and Supabase Auth/database configuration described below.
 
 This repository contains software only; it does not certify legal or
 regulatory compliance. The firm's compliance officer must review every
 workflow before real client data is used.
+
+## White Label Studio status — 2026-11-20
+
+- **Implemented foundation.** `/studio` now uses a separate full-screen
+  Puck workspace, the server-side administrator/AAL2 guard, protected
+  save/publish/restore APIs, published version snapshots, responsive preview
+  widths, version history, and a route-isolated staff deployment.
+- **Public integration.** The homepage reads the latest valid published
+  version; the legacy `site_pages` row and built-in homepage remain fallbacks.
+  The existing table and business data are not removed or overwritten.
+- **Database.** Additive migration
+  `supabase/migrations/202611200001_white_label_studio_versions.sql` adds the
+  version table, indexes, grants, and RLS.
+- **Not complete.** Global brand/theme management, marketing media, additional
+  pages, templates, feature controls, full SEO settings, and end-to-end
+  tenant provisioning/host/storage isolation remain outstanding. This is not
+  a complete multi-tenant website customization platform.
+- **Baseline before changes.** `npm run build` and `npm run lint` passed.
+  `npm test` had 27 failures in `src/lib/deployment/routing.test.ts`: route
+  isolation returned `allow` for protected routes. That bypass was corrected;
+  the final full Vitest suite passes (196 tests), TypeScript/lint pass, and the
+  production build succeeds.
+- **Browser checks.** Full Playwright suite passed (41/41), including public
+  smoke, route isolation, mobile layouts, insights, offline/PWA, and Studio
+  public-route exclusion. Updated stale assertions to match the actual local
+  demo portal/login, research UI, and non-licensed demo disclosures. Authenticated
+  Studio E2E could not run because no live Supabase project, migration, or test
+  account is configured.
 
 ## Phase status
 
@@ -37,7 +67,8 @@ workflow before real client data is used.
   Password visibility,
   forgot-password, sign-in rate limiting and MFA are not complete.
 - **0(d) Interactive feature — completed.** Both the Puck homepage studio and
-  the fund comparison are present and interactive; neither needed restoration.
+  the fund comparison are present and interactive; Studio now uses a server
+  protected draft/publish workflow described above.
 - **0(e) Platform matrix — partly done.** Empty-by-default matrix, statuses,
   source/verifier/date, stale marking, search, editor and cell history exist.
   Optional CSV import and a dedicated re-verification queue are not complete.
@@ -108,9 +139,10 @@ workflow before real client data is used.
 - **4.2 Versioned public documents — not built.** No `site_documents` table,
   private source bucket, version workflow or publish-only shared document
   helper exists. Existing generated-document behavior remains.
-- **4.3 Content editor — not built.** Fund facts are typed in source data;
-  draft/preview/compliance approval/publish/version/revert management is
-  absent.
+- **4.3 Content editor — partly done.** The public homepage has protected
+  Puck draft, preview, publish, and version restoration foundations.
+  Compliance approval, additional pages, brand/theme editing, and content
+  management for the remaining public routes are absent.
 
 ### Phase 5 — Platforms and codes
 
@@ -232,6 +264,7 @@ Then apply additive migrations in timestamp order:
 17. `supabase/migrations/202611180007_adviser_client_relationships.sql`
 18. `supabase/migrations/202611180008_notifications_reviews.sql`
 19. `supabase/migrations/202611180009_goal_archive.sql`
+20. `supabase/migrations/202611200001_white_label_studio_versions.sql`
 
 No new migration was created for the deployment-isolation work.
 

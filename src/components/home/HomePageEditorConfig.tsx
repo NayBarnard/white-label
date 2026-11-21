@@ -503,12 +503,19 @@ function isHomePageData(value: unknown): value is Data<HomePageComponents> {
     isRecord(value) &&
     isRecord(value.root) &&
     Array.isArray(value.content) &&
+    value.content.length > 0 &&
+    value.content.length <= 50 &&
     value.content.every(
       (item) =>
         isRecord(item) &&
         typeof item.type === "string" &&
         isValidComponent(item.type, item.props),
-    )
+    ) &&
+    new Set(
+      value.content.map((item) =>
+        isRecord(item) && isRecord(item.props) ? item.props.id : null,
+      ),
+    ).size === value.content.length
   );
 }
 

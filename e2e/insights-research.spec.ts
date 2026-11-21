@@ -20,23 +20,24 @@ test("insights hub searches and filters canonical records", async ({ page }) => 
   });
   await page.goto("/insights");
 
-  await expect(page.getByText("FEATURED RESEARCH")).toBeVisible();
+  await expect(page.getByText("FEATURED RESEARCH", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Market snapshot" })).toBeVisible();
   await expect(page.getByText("No verified quote available").first()).toBeVisible();
   await expect(page.getByRole("link", { name: "Browse the versioned research library" })).toHaveAttribute("href", "/insights/library");
 
+  const researchResults = page.locator('section[aria-labelledby="canonical-research-heading"]');
   await page.getByRole("combobox", { name: "Category" }).selectOption("Investment Strategy");
-  await expect(page.getByRole("heading", { name: "Building resilient portfolios through diversification" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Understanding the role of investment costs" })).toHaveCount(0);
+  await expect(researchResults.getByRole("heading", { name: "Building resilient portfolios through diversification" })).toBeVisible();
+  await expect(researchResults.getByRole("heading", { name: "Understanding the role of investment costs" })).toHaveCount(0);
 
   await page.getByRole("combobox", { name: "Category" }).selectOption("All");
   await page.getByRole("searchbox", { name: "Search research" }).fill("investment costs");
-  await expect(page.getByRole("heading", { name: "Understanding the role of investment costs" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Building resilient portfolios through diversification" })).toHaveCount(0);
+  await expect(researchResults.getByRole("heading", { name: "Understanding the role of investment costs" })).toBeVisible();
+  await expect(researchResults.getByRole("heading", { name: "Building resilient portfolios through diversification" })).toHaveCount(0);
 
   await page.getByRole("searchbox", { name: "Search research" }).fill("");
   await page.getByLabel("Published from").fill("2026-07-21");
-  await expect(page.getByRole("heading", { name: "Market context and investment time horizons" })).toHaveCount(0);
+  await expect(researchResults.getByRole("heading", { name: "Market context and investment time horizons" })).toHaveCount(0);
 });
 
 test("versioned research library identifies archived files and prevents their download", async ({ page }) => {
@@ -84,7 +85,7 @@ test("versioned research library identifies archived files and prevents their do
   });
   await page.goto("/insights/library");
 
-  await expect(page.getByRole("heading", { name: "Versioned research library" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Research, with its version history." })).toBeVisible();
   await page.getByRole("combobox", { name: "Version status" }).selectOption("Latest");
   await expect(page.getByText("Latest · v3")).toBeVisible();
   await expect(page.getByRole("link", { name: "Download latest version" })).toHaveAttribute("href", /version=3/);

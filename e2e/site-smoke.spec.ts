@@ -1,10 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { company, documents } from "../src/data/firmData";
 
-test("unauthenticated portal access redirects to login", async ({ page }) => {
+test("portal opens its clearly labelled local demo without authentication", async ({ page }) => {
   await page.goto("/portal");
-  await expect(page).toHaveURL(/\/portal\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "Client Portal" })).toBeVisible();
+  await expect(page).toHaveURL(/\/portal$/);
+  await expect(page.getByText("ILLUSTRATIVE DEMONSTRATION")).toBeVisible();
+  await expect(page.getByText("Local browser data")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Welcome, Alex" })).toBeVisible();
 });
 
 test("unauthenticated admin access is not found", async ({ page }) => {
@@ -182,13 +184,13 @@ test("open navigation and chat panels dismiss when clicking elsewhere", async ({
   await expect(chatPanel).toHaveCount(0);
 });
 
-test("public footer contains only the requested firm, contact and policy links", async ({ page }) => {
+test("public footer contains accurate demo disclosure, contact and policy links", async ({ page }) => {
   await page.goto("/");
 
   const footer = page.locator("footer.public-footer");
   await expect(footer).toContainText("Independent Investment Management");
-  await expect(footer).toContainText("Authorised FSP in terms of the FAIS Act of South Africa - FSP No. 622");
-  await expect(footer).toContainText("Category: Discretionary Investment Management");
+  await expect(footer).toContainText(company.publicFooterNotice);
+  await expect(footer).not.toContainText("FSP No. 622");
   await expect(footer).toContainText(company.phone);
   await expect(footer).toContainText(company.email);
   await expect(footer).toContainText(company.address);

@@ -76,6 +76,7 @@ Then apply the additive migrations:
 17. `supabase/migrations/202611180007_adviser_client_relationships.sql`
 18. `supabase/migrations/202611180008_notifications_reviews.sql`
 19. `supabase/migrations/202611180009_goal_archive.sql`
+20. `supabase/migrations/202611200001_white_label_studio_versions.sql`
 
 Import only approved NAV and benchmark observations into `fund_metrics`. Set
 the admin `app_metadata.role` claim through a trusted Supabase Admin API
@@ -85,6 +86,17 @@ put the service-role key in client-side environment variables.
 The platform migration creates no seeded platforms, share classes, or codes.
 Populate it only from the firm's verified spreadsheet, after a quarterly
 re-verification owner has been assigned.
+
+The Studio migration is additive. Keep `supabase/puck-studio.sql` and the
+legacy `site_pages` table; the public homepage reads a versioned published
+homepage first and falls back to the legacy row and then the built-in page.
+The new table grants read access only to public published configuration for
+the `default` tenant and admin-readable versions matching the trusted
+`app_metadata.tenant_id` claim. Draft writes and publishing go through server
+routes that recheck the admin role and AAL2, and use the server-only service
+role key. Tenant provisioning and public host-to-tenant resolution are not
+implemented; do not treat the default tenant column as completed tenant
+isolation.
 
 ## Supabase Auth URLs and email delivery
 

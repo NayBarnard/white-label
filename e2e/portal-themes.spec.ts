@@ -25,7 +25,8 @@ test("the configured portal theme uses its AA-contrast palette", async ({ page }
   if (!isStaffDeployment) {
     const staffPage = await page.goto("/advisor/login");
     expect(staffPage?.status()).toBe(200);
-    await expect(page.getByRole("heading", { name: "Staff sign-in" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Staff access" })).toBeVisible();
+    await expect(page.getByText("LOCAL DEMONSTRATION", { exact: true })).toBeVisible();
   }
 
   for (const [path, scope, expectedLight, expectedDark] of routes) {

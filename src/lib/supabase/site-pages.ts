@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { isHomePageData } from "@/components/home/HomePageEditorConfig";
 import type { PortalDatabase } from "@/lib/supabase/portal";
 
 export async function getPublishedHomePage() {
@@ -17,14 +18,32 @@ export async function getPublishedHomePage() {
     },
   });
   const { data, error } = await supabase
+    .from("site_studio_versions")
+    .select("content")
+    .eq("tenant_id", "default")
+    .eq("slug", "home")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Could not load the published Studio homepage:", error.message);
+  } else if (data?.content && isHomePageData(data.content)) {
+    return data.content;
+  } else if (data?.content) {
+    console.error("Published Studio homepage is invalid; trying the legacy homepage.");
+  }
+
+  const legacy = await supabase
     .from("site_pages")
     .select("content")
     .eq("slug", "home")
     .maybeSingle();
 
-  if (error) {
-    console.error("Could not load published homepage content:", error.message);
+  if (legacy.error) {
+    console.error("Could not load legacy published homepage content:", legacy.error.message);
     return null;
   }
-  return data?.content ?? null;
+  return legacy.data?.content ?? null;
 }

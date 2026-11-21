@@ -111,23 +111,26 @@ add its metadata to `client_documents` through a trusted administrative process.
 
 ## Website studio
 
-The Puck visual editor is available at `/studio`. Apply
-[`supabase/puck-studio.sql`](./supabase/puck-studio.sql) to the same Supabase
-project. Sign in with an existing Supabase Auth account whose trusted
-`app_metadata` includes `"role": "admin"` to edit and publish the homepage.
-Assign this claim only through a trusted Supabase Admin API process; do not use
-`user_metadata`, which users can modify themselves. Sign out and back in after
-the claim is changed so the refreshed JWT contains the new role. For example,
-a trusted server-only admin client can assign the claim with
-`supabaseAdmin.auth.admin.updateUserById(userId, { app_metadata: { role: "admin" } })`.
-Never run this call in browser code.
+The protected Puck-based Studio is available at `/studio` on the staff
+deployment. It uses the existing Supabase project and requires a signed-in
+administrator with trusted `app_metadata.role = "admin"` and AAL2 MFA.
+Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and
+server-only `SUPABASE_SERVICE_ROLE_KEY`. Never assign roles through editable
+`user_metadata` or expose the service-role key to browser code.
 
-The public homepage reads the published page record at request time and keeps
-the built-in homepage as its fallback until content is published. Row-level
-security allows public reads but restricts inserts and updates to admin-role
-JWTs. The studio uses the existing `NEXT_PUBLIC_SUPABASE_URL` and
-`NEXT_PUBLIC_SUPABASE_ANON_KEY`; never expose the Supabase service-role key to
-the browser.
+Apply [`supabase/puck-studio.sql`](./supabase/puck-studio.sql), then apply
+[`supabase/migrations/202611200001_white_label_studio_versions.sql`](./supabase/migrations/202611200001_white_label_studio_versions.sql).
+The editor saves a private draft, previews unpublished changes, publishes on
+request, and keeps published snapshots for restoration. The public homepage
+uses the latest valid published Puck configuration and retains the existing
+built-in homepage as a safe fallback. The prior `site_pages` homepage row
+remains readable as a migration fallback.
+
+The current Studio release manages the homepage only. Brand/theme management,
+media uploads, customer-created pages, template management, and tenant
+provisioning are not yet implemented. See
+[`docs/WHITE_LABEL_STUDIO.md`](./docs/WHITE_LABEL_STUDIO.md) for verified
+scope and [`docs/STUDIO_USER_GUIDE.md`](./docs/STUDIO_USER_GUIDE.md) for use.
 
 The onboarding questionnaire generates a preliminary PDF locally in the
 browser. It does not collect identity or banking details, perform KYC/AML

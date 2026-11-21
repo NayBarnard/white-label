@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { company } from "../src/data/firmData";
 
 test("PWA manifest exposes valid icons and shortcuts", async ({ request }) => {
   const manifestResponse = await request.get("/manifest.webmanifest");
@@ -54,7 +55,7 @@ test("service worker registers, offline page has help and chat, and portal is no
   await page.getByRole("button", { name: "Send message" }).click();
   await expect(
     page.getByLabel("PLACEHOLDER BRAND AI Assistant chat").locator(".placeholder-chat-message").filter({
-      hasText: "021 300 1582",
+      hasText: company.phone,
     }),
   ).toBeVisible();
   await page.context().setOffline(false);
@@ -81,7 +82,7 @@ test("chatbot answers questions after greetings and understands a follow-up", as
 
   await input.fill("Hi, how are you? What is the FSP number?");
   await send.click();
-  await expect(chat.locator(".placeholder-chat-message").filter({ hasText: "FSP No. 622" })).toBeVisible();
+  await expect(chat.locator(".placeholder-chat-message").filter({ hasText: company.regulatoryNotice })).toBeVisible();
 
   await input.fill("What are the fees for Balanced?");
   await send.click();

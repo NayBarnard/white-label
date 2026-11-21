@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
+import { Render } from "@puckeditor/core/rsc";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { DeferredFundComparison } from "@/components/DeferredFundComparison";
 import { CountUp } from "@/components/CountUp";
+import {
+  homePageConfig,
+  isHomePageData,
+} from "@/components/home/HomePageEditorConfig";
 import { HomeSwipeCarousel } from "@/components/HomeSwipeCarousel";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { ScrollPopOut } from "@/components/ScrollPopOut";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { company, returnSummary } from "@/data/firmData";
 import { LargeTitle } from "@/components/IOSKit";
+import { getPublishedHomePage } from "@/lib/supabase/site-pages";
 
 export const metadata: Metadata = {
   title: "PLACEHOLDER BRAND | Independent Fund Management",
@@ -22,7 +28,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const publishedContent = await getPublishedHomePage();
+  if (isHomePageData(publishedContent)) {
+    return <Render config={homePageConfig} data={publishedContent} />;
+  }
+  return <CurrentHomePage />;
+}
+
+function CurrentHomePage() {
   const platformNames = ["Absa", "Momentum", "Sanlam", "Old Mutual"];
   const beliefs = [
     {
