@@ -16,41 +16,40 @@
 - Supabase-dependent primary portal routes: replaced with standalone routes.
 
 Database migrations and Supabase provider code remain in the repository for
-historical reference, but are not required to run or build this demonstration.
-The White Label Studio is an exception: persistent homepage editing requires
-the Studio migration and Supabase Auth/database configuration described below.
+optional integrations; they are not required to run or build the local
+demonstration.
 
 This repository contains software only; it does not certify legal or
 regulatory compliance. The firm's compliance officer must review every
 workflow before real client data is used.
 
-## White Label Studio status — 2026-11-20
+## White Label Studio status — 2026-11-21
 
-- **Implemented foundation.** `/studio` now uses a separate full-screen
-  Puck workspace, the server-side administrator/AAL2 guard, protected
-  save/publish/restore APIs, published version snapshots, responsive preview
-  widths, version history, and a route-isolated staff deployment.
-- **Public integration.** The homepage reads the latest valid published
-  version; the legacy `site_pages` row and built-in homepage remain fallbacks.
-  The existing table and business data are not removed or overwritten.
-- **Database.** Additive migration
-  `supabase/migrations/202611200001_white_label_studio_versions.sql` adds the
-  version table, indexes, grants, and RLS.
+- **Active Studio mode.** `/studio` is a browser-only placeholder editor using
+  generic Puck content. It saves and recovers drafts in browser storage, does
+  not read/write Studio data in Supabase, and cannot publish.
+- **Local access.** Set `STUDIO_DEMO_MODE=true` while running `npm run dev` to
+  open the Studio without Supabase. This bypass is limited to development and
+  the exact `/studio` page; production still requires the server-side
+  administrator/AAL2 check.
+- **Optional CMS path.** Protected database APIs and the additive migration
+  remain, but APIs return 410 and public homepage Studio lookup is skipped
+  unless `STUDIO_STORAGE_MODE=supabase` is explicitly enabled server-side.
+  This optional path has not been validated against a live Supabase project.
+- **Placeholder data boundary.** Studio defaults no longer import firm
+  identity, customer, licensing, contact, or investment performance data.
+  Existing business workflows and public-site fallback are unchanged.
 - **Not complete.** Global brand/theme management, marketing media, additional
   pages, templates, feature controls, full SEO settings, and end-to-end
   tenant provisioning/host/storage isolation remain outstanding. This is not
   a complete multi-tenant website customization platform.
 - **Baseline before changes.** `npm run build` and `npm run lint` passed.
   `npm test` had 27 failures in `src/lib/deployment/routing.test.ts`: route
-  isolation returned `allow` for protected routes. That bypass was corrected;
-  the final full Vitest suite passes (196 tests), TypeScript/lint pass, and the
-  production build succeeds.
-- **Browser checks.** Full Playwright suite passed (41/41), including public
-  smoke, route isolation, mobile layouts, insights, offline/PWA, and Studio
-  public-route exclusion. Updated stale assertions to match the actual local
-  demo portal/login, research UI, and non-licensed demo disclosures. Authenticated
-  Studio E2E could not run because no live Supabase project, migration, or test
-  account is configured.
+  isolation returned `allow` for protected routes. That bypass was corrected.
+- **Current validation.** 206 Vitest tests, lint, TypeScript, production build,
+  and all 41 Playwright tests pass. A local browser check rendered Studio with
+  `STUDIO_DEMO_MODE=true` and no Supabase credentials; it observed no Supabase
+  network requests.
 
 ## Phase status
 
@@ -264,7 +263,8 @@ Then apply additive migrations in timestamp order:
 17. `supabase/migrations/202611180007_adviser_client_relationships.sql`
 18. `supabase/migrations/202611180008_notifications_reviews.sql`
 19. `supabase/migrations/202611180009_goal_archive.sql`
-20. `supabase/migrations/202611200001_white_label_studio_versions.sql`
+20. Optional future Studio CMS migration:
+    `supabase/migrations/202611200001_white_label_studio_versions.sql`
 
 No new migration was created for the deployment-isolation work.
 

@@ -1,67 +1,54 @@
 # White Label Studio implementation checklist
 
-This is the delivery checklist for the Studio in this repository. A checked
-item means the behavior exists in source and was locally validated; it does
-not imply that a live Supabase project or deployment was configured.
+The current Studio is a browser-only placeholder demo. It intentionally does
+not load or publish business data. A draft can be stored in local browser
+storage; do not enter real or sensitive information.
 
-## Protected Studio and publishing foundation
+## Implemented and locally verified
 
-- [x] `/studio` is a separate full-screen workspace and no longer writes
-  homepage content to browser local storage.
-- [x] Studio page access uses the server-verified administrator and AAL2 guard.
-- [x] Draft, publish, and restore API requests repeat server-side authorization.
-- [x] Studio data is validated against the existing Puck component schema.
-- [x] Homepage drafts are persisted separately from immutable published
-  snapshots.
-- [x] Publishing requires confirmation, records the publishing user and time,
-  and does not report success when the database write fails.
-- [x] Prior snapshots can be loaded for editing or restored by publishing a
-  new version.
-- [x] The public homepage renders only a valid published configuration and
-  falls back to the legacy `site_pages` row and then the existing homepage.
-- [x] Public/staff route isolation is enforced in the Next.js 16 Proxy and
-  covered by route tests.
-- [x] The migration adds tenant-scoped version rows and RLS without changing
-  existing business tables.
+- [x] `/studio` is a dedicated full-screen Puck workspace.
+- [x] Editor defaults are generic placeholders, with no firm identity,
+  licensing details, customer records, financial results, or contact details.
+- [x] Browser drafts and recovery copies are stored locally and schema-checked.
+- [x] Studio does not request Supabase data or send drafts to Studio APIs in its
+  default browser-only mode.
+- [x] Publishing controls are absent or explicitly disabled; public site
+  content is not changed by Studio edits.
+- [x] A development-only `STUDIO_DEMO_MODE=true` option opens `/studio`
+  without Supabase authentication. Production never honors this bypass.
+- [x] Supabase-backed Studio APIs reject reads and writes unless the
+  server-side `STUDIO_STORAGE_MODE=supabase` opt-in is set.
+- [x] Public homepage rendering does not query Studio versions in browser-only
+  mode and retains the existing built-in site fallback.
+- [x] Public/staff route isolation remains covered by route tests.
 
-## Not implemented yet
+## Not implemented or not enabled
 
-- [ ] Full automatic draft saving and unsaved browser-session recovery.
-- [ ] Editing public pages other than the existing homepage.
-- [ ] Global brand identity and design-token controls reflected throughout
-  every public route.
-- [ ] Dedicated component library beyond the existing Puck homepage sections.
-- [ ] Supabase Storage upload, image cropping, and marketing-media management.
-- [ ] Navigation, feature-control, SEO, templates, and full website settings
-  managers.
-- [ ] Full configuration diffing, separate publishing event log, and version
-  retention/cleanup controls.
-- [ ] Tenant provisioning, tenant-aware public host resolution, tenant-specific
+- [ ] Supabase-backed saving, publishing, and rollback are not enabled for
+  this placeholder demo and have not been verified against a live project.
+- [ ] Full brand identity, global design tokens, additional managed pages,
+  media uploads, navigation, templates, feature controls, and SEO settings.
+- [ ] Tenant provisioning, tenant-aware host resolution, tenant-specific
   Storage policies, and cross-tenant integration tests.
-- [ ] Live Supabase integration and browser verification with administrator,
-  non-administrator, and AAL1-only accounts.
+- [ ] Authenticated Studio/database E2E using a non-production project.
 
-These deferred areas are intentionally not represented as working controls.
-The current release is a secured homepage editing and publishing foundation,
-not the complete multi-tenant customization suite.
+The optional migration
+`supabase/migrations/202611200001_white_label_studio_versions.sql` and
+protected server routes remain available as a future integration path. They
+are not required or used by the browser-only demo.
 
-## Required local verification
+## Verification
 
-- [x] `npm run lint` passed after implementation.
-- [x] Focused route, Puck data, and tenant-claim tests passed.
-- [x] Full Vitest suite passed (196 tests), TypeScript passed, and the
-  production build passed.
-- [x] Public E2E smoke suite passed (27/27); the full Playwright suite passed
-  (41/41). Browser assertions now match the local demo portal, current research
-  headings, and the accurate non-licensed demo disclosures.
-- [ ] Authenticated Studio/database E2E remains unavailable without Supabase
-  test credentials and a migrated project.
+- [x] TypeScript and lint passed after the placeholder-only changes.
+- [x] Full Vitest suite passed (206 tests).
+- [x] Production build passed.
+- [x] Full Playwright suite passed (41/41).
+- [x] Local browser check confirmed `/studio` renders without Supabase and
+  sends no Supabase requests.
+- [ ] Live Supabase and Vercel integration checks are intentionally not run.
 
-## Deployment prerequisites
+## Local demo
 
-Apply the existing base scripts and additive migrations in
-[`DEPLOYMENT.md`](./DEPLOYMENT.md), including
-`supabase/migrations/202611200001_white_label_studio_versions.sql`. Configure
-Supabase Auth, trusted administrator `app_metadata`, AAL2 MFA, and the
-server-only service role key before using Studio. Never use live customer data
-for initial Studio verification.
+Run `STUDIO_DEMO_MODE=true npm run dev`, then open `/studio`. No Supabase or
+Vercel credentials are needed. The development proxy permits only the Studio
+page for this explicit local mode. Do not set `STUDIO_DEMO_MODE` in production.

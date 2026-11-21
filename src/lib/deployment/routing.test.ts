@@ -17,6 +17,12 @@ describe("deployment route isolation", () => {
     (pathname) => expect(getRouteDisposition("public", pathname)).toBe("not-found"),
   );
 
+  it("allows only the Studio page in explicitly enabled local demo mode", () => {
+    expect(getRouteDisposition("public", "/studio", true)).toBe("allow");
+    expect(getRouteDisposition("public", "/studio/anything", true)).toBe("not-found");
+    expect(getRouteDisposition("public", "/api/studio/homepage", true)).toBe("not-found");
+  });
+
   it("allows advisor login in public mode for testing", () => {
     expect(getRouteDisposition("public", "/advisor/login")).toBe("allow");
   });
@@ -56,6 +62,14 @@ describe("deployment route isolation", () => {
     vi.stubEnv("APP_MODE", "public");
     const response = await proxy(new NextRequest("https://www.example/api/admin/setup"));
     expect(response.status).toBe(404);
+  });
+
+  it("allows the Studio page in public mode only for the explicit local development demo", async () => {
+    vi.stubEnv("APP_MODE", "public");
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("STUDIO_DEMO_MODE", "true");
+    const response = await proxy(new NextRequest("http://localhost:3000/studio"));
+    expect(response.status).toBe(200);
   });
 
   it.each(["/admin", "/advisor", "/studio", "/api/admin/setup", "/api/advisor/platforms"])(

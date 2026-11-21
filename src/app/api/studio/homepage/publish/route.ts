@@ -3,6 +3,7 @@ import { authorizeAdminApi } from "@/lib/admin/server";
 import { isHomePageData } from "@/components/home/HomePageEditorConfig";
 import { readJsonBody } from "@/lib/server/rate-limit";
 import { getStudioTenantId } from "@/lib/studio/tenant";
+import { isStudioSupabaseStorageEnabled } from "@/lib/studio/mode";
 
 const HOME_SLUG = "home";
 const MAX_CONTENT_BYTES = 512 * 1024;
@@ -13,6 +14,9 @@ function jsonError(message: string, status: number) {
 }
 
 export async function POST(request: Request) {
+  if (!isStudioSupabaseStorageEnabled(process.env.STUDIO_STORAGE_MODE)) {
+    return jsonError("Publishing is disabled in browser-only demo mode.", 410);
+  }
   const access = await authorizeAdminApi();
   if (!access.ok) return access.response;
 

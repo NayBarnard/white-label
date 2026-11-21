@@ -21,18 +21,21 @@ client-facing workflow before real client data is used.
 - [ ] Apply `supabase/puck-studio.sql`.
 - [ ] Apply additive migrations `202611160001` through `202611180009` in
   timestamp order.
-- [ ] Apply `supabase/migrations/202611200001_white_label_studio_versions.sql`
-  after `supabase/puck-studio.sql` and the existing additive migrations.
+- [ ] Optional only if a future Supabase CMS mode is approved: apply
+  `supabase/migrations/202611200001_white_label_studio_versions.sql` after
+  `supabase/puck-studio.sql` and the existing additive migrations. The current
+  browser-only placeholder Studio does not use this migration.
 - [ ] Confirm no existing migration has failed or been only partially applied.
 - [ ] Assign administrator/adviser/client roles exclusively through trusted
   server-side or Supabase Admin processes.
 - [ ] Confirm adviser-client relationships exist before adviser profile testing.
 - [ ] Run RLS tests for client ownership and unassigned-adviser denial.
-- [ ] Verify the Studio route and all `/api/studio/*` operations with admin,
-  non-admin, and AAL1-only accounts; confirm publish/restore are denied unless
-  the trusted administrator has completed AAL2.
-- [ ] Verify draft save, publish, public homepage rendering, legacy `site_pages`
-  fallback, and snapshot restoration against a non-production Supabase project.
+- [ ] Verify browser-only Studio placeholders and ensure `/studio` does not
+  read or write Supabase data.
+- [ ] Only if the optional CMS mode is approved: verify the Studio route and
+  `/api/studio/*` operations with admin, non-admin, and AAL1-only accounts,
+  plus draft save, publish, public homepage rendering and restore against a
+  non-production Supabase project.
 - [ ] Do not claim multi-tenant isolation: tenant provisioning and public
   host-to-tenant resolution are not implemented.
 

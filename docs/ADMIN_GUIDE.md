@@ -20,31 +20,23 @@ authentication (MFA) for every administrator account.
 
 ## White Label Studio
 
-Open `/studio` on the staff deployment with an administrator account that has
-completed MFA. The route checks the server-verified Supabase user and AAL2
-claim; the Studio API checks them again for every read, save, publish, and
-restore. Advisers and client accounts cannot use these operations.
+The current Studio is a browser-only placeholder demo. To use it locally
+without Supabase or Vercel, run `STUDIO_DEMO_MODE=true npm run dev` and open
+`/studio`. This bypass is limited to development and uses generic example
+content only. Do not enter real or sensitive information.
 
-The current visual editor manages the homepage only:
+In production `/studio` still requires a server-verified administrator account
+with AAL2. However, the current editor never reads existing website/customer
+data, writes Studio database records, or publishes changes. Drafts remain in
+the current browser.
 
-1. Choose **Visual editor** and use the Puck outline to select, reorder, add,
-   duplicate, or remove supported sections. Edit a selected section's fields
-   in its properties panel.
-2. Select desktop, tablet, or mobile width to inspect the canvas. **Preview**
-   opens a private render of the current in-memory edits; it does not change
-   the public site.
-3. Use **Save draft** to persist work without publishing. Use **Publish** and
-   confirm to create a published snapshot. The public homepage picks up the
-   latest valid snapshot; its built-in homepage remains the fallback if no
-   valid snapshot is available.
-4. Open **Version history** to load an old snapshot for editing or restore it.
-   Restore publishes a new snapshot; it does not delete the previous version
-   or business data.
+Use **Visual editor** to change placeholder copy and sections, switch preview
+widths, and inspect local changes. **Save draft** stores to browser storage;
+**Publishing** and **Version history** are informational and clearly disabled.
 
-The Pages screen currently exposes only `/`. Additional pages, brand/theme
-settings, customer media uploads, templates, and tenant provisioning are not
-enabled in this release. Do not upload client documents as website media or
-edit route configuration to work around these limits.
+The Supabase version migration and server routes remain an optional future
+integration. Database access is disabled unless `STUDIO_STORAGE_MODE=supabase`
+is explicitly set server-side; this is not the mode described above.
 
 ## Monthly routine
 

@@ -1,9 +1,35 @@
 import { describe, expect, it } from "vitest";
 import { defaultHomePageData, isHomePageData } from "./HomePageEditorConfig";
 
+function getSectionProps(data: unknown, type: string): Record<string, unknown> | null {
+  if (typeof data !== "object" || data === null || !("content" in data) || !Array.isArray(data.content)) {
+    return null;
+  }
+  const section = data.content.find((item) =>
+    typeof item === "object" &&
+    item !== null &&
+    "type" in item &&
+    item.type === type &&
+    "props" in item &&
+    typeof item.props === "object" &&
+    item.props !== null,
+  );
+  return section && "props" in section ? section.props as Record<string, unknown> : null;
+}
+
 describe("homepage editor data validation", () => {
   it("accepts the built-in page and valid editable sections", () => {
     expect(isHomePageData(defaultHomePageData)).toBe(true);
+  });
+
+  it("uses editable generic placeholders instead of firm or customer data", () => {
+    const serialized = JSON.stringify(defaultHomePageData);
+
+    expect(serialized).toContain("Your company name");
+    expect(serialized).toContain("Add a verified metric");
+    expect(serialized).not.toContain("FSP");
+    expect(serialized).not.toContain("622");
+    expect(serialized).not.toContain("@");
   });
 
   it("rejects unknown component types and duplicate section identifiers", () => {
@@ -24,6 +50,18 @@ describe("homepage editor data validation", () => {
       }
     }
     expect(isHomePageData(duplicateId)).toBe(false);
+  });
+
+  it("rejects malformed editable placeholder collections", () => {
+    const invalidPerformance: unknown = structuredClone(defaultHomePageData);
+    const invalidStrategies: unknown = structuredClone(defaultHomePageData);
+    const performanceProps = getSectionProps(invalidPerformance, "Performance");
+    const strategyProps = getSectionProps(invalidStrategies, "Strategies");
+    if (performanceProps) performanceProps.items = [{ name: "Example", label: 42 }];
+    if (strategyProps) strategyProps.items = [];
+
+    expect(isHomePageData(invalidPerformance)).toBe(false);
+    expect(isHomePageData(invalidStrategies)).toBe(false);
   });
 
   it("rejects empty or excessively large section lists", () => {

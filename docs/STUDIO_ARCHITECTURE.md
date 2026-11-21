@@ -1,54 +1,40 @@
 # Studio architecture
 
-## Product boundary
+## Current mode
 
-- **Core business application:** the existing client, adviser, administration,
-  portfolio, investment, and document workflows remain in their current
-  routes and data models.
-- **Public website:** the existing homepage remains the fallback. It reads a
-  published Puck homepage snapshot when one is available and valid.
-- **White Label Studio:** `/studio` is a noindex, full-screen staff workspace.
-  It is not embedded in the public navigation or a portal surface.
-- **Publishing engine:** protected `/api/studio/homepage` and
-  `/api/studio/homepage/publish` endpoints validate Puck data and write version
-  snapshots through the existing Supabase service-role server path.
+The active Studio is a browser-only placeholder demo. It uses the existing
+Puck editor with generic content and stores drafts/recovery copies in the
+current browser. It does not read or write Studio database records, access
+customer data, or publish changes to the public site.
 
-## Authorization
+`STUDIO_DEMO_MODE=true` permits `/studio` without authentication only when
+`NODE_ENV=development`; the route exception is limited to the exact Studio
+page. Production keeps the server-side administrator and AAL2 checks.
 
-The Studio page calls `getAdminPageUser()`, which verifies the Supabase session,
-trusted `app_metadata` administrator permission, and AAL2 claims server-side.
-Every Studio API request calls `authorizeAdminApi()` and repeats those checks.
-The browser does not receive a service-role key and cannot write directly to
-the version table. The Next.js Proxy isolates public and staff deployment
-routes but is not treated as the authorization system.
+## Optional future CMS integration
 
-## Content flow
+The repository retains protected `/api/studio/homepage` and
+`/api/studio/homepage/publish` endpoints plus an additive version-table
+migration. Every endpoint returns `410` before authorization or database access
+unless the server-only `STUDIO_STORAGE_MODE=supabase` opt-in is configured.
+The public homepage likewise skips Studio-version queries unless this mode is
+explicitly enabled, and otherwise retains its built-in fallback.
 
-1. The editor loads a draft if present; otherwise it reads the legacy published
-   `site_pages` homepage or uses the bundled Puck defaults.
-2. Save writes a `draft` snapshot that is not visible to anonymous visitors.
-3. Publish validates the data, saves the current draft, and inserts a new
-   immutable `published` snapshot with actor and timestamp.
-4. The public homepage queries the latest published snapshot for the `default`
-   tenant. Invalid, missing, or unavailable Studio data does not replace the
-   built-in page.
-5. Restore selects a prior published snapshot and publishes it as a new
-   snapshot; historical rows are retained.
+When enabled for a separately reviewed future release, those endpoints use
+the server-side admin/AAL2 checks and service role; the browser never receives
+the service-role key. The browser-only editor does not call these endpoints
+or provide a publishing action.
 
-Puck provides the existing supported section editor, property fields, section
-reordering, add/remove/duplicate interactions, and its own undo/redo controls.
-No arbitrary HTML or JavaScript is stored or evaluated.
+## Placeholders and data boundaries
 
-## Scope and compatibility
+Editor defaults are generic editable copy. They do not import company details,
+client records, published performance, customer documents, or live homepage
+content. Local draft/recovery storage uses separate placeholder-demo keys and
+does not reuse older Studio browser data.
 
-The migration adds version history and leaves `site_pages` intact for existing
-deployments. Existing business routes are not replaced with a dynamic
-catch-all. Only the homepage is currently managed; additional pages and global
-brand/theme configuration are not implemented.
+## Tenant support
 
-`tenant_id` is present on Studio version rows and is derived from the trusted
-administrator `app_metadata.tenant_id` claim, defaulting to `default` for
-single-installation compatibility. Public rendering currently resolves only
-`default`. Tenant provisioning, hostname resolution, media Storage policies,
-and cross-tenant verification are absent, so this is not a completed
-multi-tenant implementation.
+The optional version table includes a tenant column, but the browser-only demo
+does not use it. Tenant provisioning, host resolution, media Storage policies,
+and cross-tenant verification are not implemented. A tenant column alone is
+not tenant isolation.

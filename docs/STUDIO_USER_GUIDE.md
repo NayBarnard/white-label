@@ -1,40 +1,38 @@
 # Studio user guide
 
-## Access requirements
+## Open the local placeholder demo
 
-Open `/studio` from the staff deployment. You need an existing Supabase Auth
-account with trusted `app_metadata.role = "admin"` and a completed AAL2 MFA
-challenge. The role must be granted by an authorized Supabase operator, never
-through editable `user_metadata`. The database migration and server-side
-`SUPABASE_SERVICE_ROLE_KEY` must be configured.
+Run:
 
-## Edit and preview the homepage
+```bash
+STUDIO_DEMO_MODE=true npm run dev
+```
 
-1. Choose **Visual editor**.
-2. Select a section in the canvas or structure outline. Edit its supported
-   fields in the Puck property panel.
-3. Reorder, add, duplicate, or remove supported sections using Puck controls.
-   The editor includes undo/redo controls.
-4. Choose desktop, tablet, or mobile width. Use **Preview** to open the
-   current unpublished content in a private preview.
-5. Select **Save draft** to persist without changing the public website.
-   Leaving with unsaved edits prompts for confirmation.
+Then open `http://localhost:3000/studio`. This explicit bypass works only in
+development. Production `/studio` still requires a server-verified
+administrator with AAL2.
 
-## Publish and restore
+## Edit and preview
 
-- Select **Publish** and confirm to create a public version. A failed database
-  operation is reported as an error; it is not shown as a successful release.
-- The public homepage renders the newest valid published version. Before the
-  first publish, or if published content cannot be read or validated, the
-  existing built-in homepage remains active.
-- Open **Version history** to load an old published snapshot for editing or
-  restore it. Restore requires confirmation and creates a new published
-  snapshot; it does not delete history or alter business records.
-- Select **Sign out** to end the Supabase session.
+1. Choose **Visual editor** and select a section in the Puck canvas.
+2. Edit the generic example text and reorder, add, duplicate, or remove
+   supported sections.
+3. Use desktop, tablet, or mobile widths and open **Preview** to inspect the
+   current local edits.
+4. Draft changes and recovery copies stay in this browser. You can manually
+   save a local draft; autosave and unsaved-change warnings are also enabled.
 
-## Current limitations
+All initial content is editable placeholder text. No firm, licensing, contact,
+financial, customer, or document data is loaded into the Studio. Do not enter
+real or sensitive information into this demo.
 
-Only the existing homepage is editable. This release does not provide global
-branding/theme controls, extra customer pages, template management, media
-uploads, feature controls, or tenant provisioning. Do not use client-document
-storage for website images.
+## Persistence and publishing
+
+This mode does not contact Supabase, update the public website, or publish.
+The **Publishing** and **Version history** sections explain these disabled
+capabilities rather than simulating successful operations. Clearing browser
+storage removes local demo drafts.
+
+The optional Supabase migration and protected endpoints are reserved for a
+future explicitly enabled CMS integration. They are disabled by default and
+are not part of this browser-only workflow.

@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
-import { company, returnSummary, strategies } from "@/data/firmData";
 
 type PillarIcon = "diversified" | "cost" | "relationships";
 
@@ -31,6 +30,7 @@ type HomePageComponents = {
     title: string;
     period: string;
     source: string;
+    items: { name: string; label: string }[];
   };
   Pillars: {
     eyebrow: string;
@@ -41,6 +41,7 @@ type HomePageComponents = {
     eyebrow: string;
     title: string;
     linkLabel: string;
+    items: { profile: string; title: string; benchmark: string; returnValue: string }[];
   };
   Contact: {
     insightEyebrow: string;
@@ -60,66 +61,89 @@ const pillarIcons = {
 } satisfies Record<PillarIcon, typeof GitCompareArrows>;
 
 const heroDefaults: HomePageComponents["Hero"] = {
-  eyebrow: "INDEPENDENT FUND MANAGEMENT",
-  title: "Independent thinking.",
-  emphasis: "Enduring perspective.",
-  intro:
-    "Independent, owner-managed investment strategies, built around clear beliefs and long-term partnerships with financial advisors.",
-  motto: company.tagline,
-  callLabel: "CALL PLACEHOLDER BRAND",
-  exploreLabel: "EXPLORE OUR FUNDS",
-  phone: company.phone,
-  email: company.email,
+  eyebrow: "YOUR INDUSTRY OR COMPANY TYPE",
+  title: "Your company name",
+  emphasis: "Your brand promise",
+  intro: "Add a short introduction to your organisation and what it offers.",
+  motto: "Add a mission statement or a short message for your visitors.",
+  callLabel: "Add a primary action",
+  exploreLabel: "Explore your services",
+  phone: "",
+  email: "",
   highlights: [
-    { value: "02", label: "Investment strategies" },
-    { value: "03", label: "Core pillars" },
-    { value: "622", label: "FSP number" },
+    { value: "00", label: "Add a verified metric" },
+    { value: "00", label: "Add a verified metric" },
+    { value: "00", label: "Add a verified metric" },
   ],
 };
 
+const placeholderPerformanceRows = [
+  { name: "Example item one", label: "Add verified figure" },
+  { name: "Example item two", label: "Add verified figure" },
+  { name: "Example item three", label: "Add verified figure" },
+  { name: "Example item four", label: "Add verified figure" },
+];
+
+const placeholderStrategies = [
+  {
+    profile: "Add a short descriptor",
+    title: "Example offering one",
+    benchmark: "Add verified details",
+    returnValue: "Add verified figure",
+  },
+  {
+    profile: "Add a short descriptor",
+    title: "Example offering two",
+    benchmark: "Add verified details",
+    returnValue: "Add verified figure",
+  },
+];
+
 const performanceDefaults: HomePageComponents["Performance"] = {
-  eyebrow: "A LONG-TERM PERSPECTIVE",
-  title: "Performance over time",
-  period: returnSummary.period,
-  source: returnSummary.source,
+  eyebrow: "YOUR RESULTS",
+  title: "Add a results section title",
+  period: "Add a verified date range",
+  source: "Add an approved source or remove this section",
+  items: placeholderPerformanceRows,
 };
 
 const pillarDefaults: HomePageComponents["Pillars"] = {
-  eyebrow: "OUR DIFFERENCE",
-  title: "Three pillars. One long-term relationship.",
+  eyebrow: "YOUR APPROACH",
+  title: "Add a title for your key benefits",
   items: [
     {
       icon: "diversified",
-      title: "Genuinely Diversified",
-      body: "Diversification is built into our managed strategies, so clients can focus on relationships rather than constructing portfolios.",
+      title: "Example benefit one",
+      body: "Describe a benefit of your service or organisation.",
     },
     {
       icon: "cost",
-      title: "Cost-Conscious",
-      body: "Disciplined fund management keeps investment costs in focus.",
+      title: "Example benefit two",
+      body: "Describe a benefit of your service or organisation.",
     },
     {
       icon: "relationships",
-      title: "Relationship-Driven",
-      body: "As an independent, owner-managed firm, we value long-term relationships with clients and financial advisors.",
+      title: "Example benefit three",
+      body: "Describe a benefit of your service or organisation.",
     },
   ],
 };
 
 const strategyDefaults: HomePageComponents["Strategies"] = {
-  eyebrow: "OUR PORTFOLIOS",
-  title: "Two distinct strategies",
-  linkLabel: "VIEW PERFORMANCE",
+  eyebrow: "YOUR OFFERINGS",
+  title: "Add a title for your offerings",
+  linkLabel: "Explore offerings",
+  items: placeholderStrategies,
 };
 
 const contactDefaults: HomePageComponents["Contact"] = {
-  insightEyebrow: "INSIGHTS & PERSPECTIVES",
-  insightTitle: "Ideas for informed investors",
-  insightLink: "Explore insights",
-  contactEyebrow: "DIRECT FUND MANAGER CONTACT",
-  contactTitle: "A relationship built on conveplaceholdertion",
-  phone: company.phone,
-  email: company.email,
+  insightEyebrow: "NEWS AND UPDATES",
+  insightTitle: "Add a featured update",
+  insightLink: "Read more",
+  contactEyebrow: "CONTACT",
+  contactTitle: "Tell visitors how to reach you",
+  phone: "",
+  email: "",
 };
 
 const homePageConfig: Config<HomePageComponents> = {
@@ -191,7 +215,7 @@ const homePageConfig: Config<HomePageComponents> = {
               </blockquote>
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
-                  href={`tel:${phone.replaceAll(" ", "")}`}
+                  href={phone ? `tel:${phone.replaceAll(" ", "")}` : "#contact"}
                   className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[var(--accent-fill)] px-6 text-xs font-bold tracking-[0.08em] text-[var(--button-text)] transition duration-200 hover:-translate-y-0.5 hover:brightness-110"
                 >
                   <Phone size={15} /> {callLabel}
@@ -203,15 +227,17 @@ const homePageConfig: Config<HomePageComponents> = {
                   {exploreLabel} <ArrowRight size={16} />
                 </Link>
               </div>
-              <a
-                href={`mailto:${email}`}
-                className="mt-4 inline-flex min-h-9 items-center gap-2 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--accent)]"
-              >
-                <Mail size={14} /> Email a fund manager: {email}
-              </a>
+              {email && (
+                <a
+                  href={`mailto:${email}`}
+                  className="mt-4 inline-flex min-h-9 items-center gap-2 text-xs font-medium text-[var(--muted)] transition hover:text-[var(--accent)]"
+                >
+                  <Mail size={14} /> Email: {email}
+                </a>
+              )}
               <div className="mt-11 flex flex-wrap gap-x-8 gap-y-4 border-t border-[var(--border)] pt-5">
-                {highlights.map((item) => (
-                  <div key={item.label}>
+                {highlights.map((item, index) => (
+                  <div key={`${item.label}-${index}`}>
                     <p className="text-lg font-semibold tracking-tight text-[var(--foreground)]">{item.value}</p>
                     <p className="mt-0.5 text-[10px] font-medium tracking-wide text-[var(--muted)]">{item.label}</p>
                   </div>
@@ -233,9 +259,20 @@ const homePageConfig: Config<HomePageComponents> = {
         title: { type: "text" },
         period: { type: "text" },
         source: { type: "text" },
+        items: {
+          type: "array",
+          arrayFields: {
+            name: { type: "text" },
+            label: { type: "text" },
+          },
+          defaultItemProps: { name: "Example item", label: "Add verified figure" },
+          getItemSummary: (item) => item.name || "Example item",
+          max: 8,
+          min: 1,
+        },
       },
       defaultProps: performanceDefaults,
-      render: ({ eyebrow, title, period, source }) => (
+      render: ({ eyebrow, title, period, source, items }) => (
         <section className="mx-auto w-full max-w-7xl px-5 py-16 lg:px-8">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -247,29 +284,20 @@ const homePageConfig: Config<HomePageComponents> = {
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {returnSummary.rows.map((row, index) => (
+            {items.map((row, index) => (
               <article
-                key={row.name}
+                key={`${row.name}-${index}`}
                 className="placeholder-glass-card group relative h-full overflow-hidden rounded-2xl p-5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(2,6,23,0.24)] sm:p-6"
               >
                 <div className="pointer-events-none absolute -right-8 -top-14 size-36 rounded-full bg-[radial-gradient(circle,rgba(197,168,128,0.12),transparent_70%)]" />
                 <div className="relative flex items-start justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold text-[var(--foreground)]">{row.name}</p>
-                    <p className="mt-1 text-[11px] text-[var(--muted)]">Cumulative total return</p>
+                    <p className="mt-1 text-[11px] text-[var(--muted)]">{row.label}</p>
                   </div>
                   <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[9px] font-semibold tracking-wide text-[var(--muted)]">
-                    {index < 2 ? "PLACEHOLDER BRAND FUND" : "BENCHMARK"}
+                    {index < 2 ? "EXAMPLE ITEM" : "EXAMPLE"}
                   </span>
-                </div>
-                <p className="relative mt-5 text-3xl font-semibold tracking-tight text-[var(--accent)] sm:text-4xl">
-                  {row.label}
-                </p>
-                <div className="relative mt-5 h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#9E815B] via-[#C5A880] to-[#D7C39F] transition-all duration-700 group-hover:brightness-105"
-                    style={{ width: `${(row.value / Math.max(...returnSummary.rows.map((item) => item.value))) * 100}%` }}
-                  />
                 </div>
               </article>
             ))}
@@ -315,10 +343,10 @@ const homePageConfig: Config<HomePageComponents> = {
           <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">{eyebrow}</p>
           <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map(({ icon, title: itemTitle, body }) => {
+            {items.map(({ icon, title: itemTitle, body }, index) => {
               const Icon = pillarIcons[icon];
               return (
-                <article key={itemTitle} className="placeholder-glass-card h-full rounded-2xl p-6">
+                <article key={`${itemTitle}-${index}`} className="placeholder-glass-card h-full rounded-2xl p-6">
                   <span className="flex size-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--background)] text-[var(--accent)]">
                     <Icon size={21} />
                   </span>
@@ -337,9 +365,27 @@ const homePageConfig: Config<HomePageComponents> = {
         eyebrow: { type: "text" },
         title: { type: "text" },
         linkLabel: { type: "text" },
+        items: {
+          type: "array",
+          arrayFields: {
+            profile: { type: "text" },
+            title: { type: "text" },
+            benchmark: { type: "text" },
+            returnValue: { type: "text" },
+          },
+          defaultItemProps: {
+            profile: "Add a short descriptor",
+            title: "Example offering",
+            benchmark: "Add verified details",
+            returnValue: "Add verified figure",
+          },
+          getItemSummary: (item) => item.title || "Example offering",
+          max: 6,
+          min: 1,
+        },
       },
       defaultProps: strategyDefaults,
-      render: ({ eyebrow, title, linkLabel }) => (
+      render: ({ eyebrow, title, linkLabel, items }) => (
         <section className="border-y border-[var(--border)] bg-[var(--surface)]">
           <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
@@ -355,8 +401,8 @@ const homePageConfig: Config<HomePageComponents> = {
               </Link>
             </div>
             <div className="mt-8 grid gap-5 md:grid-cols-2">
-              {strategies.map((strategy) => (
-                <article key={strategy.id} className="placeholder-glass-card relative h-full overflow-hidden rounded-2xl p-7">
+              {items.map((strategy, index) => (
+                <article key={`${strategy.title}-${index}`} className="placeholder-glass-card relative h-full overflow-hidden rounded-2xl p-7">
                   <div className="pointer-events-none absolute -right-14 -top-16 size-48 rounded-full bg-[radial-gradient(circle,rgba(197,168,128,0.12),transparent_70%)]" />
                   <p className="relative inline-flex rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[10px] font-bold tracking-[0.12em] text-[var(--accent)]">
                     {strategy.profile}
@@ -365,9 +411,9 @@ const homePageConfig: Config<HomePageComponents> = {
                   <p className="relative mt-2 text-sm text-[var(--muted)]">Benchmark: {strategy.benchmark}</p>
                   <div className="relative mt-6 flex items-end justify-between gap-3 border-t border-[var(--border)]/80 pt-5">
                     <div>
-                      <p className="text-xs text-[var(--muted)]">3-year cumulative return</p>
+                      <p className="text-xs text-[var(--muted)]">{index === 0 ? "Example value" : "Example detail"}</p>
                       <p className="mt-1 text-3xl font-semibold tracking-tight text-[var(--accent)]">
-                        {strategy.cumulative.threeYear}
+                        {strategy.returnValue}
                       </p>
                     </div>
                     <Link
@@ -420,13 +466,13 @@ const homePageConfig: Config<HomePageComponents> = {
             <section className="placeholder-glass-card rounded-2xl p-6">
               <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">{contactEyebrow}</p>
               <h2 className="mt-3 text-xl font-semibold">{contactTitle}</h2>
-              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-                <a href={`tel:${phone.replaceAll(" ", "")}`} className="inline-flex items-center gap-2 font-semibold text-[var(--foreground)] hover:text-[var(--accent)]">
-                  <Phone size={15} /> {phone}
-                </a>
-                <a href={`mailto:${email}`} className="inline-flex items-center gap-2 font-semibold text-[var(--foreground)] hover:text-[var(--accent)]">
-                  <Mail size={15} /> {email}
-                </a>
+              <div id="contact" className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+                {phone
+                  ? <a href={`tel:${phone.replaceAll(" ", "")}`} className="inline-flex items-center gap-2 font-semibold text-[var(--foreground)] hover:text-[var(--accent)]"><Phone size={15} /> {phone}</a>
+                  : <span className="text-[var(--muted)]">Add a phone number</span>}
+                {email
+                  ? <a href={`mailto:${email}`} className="inline-flex items-center gap-2 font-semibold text-[var(--foreground)] hover:text-[var(--accent)]"><Mail size={15} /> {email}</a>
+                  : <span className="text-[var(--muted)]">Add an email address</span>}
               </div>
             </section>
           </div>
@@ -473,7 +519,13 @@ function isValidComponent(type: string, props: unknown) {
         props.highlights.every((item) => hasStringFields(item, ["value", "label"]))
       );
     case "Performance":
-      return hasStringFields(props, ["id", "eyebrow", "title", "period", "source"]);
+      return (
+        hasStringFields(props, ["id", "eyebrow", "title", "period", "source"]) &&
+        Array.isArray(props.items) &&
+        props.items.length >= 1 &&
+        props.items.length <= 8 &&
+        props.items.every((item) => hasStringFields(item, ["name", "label"]))
+      );
     case "Pillars":
       return (
         hasStringFields(props, ["id", "eyebrow", "title"]) &&
@@ -487,7 +539,15 @@ function isValidComponent(type: string, props: unknown) {
         )
       );
     case "Strategies":
-      return hasStringFields(props, ["id", "eyebrow", "title", "linkLabel"]);
+      return (
+        hasStringFields(props, ["id", "eyebrow", "title", "linkLabel"]) &&
+        Array.isArray(props.items) &&
+        props.items.length >= 1 &&
+        props.items.length <= 6 &&
+        props.items.every((item) =>
+          hasStringFields(item, ["profile", "title", "benchmark", "returnValue"]),
+        )
+      );
     case "Contact":
       return hasStringFields(props, [
         "id", "insightEyebrow", "insightTitle", "insightLink", "contactEyebrow",

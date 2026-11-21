@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 
 export type ConnectionStatus = "connecting" | "connected" | "error";
 
@@ -24,6 +25,8 @@ let splashShownThisTab = false;
 const ConnectionContext = createContext<ConnectionContextValue | null>(null);
 
 export function ConnectionProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isStudioRoute = pathname?.startsWith("/studio") ?? false;
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
   const [showInitialSplash, setShowInitialSplash] = useState(false);
   const startedInThisMount = useRef(false);
@@ -33,6 +36,8 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
+    if (isStudioRoute) return;
+
     let alreadyShown = splashShownThisTab;
     try {
       alreadyShown ||= window.sessionStorage.getItem(SESSION_KEY) === "shown";
@@ -76,13 +81,13 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
       controller.abort();
       window.clearTimeout(timeout);
     };
-  }, []);
+  }, [isStudioRoute]);
 
   return (
     <ConnectionContext.Provider
       value={{
-        status,
-        showInitialSplash,
+        status: isStudioRoute ? "connected" : status,
+        showInitialSplash: isStudioRoute ? false : showInitialSplash,
         dismissInitialSplash,
       }}
     >

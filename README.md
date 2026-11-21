@@ -4,7 +4,8 @@
 
 This project runs locally without a database, Supabase, API keys, authentication
 provider, or cloud storage. Client, adviser, and administration workflows use
-fictional data and browser localStorage.
+fictional data and browser localStorage. The Studio can be opened as an explicit
+local-only placeholder demo without Supabase or Vercel.
 
 ```bash
 npm install
@@ -12,7 +13,14 @@ npm run dev
 ```
 
 Open `http://localhost:3000`. Start with `/portal`, `/advisor`, or `/admin`.
-Use `/admin` to reset browser demo data.
+Use `/admin` to reset browser demo data. To open the Studio locally without
+Supabase authentication, run `STUDIO_DEMO_MODE=true npm run dev` and open
+`/studio`. This bypass is development-only; production still requires the
+server-verified administrator and AAL2 checks.
+
+The Studio uses generic editable placeholders and browser storage only. It
+does not load existing site/customer data, write to Supabase, or publish. Do
+not enter real or sensitive information into the local demo.
 
 ## Customisation
 
@@ -27,15 +35,16 @@ identity verification, regulatory check, or financial transaction occurs.
 
 ## Deployments
 
-The project is connected to Vercel. Pushes to its configured production branch
-trigger a production deployment; pull requests can receive preview deployments
-when preview deployments are enabled for the project.
+Vercel is optional; local development and the Studio placeholder demo do not
+depend on it. If this repository is connected to a Vercel project, that
+project's configured branch and preview settings determine its deployments.
 
 ## Environment variables
 
 Copy `.env.example` to `.env.local` for local work. Configure
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for portal,
-studio, and browser-side Supabase access. Configure
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for Supabase
+features that are explicitly enabled. Studio browser-only mode does not need
+these settings. Configure
 `SUPABASE_SERVICE_ROLE_KEY` only in server-side environments for fund data,
 public submissions, rate limiting, and admin operations. `OPENAI_API_KEY` is
 optional; the website chatbot has a knowledge-base fallback. Set
@@ -49,7 +58,8 @@ Server submission code validates its required environment variables before
 making requests and logs the missing variable names without exposing secret
 values. Browser Supabase access uses a typed client-safe validator that only
 reads the `NEXT_PUBLIC_` variables. Never add a `NEXT_PUBLIC_` prefix to a
-secret key.
+secret key. The optional future Studio database workflow is disabled unless
+`STUDIO_STORAGE_MODE=supabase` is explicitly set server-side.
 
 See [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) for the production domain,
 Supabase migration, Auth redirect, and SMTP checklist.

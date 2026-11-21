@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { getPortalSupabaseClient } from "@/lib/supabase/portal";
 
 export type PortalSessionState = {
@@ -24,9 +25,13 @@ const initialState: PortalSessionState = {
 const PortalSessionContext = createContext<PortalSessionState>(initialState);
 
 export function PortalSessionProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isStudioRoute = pathname?.startsWith("/studio") ?? false;
   const [session, setSession] = useState(initialState);
 
   useEffect(() => {
+    if (isStudioRoute) return;
+
     let active = true;
     let requestId = 0;
     let supabase: ReturnType<typeof getPortalSupabaseClient>;
@@ -144,10 +149,12 @@ export function PortalSessionProvider({ children }: { children: ReactNode }) {
       active = false;
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [isStudioRoute]);
 
   return (
-    <PortalSessionContext.Provider value={session}>
+    <PortalSessionContext.Provider
+      value={isStudioRoute ? { ...initialState, status: "signed-out" } : session}
+    >
       {children}
     </PortalSessionContext.Provider>
   );

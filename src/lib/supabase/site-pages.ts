@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { isHomePageData } from "@/components/home/HomePageEditorConfig";
 import type { PortalDatabase } from "@/lib/supabase/portal";
+import { isStudioSupabaseStorageEnabled } from "@/lib/studio/mode";
 
 export async function getPublishedHomePage() {
+  if (!isStudioSupabaseStorageEnabled(process.env.STUDIO_STORAGE_MODE)) return null;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;

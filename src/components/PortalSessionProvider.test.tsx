@@ -11,6 +11,11 @@ const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   onAuthStateChange: vi.fn(),
   from: vi.fn(),
+  pathname: vi.fn(() => "/"),
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: mocks.pathname,
 }));
 
 vi.mock("@/lib/supabase/portal", () => ({
@@ -29,8 +34,16 @@ const user = {
   user_metadata: { full_name: "Client Name" },
 };
 
+function PortalSessionStatus() {
+  return <output>{usePortalSession().status}</output>;
+}
+
 describe("PortalSessionProvider", () => {
   beforeEach(() => {
+    mocks.pathname.mockReturnValue("/");
+    mocks.getUser.mockClear();
+    mocks.onAuthStateChange.mockClear();
+    mocks.from.mockClear();
     mocks.authListener = null;
     mocks.getUser.mockResolvedValue({ data: { user }, error: null });
     mocks.onAuthStateChange.mockImplementation((callback) => {
@@ -73,5 +86,19 @@ describe("PortalSessionProvider", () => {
 
     await waitFor(() => expect(mocks.from).toHaveBeenCalledTimes(4));
     expect(observedStatuses).not.toContain("loading");
+  });
+
+  it("does not initialize Supabase on the Studio route", () => {
+    mocks.pathname.mockReturnValue("/studio");
+    render(
+      <PortalSessionProvider>
+        <PortalSessionStatus />
+      </PortalSessionProvider>,
+    );
+
+    expect(screen.getByText("signed-out")).toBeInTheDocument();
+    expect(mocks.getUser).not.toHaveBeenCalled();
+    expect(mocks.onAuthStateChange).not.toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
   });
 });

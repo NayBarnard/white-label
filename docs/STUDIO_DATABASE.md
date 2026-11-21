@@ -1,16 +1,16 @@
-# Studio database and migration
+# Optional Studio database integration
 
-## Migration order
+The active browser-only placeholder Studio does not use this schema. Do not
+apply this migration for the local demo. The database flow below is reserved
+for a future release that explicitly enables server persistence.
 
-Keep the existing base SQL and migrations. Apply `supabase/puck-studio.sql`
-with the base scripts, apply the existing additive migrations in timestamp
-order, then apply:
+## Migration order for the future CMS mode
 
-1. `supabase/migrations/202611200001_white_label_studio_versions.sql`
-
-See [`DEPLOYMENT.md`](./DEPLOYMENT.md) for the full repository migration
-sequence. The Studio migration is additive and does not rewrite existing
-`site_pages` content or business data.
+Keep the existing base SQL and migrations. Apply
+`supabase/migrations/202611200001_white_label_studio_versions.sql` after the
+base scripts and prior additive migrations. See [`DEPLOYMENT.md`](./DEPLOYMENT.md)
+for the full repository migration sequence. The Studio migration is additive
+and does not rewrite existing `site_pages` content or business data.
 
 ## `public.site_studio_versions`
 
@@ -38,12 +38,15 @@ grant. Server endpoints authorize role and AAL2 before using the server-only
 service role for writes.
 
 The `site_pages` RLS policy and table are retained for the legacy fallback.
-The service-role key must only be configured server-side.
+The service-role key must only be configured server-side. Studio API and
+public lookup code skips these tables unless server-side
+`STUDIO_STORAGE_MODE=supabase` is explicitly set.
 
 ## Migration and operational checks
 
 - Back up the target Supabase database before production migrations.
-- Apply the SQL once using the approved migration process.
+- Enable the CMS only after an explicit product/security decision, then apply
+  the SQL once using the approved migration process.
 - Confirm the table, constraints, indexes, grants, and policies in Supabase.
 - Test unauthorized, admin AAL1, and admin AAL2 sessions in a non-production
   project.

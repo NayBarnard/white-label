@@ -26,11 +26,8 @@ afterEach(() => {
 });
 
 describe("visitor-facing unavailable states", () => {
-  it("uses plain-language messages without provider or database terminology", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({
-      ok: false,
-      json: async () => ({ error: "Website versions could not be loaded." }),
-    } as Response);
+  it("keeps the Studio on generic browser-only placeholders without requesting real data", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
 
     const { container } = render(
       <>
@@ -42,7 +39,9 @@ describe("visitor-facing unavailable states", () => {
     expect(
       screen.getByText("The client portal is unavailable right now. Please try again or contact placeholder."),
     ).toBeInTheDocument();
-    expect(await screen.findByText("Website versions could not be loaded.")).toBeInTheDocument();
+    expect(await screen.findByText(/No real business or customer data is loaded/)).toBeInTheDocument();
+    expect(screen.getByText("Disabled")).toBeInTheDocument();
+    expect(fetchSpy).not.toHaveBeenCalled();
     expect(container.textContent).not.toMatch(/supabase|service role|postgres/i);
   });
 });

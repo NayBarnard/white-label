@@ -76,7 +76,8 @@ Then apply the additive migrations:
 17. `supabase/migrations/202611180007_adviser_client_relationships.sql`
 18. `supabase/migrations/202611180008_notifications_reviews.sql`
 19. `supabase/migrations/202611180009_goal_archive.sql`
-20. `supabase/migrations/202611200001_white_label_studio_versions.sql`
+20. Optional future Studio CMS migration:
+    `supabase/migrations/202611200001_white_label_studio_versions.sql`
 
 Import only approved NAV and benchmark observations into `fund_metrics`. Set
 the admin `app_metadata.role` claim through a trusted Supabase Admin API
@@ -87,16 +88,20 @@ The platform migration creates no seeded platforms, share classes, or codes.
 Populate it only from the firm's verified spreadsheet, after a quarterly
 re-verification owner has been assigned.
 
-The Studio migration is additive. Keep `supabase/puck-studio.sql` and the
-legacy `site_pages` table; the public homepage reads a versioned published
-homepage first and falls back to the legacy row and then the built-in page.
-The new table grants read access only to public published configuration for
-the `default` tenant and admin-readable versions matching the trusted
-`app_metadata.tenant_id` claim. Draft writes and publishing go through server
-routes that recheck the admin role and AAL2, and use the server-only service
-role key. Tenant provisioning and public host-to-tenant resolution are not
-implemented; do not treat the default tenant column as completed tenant
-isolation.
+The active Studio is a browser-only placeholder demo; it does not require the
+Studio migration and does not read or write Studio records. To open it locally
+without Supabase, run `STUDIO_DEMO_MODE=true npm run dev`; this bypass is
+development-only and must not be enabled in production. Generic drafts are
+stored in the browser, and publishing is disabled.
+
+The additive Studio migration and protected server routes are reserved for a
+future opt-in CMS mode. If that mode is deliberately enabled with the
+server-only `STUDIO_STORAGE_MODE=supabase` setting, keep `supabase/puck-studio.sql`
+and the legacy `site_pages` table. The migration grants read access only to
+published default-tenant content and trusted admin reads; server endpoints
+require admin/AAL2 and the service role. Tenant provisioning and public
+host-to-tenant resolution are not implemented. Do not enable this optional
+mode or apply its Studio migration for the browser-only placeholder demo.
 
 ## Supabase Auth URLs and email delivery
 

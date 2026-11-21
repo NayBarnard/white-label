@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getAppMode, getRouteDisposition } from "@/lib/deployment/routing";
 import type { PortalDatabase } from "@/lib/supabase/portal";
+import { isLocalStudioDemoAllowed } from "@/lib/studio/mode";
 
 function addStaffSecurityHeaders(response: NextResponse, csp: string) {
   response.headers.set("Content-Security-Policy", csp);
@@ -18,7 +19,8 @@ function addStaffSecurityHeaders(response: NextResponse, csp: string) {
 
 export async function proxy(request: NextRequest) {
   const mode = getAppMode(process.env.APP_MODE);
-  const disposition = getRouteDisposition(mode, request.nextUrl.pathname);
+  const localStudioDemo = isLocalStudioDemoAllowed(process.env.NODE_ENV, process.env.STUDIO_DEMO_MODE);
+  const disposition = getRouteDisposition(mode, request.nextUrl.pathname, localStudioDemo);
 
   if (disposition === "not-found") {
     const response = request.nextUrl.pathname.startsWith("/api/")

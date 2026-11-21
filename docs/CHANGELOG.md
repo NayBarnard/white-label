@@ -1,19 +1,17 @@
 # Changelog
 
-## White Label Studio publishing foundation
-- Replaced the localStorage-only `/studio` prototype with a private Studio
-  workspace that reuses the existing Puck homepage editor.
-- Added server-side admin/AAL2 route checks and protected API reads, draft
-  saves, publishing, and restoration.
-- Added additive Supabase version snapshots and RLS, while preserving legacy
-  `site_pages` compatibility and the built-in public homepage fallback.
-- Connected the public homepage to the latest valid published Puck snapshot.
-- Restored deployment route isolation; public mode hides staff and Studio
-  routes, and staff mode hides public-site routes.
-- Added focused route-isolation and homepage configuration validation tests.
-- Current scope is homepage editing and publishing only. Full brand/theme
-  controls, media management, additional pages, templates, and tenant
-  provisioning remain outstanding; see `docs/WHITE_LABEL_STUDIO.md`.
+## White Label Studio placeholder demo
+- Kept a separate Puck-based Studio workspace with generic editable homepage
+  placeholders and responsive local preview.
+- Added browser-local draft saving and recovery; Studio does not load live
+  business/customer content, send drafts to Supabase, or publish in its active
+  mode.
+- Added a development-only opt-in for opening `/studio` without Supabase Auth.
+  Production access remains server-authorized.
+- Disabled optional Studio database APIs and public Studio-version lookup by
+  default. The Supabase migration/backend remain an opt-in future integration.
+- Updated browser tests to enforce accurate local demo content and data
+  boundaries. Broader brand, media, page, and tenant managers remain unbuilt.
 
 ## Task 22: Public homepage presentation
 - Added the scrolling gold statement ticker beneath the public header and

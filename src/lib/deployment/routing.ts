@@ -9,9 +9,14 @@ export function getAppMode(value: string | undefined): AppMode {
 export function getRouteDisposition(
   mode: AppMode,
   pathname: string,
+  allowLocalStudioDemo = false,
 ): RouteDisposition {
   const normalizedPath = normalizePath(pathname);
   if (!normalizedPath) return "not-found";
+
+  if (mode === "public" && allowLocalStudioDemo && normalizedPath === "/studio") {
+    return "allow";
+  }
 
   if (mode === "public" && normalizedPath !== "/advisor/login" && isUnderPath(normalizedPath, [
     "/admin",
