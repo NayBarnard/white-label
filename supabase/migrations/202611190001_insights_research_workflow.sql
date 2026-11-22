@@ -6,7 +6,7 @@ alter table public.manager_updates
   add column if not exists author_bio text,
   add column if not exists executive_summary text,
   add column if not exists key_takeaways text[] not null default '{}',
-  add column if not exists rsa_perspective text,
+  add column if not exists perspective text,
   add column if not exists related_slugs text[] not null default '{}',
   add column if not exists strategy text not null default 'Both',
   add column if not exists featured boolean not null default false,
@@ -74,7 +74,7 @@ alter table public.manager_updates
 
 alter table public.manager_updates
   add constraint manager_updates_strategy_check check (
-    strategy in ('RSA Balanced', 'RSA Cautious', 'Both')
+    strategy in ('PLACEHOLDER BRAND Balanced', 'PLACEHOLDER BRAND Cautious', 'Both')
   );
 
 alter table public.manager_updates
@@ -89,7 +89,7 @@ alter table public.manager_updates
 
 alter table public.manager_updates
   add constraint manager_updates_research_perspective_check check (
-    rsa_perspective is null or char_length(btrim(rsa_perspective)) between 10 and 1000
+    perspective is null or char_length(btrim(perspective)) between 10 and 1000
   );
 
 create index if not exists manager_updates_scheduled_idx
@@ -167,7 +167,7 @@ alter table public.site_documents
 
 alter table public.site_documents
   add constraint site_documents_strategy_check check (
-    strategy is null or strategy in ('RSA Balanced', 'RSA Cautious', 'Both')
+    strategy is null or strategy in ('PLACEHOLDER BRAND Balanced', 'PLACEHOLDER BRAND Cautious', 'Both')
   );
 
 alter table public.site_documents

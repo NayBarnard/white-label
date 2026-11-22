@@ -1,8 +1,8 @@
 create table if not exists public.site_documents (
   id uuid primary key default gen_random_uuid(),
   slug text not null check (slug in (
-    'rsa-balanced-fact-sheet',
-    'rsa-cautious-fact-sheet',
+    'placeholder-balanced-fact-sheet',
+    'placeholder-cautious-fact-sheet',
     'conflict-of-interest-policy',
     'complaints-resolution-policy',
     'popi-act-statement',
