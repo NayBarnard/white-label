@@ -27,14 +27,14 @@ describe("manager update validation", () => {
     const update = parseManagerUpdateInput({
       ...validTextUpdate,
       category: "Economic Insights",
-      authorName: "PLACEHOLDER BRAND Investment Team",
+      authorName: "your firm Investment Team",
       featured: true,
       scheduledAt: "2026-12-01T10:00:00Z",
       pdfObjectPath: "insights/123e4567-e89b-42d3-a456-426614174000.pdf",
     });
     expect(update).toMatchObject({
       category: "Economic Insights",
-      authorName: "PLACEHOLDER BRAND Investment Team",
+      authorName: "your firm Investment Team",
       featured: true,
       pdfObjectPath: "insights/123e4567-e89b-42d3-a456-426614174000.pdf",
     });

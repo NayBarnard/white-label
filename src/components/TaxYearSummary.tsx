@@ -51,7 +51,7 @@ export function TaxYearSummary({
               <dd className="mt-1 text-lg font-semibold">{zar(limits.tfsaLifetime)}</dd>
             </div>
             <div className="rounded-xl bg-[var(--background)] p-4">
-              <dt className="text-xs text-[var(--muted)]">TFSA contributions recorded with PLACEHOLDER BRAND this tax year</dt>
+              <dt className="text-xs text-[var(--muted)]">TFSA contributions recorded with your firm this tax year</dt>
               <dd className="mt-1 text-lg font-semibold">{zar(contributions)}</dd>
             </div>
             <div className="rounded-xl bg-[var(--background)] p-4">

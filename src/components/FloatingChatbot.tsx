@@ -113,7 +113,7 @@ export function FloatingChatbot({
     >
       {open && (
         <section
-          aria-label="PLACEHOLDER BRAND AI Assistant chat"
+          aria-label="your firm AI Assistant chat"
           className={`chatbot-panel${standalone ? " chatbot-panel-standalone" : ""} flex h-fit max-h-[min(340px,calc(100dvh_-_120px_-_env(safe-area-inset-bottom)))] w-[92vw] flex-col overflow-hidden rounded-3xl text-[var(--foreground)] sm:w-[360px]`}
         >
           <div className="chatbot-header flex items-center justify-between px-4 py-3">
@@ -122,7 +122,7 @@ export function FloatingChatbot({
                 <Bot size={18} aria-hidden="true" />
               </span>
               <div className="relative">
-                <p className="text-sm font-semibold">PLACEHOLDER BRAND AI Assistant</p>
+                <p className="text-sm font-semibold">your firm AI Assistant</p>
                 <p className="mt-0.5 text-[11px] text-[var(--muted)]">Here to help</p>
                 <span className="chatbot-online-dot" role="status" aria-label="Online" />
               </div>
@@ -173,7 +173,7 @@ export function FloatingChatbot({
             {loading && (
               <p className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--muted)]" role="status">
                 <span className="size-1.5 animate-pulse rounded-full bg-amber-500" />
-                PLACEHOLDER BRAND AI Assistant is responding…
+                your firm AI Assistant is responding…
               </p>
             )}
           </div>
@@ -181,7 +181,7 @@ export function FloatingChatbot({
           <div className="chatbot-composer p-2.5">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <label htmlFor="assistant-message" className="sr-only">
-                Message PLACEHOLDER BRAND AI Assistant
+                Message your firm AI Assistant
               </label>
               <input
                 id="assistant-message"
@@ -208,7 +208,7 @@ export function FloatingChatbot({
         type="button"
         onClick={toggleOpen}
         aria-expanded={open}
-        aria-label={standalone ? (open ? "Close PLACEHOLDER BRAND AI Assistant" : "Open PLACEHOLDER BRAND AI Assistant") : undefined}
+        aria-label={standalone ? (open ? "Close your firm AI Assistant" : "Open your firm AI Assistant") : undefined}
         className={standalone ? "standalone-chat-launcher" : "island-chat-launcher w-full xl:w-auto"}
       >
         {open ? <X size={19} aria-hidden="true" /> : <MessageCircle size={19} aria-hidden="true" />}
@@ -216,7 +216,7 @@ export function FloatingChatbot({
           <>
             <span className="chatbot-mobile-label">{open ? "Close chat" : "Chat"}</span>
             <span className="chatbot-desktop-label">
-              {open ? "Close assistant" : "PLACEHOLDER BRAND AI Assistant"}
+              {open ? "Close assistant" : "your firm AI Assistant"}
             </span>
           </>
         ) : null}

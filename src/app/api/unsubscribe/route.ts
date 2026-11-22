@@ -66,6 +66,6 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     status: "unsubscribed",
-    message: "Your email has been unsubscribed from PLACEHOLDER BRAND updates.",
+    message: "Your email has been unsubscribed from your firm updates.",
   });
 }

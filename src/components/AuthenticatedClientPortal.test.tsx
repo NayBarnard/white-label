@@ -102,7 +102,7 @@ describe("AuthenticatedClientPortal demo data", () => {
 
     fireEvent(window, new CustomEvent("placeholder-portal-navigate", { detail: "requests" }));
     expect(
-      screen.getByText("Your fees are set out in your signed mandate and fee schedule. Contact the PLACEHOLDER BRAND team for a copy."),
+      screen.getByText("Your fees are set out in your signed mandate and fee schedule. Contact the your firm team for a copy."),
     ).toBeInTheDocument();
     expect(screen.queryByText("0.55%")).not.toBeInTheDocument();
   });

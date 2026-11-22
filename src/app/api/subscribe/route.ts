@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         status: "subscribed",
-        message: "Thank you for subscribing to PLACEHOLDER BRAND updates.",
+        message: "Thank you for subscribing to your firm updates.",
         unsubscribeUrl: `/unsubscribe?token=${encodeURIComponent(createNewsletterUnsubscribeToken(subscriptionId))}`,
       },
       { status: 201 },

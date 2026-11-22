@@ -7,7 +7,7 @@ import { TaxYearSummary } from "./TaxYearSummary";
 afterEach(cleanup);
 
 describe("TaxYearSummary", () => {
-  it("shows verified limits and PLACEHOLDER BRAND TFSA contributions during tax-year-end season", () => {
+  it("shows verified limits and your firm TFSA contributions during tax-year-end season", () => {
     render(
       <TaxYearSummary
         limits={taxYearLimits}

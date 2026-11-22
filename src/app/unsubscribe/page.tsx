@@ -3,12 +3,12 @@ import { NewsletterUnsubscribe } from "@/components/NewsletterUnsubscribe";
 
 export const metadata: Metadata = {
   title: "Unsubscribe from email updates",
-  description: "Manage your PLACEHOLDER BRAND email update preferences.",
+  description: "Manage your your firm email update preferences.",
   openGraph: {
-    title: "Unsubscribe from email updates | PLACEHOLDER BRAND",
-    description: "Manage your PLACEHOLDER BRAND email update preferences.",
+    title: "Unsubscribe from email updates | your firm",
+    description: "Manage your your firm email update preferences.",
     url: "/unsubscribe",
-    siteName: "PLACEHOLDER BRAND",
+    siteName: "your firm",
     type: "website",
   },
   robots: { index: false, follow: false },

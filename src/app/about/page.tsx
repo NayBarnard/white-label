@@ -9,11 +9,11 @@ import { ScrollPopOut } from "@/components/ScrollPopOut";
 import { LargeTitle } from "@/components/IOSKit";
 
 export const metadata: Metadata = {
-  title: "About PLACEHOLDER BRAND",
-  description: "Learn about PLACEHOLDER BRAND' independent, owner-managed investment approach and leadership team.",
+  title: "About your firm",
+  description: "Learn about your firm' independent, owner-managed investment approach and leadership team.",
   openGraph: {
-    title: "About PLACEHOLDER BRAND",
-    description: "Learn about PLACEHOLDER BRAND' independent, owner-managed investment approach and leadership team.",
+    title: "About your firm",
+    description: "Learn about your firm' independent, owner-managed investment approach and leadership team.",
     url: "/about",
   },
 };
@@ -33,7 +33,7 @@ export default function AboutPage() {
           <h2 className="mt-3 text-3xl font-semibold">Independent thinking, built around partnership.</h2>
           <div className="mt-6 space-y-5 text-base leading-8 text-[var(--muted)]">
             <p>
-              PLACEHOLDER BRAND is an independent boutique investment management company, catering to investors&apos; needs through a focused range of investment portfolios. Our approach is to compound investor wealth over the long term by blending internal and external fund management skills in a well-considered, coordinated and active manner, while seeking to avoid significant loss of capital in times of market turbulence.
+              your firm is an independent boutique investment management company, catering to investors&apos; needs through a focused range of investment portfolios. Our approach is to compound investor wealth over the long term by blending internal and external fund management skills in a well-considered, coordinated and active manner, while seeking to avoid significant loss of capital in times of market turbulence.
             </p>
             <p>
               This approach gives investors diversified access to some of the country&apos;s and globe&apos;s most talented managers within the funds, at a reasonable cost. It reduces complexity and offers a comprehensive financial and estate planning solution.
@@ -104,7 +104,7 @@ export default function AboutPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-12 sm:flex-row sm:items-center lg:px-8">
           <div>
             <p className="text-xs font-bold tracking-[0.16em]">WORK WITH placeholder</p>
-            <h2 className="mt-2 text-2xl font-semibold">Become an PLACEHOLDER BRAND Partner</h2>
+            <h2 className="mt-2 text-2xl font-semibold">Become an your firm Partner</h2>
             <p className="mt-2 max-w-xl text-sm leading-6">Let&apos;s build a considered, client-first partnership with your financial advice practice.</p>
           </div>
           <Link href="/contact#enquiry" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">

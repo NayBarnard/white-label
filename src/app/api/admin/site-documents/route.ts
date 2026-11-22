@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     ? null
     : record.strategy === null
       ? null
-      : record.strategy === "PLACEHOLDER BRAND Balanced" || record.strategy === "PLACEHOLDER BRAND Cautious" || record.strategy === "Both"
+      : record.strategy === "your firm Balanced" || record.strategy === "your firm Cautious" || record.strategy === "Both"
       ? record.strategy
       : undefined;
   const fileSizeBytes = record.fileSizeBytes === undefined

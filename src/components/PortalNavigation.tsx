@@ -70,6 +70,7 @@ function getPortalLinks(pathname: string): PortalLink[] {
   }
   return [
     { label: "Dashboard", href: "/advisor#dashboard", section: "dashboard" },
+    { label: "Universal Search", href: "/advisor/search", section: "search" },
     { label: "My Clients", href: "/advisor/clients", section: "clients" },
     { label: "Fund Centre", href: "/advisor#fund-centre", section: "fund-centre" },
     { label: "LISP Availability", href: "/advisor#lisp-availability", section: "lisp-availability" },
@@ -136,7 +137,7 @@ export function PortalNavigation() {
     const supabase = getPortalSupabaseClient();
     if (supabase) await supabase.auth.signOut({ scope: "global" });
     setOpen(false);
-    router.replace(isClient ? "/portal/dashboard" : "/advisor/login");
+    router.replace(isClient ? "/portal/dashboard" : isAdmin ? "/admin/login" : "/advisor/login");
   }
 
   function chooseLink(link: PortalLink) {
@@ -188,7 +189,7 @@ export function PortalNavigation() {
               setOpen(false);
             }}
           >
-            Chat with PLACEHOLDER BRAND AI Assistant
+            Chat with your firm AI Assistant
           </button>
           <div className="portal-menu-install"><InstallAppControl showUnavailable /></div>
           <button

@@ -7,10 +7,10 @@ import { LargeTitle } from "@/components/IOSKit";
 
 export const metadata: Metadata = {
   title: "Investment resources",
-  description: "Access product resources, operating forms and compliance documents available from PLACEHOLDER BRAND.",
+  description: "Access product resources, operating forms and compliance documents available from your firm.",
   openGraph: {
     title: "Investment resources",
-    description: "Access product resources, operating forms and compliance documents available from PLACEHOLDER BRAND.",
+    description: "Access product resources, operating forms and compliance documents available from your firm.",
     url: "/resources",
   },
 };
@@ -70,7 +70,7 @@ export default function ResourcesPage() {
           );
         })}
         <p className="glass p-5 text-sm leading-6 text-[var(--muted)]">
-          The investment application forms are official PDF documents. Compliance resources are generated request copies, not official policies; please contact your financial advisor or PLACEHOLDER BRAND for current official policy documents. Product fact sheets contain the published performance figures shown on this site.
+          The investment application forms are official PDF documents. Compliance resources are generated request copies, not official policies; please contact your financial advisor or your firm for current official policy documents. Product fact sheets contain the published performance figures shown on this site.
         </p>
         <p className="text-sm text-[var(--muted)]">
           Begin a preliminary investor questionnaire on the{" "}

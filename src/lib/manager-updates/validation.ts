@@ -18,7 +18,7 @@ export type ManagerUpdateInput = {
   keyTakeaways?: string[];
   perspective?: string | null;
   relatedSlugs?: string[];
-  strategy?: "PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious" | "Both";
+  strategy?: "your firm Balanced" | "your firm Cautious" | "Both";
   featured?: boolean;
   scheduledAt?: string | null;
   pdfObjectPath?: string | null;
@@ -92,7 +92,7 @@ export function parseManagerUpdateInput(input: unknown): ManagerUpdateInput | nu
       relatedSlugs.some((item) => typeof item !== "string" || !researchSlugPattern.test(item)) ||
       new Set(relatedSlugs).size !== relatedSlugs.length
     )) ||
-    (strategy !== undefined && strategy !== "PLACEHOLDER BRAND Balanced" && strategy !== "PLACEHOLDER BRAND Cautious" && strategy !== "Both") ||
+    (strategy !== undefined && strategy !== "your firm Balanced" && strategy !== "your firm Cautious" && strategy !== "Both") ||
     (featured !== undefined && typeof featured !== "boolean") ||
     (scheduledAt !== undefined && scheduledAt !== null && (
       typeof scheduledAt !== "string" ||
@@ -118,7 +118,7 @@ export function parseManagerUpdateInput(input: unknown): ManagerUpdateInput | nu
     ...(Array.isArray(keyTakeaways) ? { keyTakeaways: keyTakeaways.map((item) => item.trim()) } : {}),
     ...(typeof perspective === "string" || perspective === null ? { perspective: perspective?.trim() || null } : {}),
     ...(Array.isArray(relatedSlugs) ? { relatedSlugs: [...relatedSlugs] as string[] } : {}),
-    ...(strategy === "PLACEHOLDER BRAND Balanced" || strategy === "PLACEHOLDER BRAND Cautious" || strategy === "Both" ? { strategy } : {}),
+    ...(strategy === "your firm Balanced" || strategy === "your firm Cautious" || strategy === "Both" ? { strategy } : {}),
     ...(typeof featured === "boolean" ? { featured } : {}),
     ...(typeof scheduledAt === "string" || scheduledAt === null ? { scheduledAt } : {}),
     ...(typeof pdfObjectPath === "string" || pdfObjectPath === null ? { pdfObjectPath } : {}),

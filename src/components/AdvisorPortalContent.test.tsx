@@ -24,20 +24,20 @@ describe("AdvisorPortalContent", () => {
   it("does not display investor records to an adviser account by default", () => {
     render(<AdvisorPortalContent />);
     expect(screen.getByText(/Client information is not shown to adviser accounts by default/)).toBeInTheDocument();
-    expect(screen.getByText(/Adviser access requires client authorization, PLACEHOLDER BRAND approval, a defined access scope, and an auditable active link/)).toBeInTheDocument();
+    expect(screen.getByText(/Adviser access requires client authorization, your firm approval, a defined access scope, and an auditable active link/)).toBeInTheDocument();
   });
 
   it("filters the fund catalogue using published fund names", () => {
     render(<AdvisorPortalContent />);
     fireEvent.change(screen.getByRole("textbox", { name: "Search funds" }), { target: { value: "cautious" } });
-    expect(screen.getByRole("heading", { name: "PLACEHOLDER BRAND Cautious Strategy" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "PLACEHOLDER BRAND Balanced Strategy" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "your firm Cautious Strategy" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "your firm Balanced Strategy" })).not.toBeInTheDocument();
   });
 
   it("tracks recent fund selection within the adviser session", () => {
     render(<AdvisorPortalContent />);
     fireEvent.click(screen.getAllByRole("button", { name: "Record as recently accessed" })[0]);
-    expect(screen.getByRole("link", { name: "PLACEHOLDER BRAND Balanced" })).toHaveAttribute("href", "/portfolios#balanced");
+    expect(screen.getByRole("link", { name: "your firm Balanced" })).toHaveAttribute("href", "/portfolios#balanced");
   });
 
   it("filters the public document catalogue by category", () => {
@@ -46,6 +46,6 @@ describe("AdvisorPortalContent", () => {
       target: { value: "Compliance & Regulatory" },
     });
     expect(screen.getByText("Conflict of Interest Policy")).toBeInTheDocument();
-    expect(screen.queryByText("PLACEHOLDER BRAND Balanced Fact Sheet")).not.toBeInTheDocument();
+    expect(screen.queryByText("your firm Balanced Fact Sheet")).not.toBeInTheDocument();
   });
 });

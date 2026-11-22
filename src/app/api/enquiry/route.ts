@@ -8,8 +8,8 @@ import { features } from "@/config/features";
 
 const inquiryTypes = [
   "General",
-  "PLACEHOLDER BRAND Balanced",
-  "PLACEHOLDER BRAND Cautious",
+  "your firm Balanced",
+  "your firm Cautious",
   "Partnership",
   "Other",
   "Onboarding questionnaire",

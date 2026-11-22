@@ -531,7 +531,7 @@ export function ClientDashboard() {
             <article className={`${panelClass} p-5`}>
               <p className="text-xs font-medium text-[var(--muted)]">Managed accounts</p>
               <p className="mt-2 text-2xl font-semibold tabular-nums text-[var(--foreground)]">{portfolioSummaries.length}</p>
-              <p className="mt-1 text-[10px] text-[var(--muted)]">PLACEHOLDER BRAND Balanced and PLACEHOLDER BRAND Cautious records</p>
+              <p className="mt-1 text-[10px] text-[var(--muted)]">your firm Balanced and your firm Cautious records</p>
             </article>
             <article className={`${panelClass} p-5`}>
               <p className="text-xs font-medium text-[var(--muted)]">Secure documents</p>
@@ -698,7 +698,7 @@ export function ClientDashboard() {
                 )}
               </div>
               <form onSubmit={(event) => void sendSupportMessage(event)} className="mt-3 flex gap-2">
-                <label htmlFor="support-message" className="sr-only">Message the PLACEHOLDER BRAND client service team</label>
+                <label htmlFor="support-message" className="sr-only">Message the your firm client service team</label>
                 <input
                   id="support-message"
                   value={supportInput}

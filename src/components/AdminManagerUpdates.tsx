@@ -54,7 +54,7 @@ export function AdminManagerUpdates() {
   const [executiveSummary, setExecutiveSummary] = useState("");
   const [keyTakeaways, setKeyTakeaways] = useState("");
   const [perspective, setPerspective] = useState("");
-  const [strategy, setStrategy] = useState<"PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious" | "Both">("Both");
+  const [strategy, setStrategy] = useState<"your firm Balanced" | "your firm Cautious" | "Both">("Both");
   const [relatedSlugs, setRelatedSlugs] = useState("");
   const [scheduledAt, setScheduledAt] = useState("");
   const [featured, setFeatured] = useState(false);
@@ -246,12 +246,12 @@ export function AdminManagerUpdates() {
           <label className="block text-xs font-semibold sm:col-span-2">Key takeaways (3–5 lines)
             <textarea required minLength={30} maxLength={1600} rows={4} value={keyTakeaways} onChange={(event) => setKeyTakeaways(event.target.value)} className={fieldClass} placeholder={"One takeaway per line"} />
           </label>
-          <label className="block text-xs font-semibold sm:col-span-2">PLACEHOLDER BRAND perspective
+          <label className="block text-xs font-semibold sm:col-span-2">your firm perspective
             <textarea required minLength={10} maxLength={1000} rows={3} value={perspective} onChange={(event) => setPerspective(event.target.value)} className={fieldClass} />
           </label>
           <label className="block text-xs font-semibold">Strategy
             <select value={strategy} onChange={(event) => setStrategy(event.target.value as typeof strategy)} className={fieldClass}>
-              <option>Both</option><option>PLACEHOLDER BRAND Balanced</option><option>PLACEHOLDER BRAND Cautious</option>
+              <option>Both</option><option>your firm Balanced</option><option>your firm Cautious</option>
             </select>
           </label>
           <label className="block text-xs font-semibold">Related research slugs (comma-separated)
@@ -301,7 +301,7 @@ export function AdminManagerUpdates() {
               {update.featured ? <span className="rounded-full border border-[var(--accent)] px-2.5 py-1 text-[10px] font-bold text-[var(--accent)]">FEATURED</span> : null}
             </div>
             <p className="mt-2 text-xs text-[var(--muted)]">
-              {update.author_name || "PLACEHOLDER BRAND Investment Team"}
+              {update.author_name || "your firm Investment Team"}
               {update.author_designation ? ` · ${update.author_designation}` : ""}
               {update.scheduled_at ? ` · Scheduled ${new Date(update.scheduled_at).toLocaleString("en-ZA")}` : ""}
             </p>

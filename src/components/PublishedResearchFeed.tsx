@@ -16,14 +16,14 @@ export function PublishedResearchFeed() {
     fetch("/api/insights?type=research", { signal: controller.signal, cache: "no-store" })
       .then(async (response) => {
         const result = await response.json() as { articles?: ResearchArticle[]; error?: string };
-        if (!response.ok) throw new Error(result.error ?? "Published PLACEHOLDER BRAND research could not be loaded.");
+        if (!response.ok) throw new Error(result.error ?? "Published your firm research could not be loaded.");
         return result;
       })
       .then((result) => {
         if (!controller.signal.aborted) setArticles(result.articles ?? []);
       })
       .catch((requestError: unknown) => {
-        if (!controller.signal.aborted) setError(requestError instanceof Error ? requestError.message : "Published PLACEHOLDER BRAND research could not be loaded.");
+        if (!controller.signal.aborted) setError(requestError instanceof Error ? requestError.message : "Published your firm research could not be loaded.");
       });
     return () => controller.abort();
   }, []);
@@ -41,7 +41,7 @@ export function PublishedResearchFeed() {
         </select>
       </label>
       {error ? <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm">{error}</p> : null}
-      {!error && articles.length === 0 ? <p role="status" className="text-sm text-[var(--muted)]">Loading published PLACEHOLDER BRAND research…</p> : null}
+      {!error && articles.length === 0 ? <p role="status" className="text-sm text-[var(--muted)]">Loading published your firm research…</p> : null}
       {visible.length ? (
         <div className="grid gap-4 md:grid-cols-2">
           {visible.map((article) => (

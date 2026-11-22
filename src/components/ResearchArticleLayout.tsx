@@ -51,7 +51,7 @@ export function ResearchArticleLayout({ article }: { article: ResearchArticle })
                 <h2 className="text-xl font-semibold">Published fund-performance context</h2>
               </div>
               <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                This is the latest performance snapshot published by PLACEHOLDER BRAND, not a market quote or a forecast.
+                This is the latest performance snapshot published by your firm, not a market quote or a forecast.
               </p>
               <div className="mt-5 space-y-3" role="img" aria-label={`Cumulative return context for ${returnSummary.period}`}>
                 {returnSummary.rows.map((row) => {
@@ -81,7 +81,7 @@ export function ResearchArticleLayout({ article }: { article: ResearchArticle })
             </section>
 
             <section id="perspective" className="glass rounded-2xl p-6 sm:p-8">
-              <h2 className="text-xl font-semibold">PLACEHOLDER BRAND perspective</h2>
+              <h2 className="text-xl font-semibold">your firm perspective</h2>
               <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{article.perspective}</p>
             </section>
 

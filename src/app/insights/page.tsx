@@ -10,10 +10,10 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Insights & perspectives",
-  description: "Read market commentary, investment updates and thought leadership from PLACEHOLDER BRAND.",
+  description: "Read market commentary, investment updates and thought leadership from your firm.",
   openGraph: {
     title: "Insights & perspectives",
-    description: "Read market commentary, investment updates and thought leadership from PLACEHOLDER BRAND.",
+    description: "Read market commentary, investment updates and thought leadership from your firm.",
     url: "/insights",
   },
 };
@@ -48,7 +48,7 @@ export default function InsightsPage() {
       <LargeTitle
         eyebrow="INSIGHTS & PERSPECTIVES"
         title="Ideas for informed investors."
-        description="Read PLACEHOLDER BRAND updates, investment perspectives, and market commentary."
+        description="Read your firm updates, investment perspectives, and market commentary."
       />
 
       <section className="mx-auto w-full max-w-7xl px-5 py-16 lg:px-8">
@@ -60,7 +60,7 @@ export default function InsightsPage() {
         </Suspense>
         <div className="mb-5 mt-12 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">PLACEHOLDER BRAND RESEARCH</p>
+            <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">your firm RESEARCH</p>
             <h2 className="mt-2 text-2xl font-semibold">Research and perspectives</h2>
           </div>
           <Link href="/insights/library" className="text-sm font-semibold text-[var(--accent)] hover:underline">
@@ -75,7 +75,7 @@ export default function InsightsPage() {
           <div>
             <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">STAY INFORMED</p>
             <h2 className="mt-2 text-2xl font-semibold">Stay informed</h2>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Subscribe for occasional PLACEHOLDER BRAND updates.</p>
+            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Subscribe for occasional your firm updates.</p>
           </div>
           <SubscribeForm />
         </div>

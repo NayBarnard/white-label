@@ -5,7 +5,7 @@ import { ResearchLibrary } from "@/components/ResearchLibrary";
 
 export const metadata: Metadata = {
   title: "Versioned research library",
-  description: "Browse published PLACEHOLDER BRAND research and document versions with publication and audit metadata.",
+  description: "Browse published your firm research and document versions with publication and audit metadata.",
   alternates: { canonical: "/insights/library" },
 };
 

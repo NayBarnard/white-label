@@ -4,10 +4,10 @@ import { LargeTitle } from "@/components/IOSKit";
 
 export const metadata: Metadata = {
   title: "Investor onboarding",
-  description: "Begin your PLACEHOLDER BRAND onboarding journey with a simple investor services workflow.",
+  description: "Begin your your firm onboarding journey with a simple investor services workflow.",
   openGraph: {
     title: "Investor onboarding",
-    description: "Begin your PLACEHOLDER BRAND onboarding journey with a simple investor services workflow.",
+    description: "Begin your your firm onboarding journey with a simple investor services workflow.",
     url: "/onboarding",
   },
 };

@@ -19,8 +19,8 @@ export const returnSummary = {
   asAt: "30 June 2026",
   source: "FE Analytics / FE fundinfo 2026",
   rows: [
-    { name: "PLACEHOLDER BRAND Balanced", value: 569.7, label: "569.70%" },
-    { name: "PLACEHOLDER BRAND Cautious", value: 416.63, label: "416.63%" },
+    { name: "your firm Balanced", value: 569.7, label: "569.70%" },
+    { name: "your firm Cautious", value: 416.63, label: "416.63%" },
     {
       name: "SA MA High Equity (Benchmark)",
       value: 399.97,
@@ -37,8 +37,8 @@ export const returnSummary = {
 export const strategies = [
   {
     id: "balanced",
-    name: "PLACEHOLDER BRAND Balanced",
-    title: "PLACEHOLDER BRAND Balanced Strategy",
+    name: "your firm Balanced",
+    title: "your firm Balanced Strategy",
     profile: "Moderate to Aggressive",
     benchmark: "CPI+5%",
     source: company.legalName,
@@ -62,8 +62,8 @@ export const strategies = [
   },
   {
     id: "cautious",
-    name: "PLACEHOLDER BRAND Cautious",
-    title: "PLACEHOLDER BRAND Cautious Strategy",
+    name: "your firm Cautious",
+    title: "your firm Cautious Strategy",
     profile: "Conservative to Cautious",
     benchmark: "CPI+3%",
     source: company.legalName,
@@ -228,13 +228,13 @@ export const articles = [
 export const documents = [
   {
     slug: "placeholder-balanced-fact-sheet",
-    name: "PLACEHOLDER BRAND Balanced Fact Sheet",
+    name: "your firm Balanced Fact Sheet",
     category: "Product Resources",
     size: "PDF · 1 page",
   },
   {
     slug: "placeholder-cautious-fact-sheet",
-    name: "PLACEHOLDER BRAND Cautious Fact Sheet",
+    name: "your firm Cautious Fact Sheet",
     category: "Product Resources",
     size: "PDF · 1 page",
   },

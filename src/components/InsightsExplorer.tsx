@@ -87,14 +87,14 @@ export function InsightsExplorer({
     fetch("/api/insights?type=research", { signal: controller.signal, cache: "no-store" })
       .then(async (response) => {
         const data = await response.json() as { articles?: typeof researchCatalog; error?: string };
-        if (!response.ok) throw new Error(data.error ?? "Published PLACEHOLDER BRAND research could not be loaded.");
+        if (!response.ok) throw new Error(data.error ?? "Published your firm research could not be loaded.");
         return data;
       })
       .then((data) => {
         if (!controller.signal.aborted && Array.isArray(data.articles)) setResearchArticles(data.articles);
       })
       .catch((requestError: unknown) => {
-        if (!controller.signal.aborted) console.error("Published PLACEHOLDER BRAND research could not be loaded.", requestError);
+        if (!controller.signal.aborted) console.error("Published your firm research could not be loaded.", requestError);
       });
     return () => controller.abort();
   }, []);
@@ -140,7 +140,7 @@ export function InsightsExplorer({
     <div>
       <div className="flex flex-col gap-5">
         <section className="glass space-y-4 rounded-2xl p-4 sm:p-5" aria-labelledby="research-filters-heading">
-          <h2 id="research-filters-heading" className="text-sm font-semibold">Find PLACEHOLDER BRAND research</h2>
+          <h2 id="research-filters-heading" className="text-sm font-semibold">Find your firm research</h2>
           <label className="flex min-h-12 items-center gap-3 rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] px-4 backdrop-blur-xl">
             <Search size={18} className="text-[var(--muted)]" aria-hidden="true" />
             <span className="sr-only">Search research</span>
@@ -162,7 +162,7 @@ export function InsightsExplorer({
             </label>
             <label className="text-xs font-semibold">Strategy
               <select value={strategy} onChange={(event) => setStrategy(event.target.value)} className="glass-select mt-1 min-h-11 w-full rounded-lg border border-[var(--border-strong)] px-3 text-sm">
-                <option>All</option><option>PLACEHOLDER BRAND Balanced</option><option>PLACEHOLDER BRAND Cautious</option>
+                <option>All</option><option>your firm Balanced</option><option>your firm Cautious</option>
               </select>
             </label>
             <label className="text-xs font-semibold">Document type
@@ -182,7 +182,7 @@ export function InsightsExplorer({
         <section aria-labelledby="canonical-research-heading">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-bold tracking-[0.14em] text-[var(--accent)]">CANONICAL PLACEHOLDER BRAND CONTENT</p>
+              <p className="text-xs font-bold tracking-[0.14em] text-[var(--accent)]">CANONICAL your firm CONTENT</p>
               <h2 id="canonical-research-heading" className="mt-1 text-xl font-semibold">Research articles</h2>
             </div>
             <p className="text-xs text-[var(--muted)]">{filteredResearch.length} matching items</p>
@@ -201,7 +201,7 @@ export function InsightsExplorer({
               ))}
             </div>
           ) : (
-            <p className="rounded-xl border border-[var(--border)] p-5 text-sm text-[var(--muted)]">No PLACEHOLDER BRAND research matches these filters.</p>
+            <p className="rounded-xl border border-[var(--border)] p-5 text-sm text-[var(--muted)]">No your firm research matches these filters.</p>
           )}
         </section>
 

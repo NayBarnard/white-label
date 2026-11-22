@@ -89,7 +89,7 @@ export function ResearchLibrary() {
         </label>
         <label className="text-xs font-semibold">Strategy
           <select value={strategy} onChange={(event) => setStrategy(event.target.value)} className="glass-select mt-1 min-h-11 w-full rounded-lg border border-[var(--border-strong)] px-3 text-sm">
-            <option>All strategies</option><option>PLACEHOLDER BRAND Balanced</option><option>PLACEHOLDER BRAND Cautious</option>
+            <option>All strategies</option><option>your firm Balanced</option><option>your firm Cautious</option>
           </select>
         </label>
         <label className="text-xs font-semibold">Version status

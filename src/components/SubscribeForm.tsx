@@ -75,7 +75,7 @@ export function SubscribeForm() {
           onChange={(event) => setConsent(event.target.checked)}
           className="mt-1 accent-[var(--accent)]"
         />
-        I agree to receive PLACEHOLDER BRAND updates by email.
+        I agree to receive your firm updates by email.
       </label>
       {message && (
         <div role="status" aria-live="polite" className="space-y-1 text-xs text-[var(--accent)]">

@@ -25,7 +25,7 @@ function mapManagerUpdate(data: {
   key_takeaways: string[];
   placeholder_perspective: string | null;
   related_slugs: string[];
-  strategy: "PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious" | "Both";
+  strategy: "your firm Balanced" | "your firm Cautious" | "Both";
   published_at: string | null;
   featured: boolean;
 }): ResearchArticle {
@@ -39,9 +39,9 @@ function mapManagerUpdate(data: {
     date: (data.published_at ?? new Date().toISOString()).slice(0, 10),
     excerpt: executiveSummary,
     body: data.body,
-    author: data.author_name ?? "PLACEHOLDER BRAND Investment Team",
+    author: data.author_name ?? "your firm Investment Team",
     designation: data.author_designation ?? "Investment research",
-    authorBio: data.author_bio ?? "The team responsible for PLACEHOLDER BRAND' investment research and portfolio perspectives.",
+    authorBio: data.author_bio ?? "The team responsible for your firm' investment research and portfolio perspectives.",
     executiveSummary,
     readingTime: Math.max(1, Math.ceil(data.body.split(/\s+/).length / 220)),
     strategy: data.strategy,

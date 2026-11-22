@@ -69,7 +69,7 @@ export async function GET() {
   }
   const latest = rows[0];
   return NextResponse.json({
-    source: "PLACEHOLDER BRAND fund data",
+    source: "your firm fund data",
     updatedAt: latest?.updated_at ?? null,
     metrics: latest?.metrics ?? fundMetricsSnapshot,
   });

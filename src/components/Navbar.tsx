@@ -174,7 +174,7 @@ export function Navbar() {
           <Link
             href="/"
             className="shrink-0 transition-opacity hover:opacity-80"
-            aria-label="PLACEHOLDER BRAND home"
+            aria-label="your firm home"
           >
             <AnimatedLogo compact />
           </Link>

@@ -143,7 +143,7 @@ describe("public API validation", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body.answer).toContain("PLACEHOLDER BRAND Cautious Strategy");
+    expect(body.answer).toContain("your firm Cautious Strategy");
     expect(body.answer).toContain("TER: not published");
   });
 
@@ -165,7 +165,7 @@ describe("public API validation", () => {
     vi.stubEnv("OPENAI_API_KEY", "test-api-key");
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       new Response(
-        JSON.stringify({ choices: [{ message: { content: "PLACEHOLDER BRAND Cautious Strategy fees are not published." } }] }),
+        JSON.stringify({ choices: [{ message: { content: "your firm Cautious Strategy fees are not published." } }] }),
         { status: 200 },
       ),
     );

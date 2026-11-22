@@ -37,7 +37,7 @@ export async function saveSubmission(
     if (!(error instanceof MissingServerEnvironmentError)) throw error;
     console.error(error.message);
     throw new SubmissionStorageError(
-      "Online form delivery is not configured. Please contact PLACEHOLDER BRAND directly.",
+      "Online form delivery is not configured. Please contact your firm directly.",
       503,
     );
   }
@@ -64,7 +64,7 @@ export async function saveSubmission(
 
   if (!response.ok) {
     throw new SubmissionStorageError(
-      "The submission could not be stored. Please try again or contact PLACEHOLDER BRAND directly.",
+      "The submission could not be stored. Please try again or contact your firm directly.",
       502,
     );
   }

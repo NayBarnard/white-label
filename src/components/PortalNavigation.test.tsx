@@ -65,7 +65,7 @@ describe("PortalNavigation", () => {
       "Performance Reports",
       "Messages",
     ]);
-    expect(within(dialog).getByRole("button", { name: "Chat with PLACEHOLDER BRAND AI Assistant" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Chat with your firm AI Assistant" })).toBeInTheDocument();
     expect(within(dialog).getByRole("button", { name: "Install app" })).toBeDisabled();
     expect(within(dialog).getByText("Account")).toBeInTheDocument();
     expect(within(dialog).getByRole("button", { name: "Sign out" })).toBeInTheDocument();

@@ -8,11 +8,11 @@ describe("FloatingChatbot portal launcher", () => {
 
   it("opens from the portal menu event without rendering a floating launcher", () => {
     render(<FloatingChatbot standalone hideLauncher />);
-    expect(screen.queryByRole("button", { name: "Open PLACEHOLDER BRAND AI Assistant" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Open your firm AI Assistant" })).not.toBeInTheDocument();
 
     fireEvent(window, new Event("placeholder-open-assistant"));
 
-    expect(screen.getByRole("region", { name: "PLACEHOLDER BRAND AI Assistant chat" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "your firm AI Assistant chat" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Close chat" })).toBeInTheDocument();
   });
 });

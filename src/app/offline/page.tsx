@@ -7,11 +7,11 @@ export default function OfflinePage() {
       <LargeTitle
         eyebrow="CONNECTION STATUS"
         title="You're offline"
-        description="Reconnect to the internet to continue browsing. You can still ask the PLACEHOLDER BRAND AI Assistant about published site information."
+        description="Reconnect to the internet to continue browsing. You can still ask the your firm AI Assistant about published site information."
       />
       <section className="mx-auto w-full max-w-3xl px-5 py-10 sm:py-14">
         <div className="placeholder-glass-card rounded-2xl p-5 text-sm leading-6 text-[var(--muted)] sm:p-7">
-          <p>For assistance, contact PLACEHOLDER BRAND:</p>
+          <p>For assistance, contact your firm:</p>
           <ul className="mt-3 space-y-2">
             <li>
               <a className="font-semibold text-[var(--foreground)] underline" href={`tel:${company.phone.replaceAll(" ", "")}`}>

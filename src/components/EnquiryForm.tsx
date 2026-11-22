@@ -119,8 +119,8 @@ export function EnquiryForm({ compact = false }: { compact?: boolean }) {
           className="w-full rounded-sm border border-[var(--border-strong)] bg-[var(--background)] px-3 py-3 text-sm outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
         >
           <option>General</option>
-          <option>PLACEHOLDER BRAND Balanced</option>
-          <option>PLACEHOLDER BRAND Cautious</option>
+          <option>your firm Balanced</option>
+          <option>your firm Cautious</option>
           <option>Partnership</option>
           <option>Other</option>
         </select>
@@ -149,7 +149,7 @@ export function EnquiryForm({ compact = false }: { compact?: boolean }) {
           required
           className="mt-1 accent-[var(--accent)]"
         />
-        I consent to PLACEHOLDER BRAND processing my personal information to respond to this enquiry.
+        I consent to your firm processing my personal information to respond to this enquiry.
       </label>
 
       <button

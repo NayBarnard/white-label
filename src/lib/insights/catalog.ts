@@ -10,7 +10,7 @@ export const researchCategories = [
 ] as const;
 
 export type ResearchCategory = (typeof researchCategories)[number];
-export type ResearchStrategy = "PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious";
+export type ResearchStrategy = "your firm Balanced" | "your firm Cautious";
 
 export type ResearchArticle = {
   slug: string;
@@ -36,9 +36,9 @@ export type ResearchArticle = {
 const profiles: Record<string, Omit<ResearchArticle, "slug" | "title" | "date" | "excerpt" | "body">> = {
   "building-resilient-portfolios": {
     category: "Investment Strategy",
-    author: "PLACEHOLDER BRAND Investment Team",
+    author: "your firm Investment Team",
     designation: "Investment research",
-    authorBio: "The team responsible for PLACEHOLDER BRAND' investment research and portfolio perspectives.",
+    authorBio: "The team responsible for your firm' investment research and portfolio perspectives.",
     executiveSummary:
       "Diversification across asset classes can help manage portfolio volatility over time. Asset allocation and an investor's time horizon remain important considerations when assessing portfolio outcomes.",
     readingTime: 2,
@@ -50,18 +50,18 @@ const profiles: Record<string, Omit<ResearchArticle, "slug" | "title" | "date" |
       "Investment decisions should reflect an investor's objectives and time horizon.",
     ],
     perspective:
-      "PLACEHOLDER BRAND believes real diversification is an effective way to manage portfolio volatility. This general perspective is not a recommendation to change an investment.",
+      "your firm believes real diversification is an effective way to manage portfolio volatility. This general perspective is not a recommendation to change an investment.",
     relatedSlugs: ["market-context-and-time-horizons", "understanding-investment-costs"],
     source: company.legalName,
     featured: true,
   },
   "advisor-partnership": {
     category: "Adviser Insights",
-    author: "PLACEHOLDER BRAND Investment Team",
+    author: "your firm Investment Team",
     designation: "Adviser relationships",
-    authorBio: "The team responsible for PLACEHOLDER BRAND' investment research and portfolio perspectives.",
+    authorBio: "The team responsible for your firm' investment research and portfolio perspectives.",
     executiveSummary:
-      "Financial advisers play an important role in helping investors connect their objectives with investment decisions. PLACEHOLDER BRAND' independent approach is intended to support long-term collaboration between clients, advisers and investment managers.",
+      "Financial advisers play an important role in helping investors connect their objectives with investment decisions. your firm' independent approach is intended to support long-term collaboration between clients, advisers and investment managers.",
     readingTime: 2,
     strategy: "Both",
     documentType: "Research",
@@ -71,16 +71,16 @@ const profiles: Record<string, Omit<ResearchArticle, "slug" | "title" | "date" |
       "Investment outcomes are not guaranteed.",
     ],
     perspective:
-      "PLACEHOLDER BRAND values adviser partnerships as part of a considered investment process and does not replace an adviser's role.",
+      "your firm values adviser partnerships as part of a considered investment process and does not replace an adviser's role.",
     relatedSlugs: ["building-resilient-portfolios", "market-context-and-time-horizons"],
     source: company.legalName,
     featured: false,
   },
   "understanding-investment-costs": {
     category: "Investor Education",
-    author: "PLACEHOLDER BRAND Investment Team",
+    author: "your firm Investment Team",
     designation: "Investment research",
-    authorBio: "The team responsible for PLACEHOLDER BRAND' investment research and portfolio perspectives.",
+    authorBio: "The team responsible for your firm' investment research and portfolio perspectives.",
     executiveSummary:
       "Investment costs are one factor to consider when assessing a portfolio. Investors should review costs alongside objectives, risk tolerance and time horizon rather than in isolation.",
     readingTime: 2,
@@ -92,16 +92,16 @@ const profiles: Record<string, Omit<ResearchArticle, "slug" | "title" | "date" |
       "Consider objectives, risk tolerance and investment time horizon.",
     ],
     perspective:
-      "PLACEHOLDER BRAND' investment belief is that reducing costs is a dependable way to improve the potential for investor outcomes; it does not assure positive returns.",
+      "your firm' investment belief is that reducing costs is a dependable way to improve the potential for investor outcomes; it does not assure positive returns.",
     relatedSlugs: ["building-resilient-portfolios", "advisor-partnership"],
     source: company.legalName,
     featured: false,
   },
   "market-context-and-time-horizons": {
     category: "Market Commentary",
-    author: "PLACEHOLDER BRAND Investment Team",
+    author: "your firm Investment Team",
     designation: "Investment research",
-    authorBio: "The team responsible for PLACEHOLDER BRAND' investment research and portfolio perspectives.",
+    authorBio: "The team responsible for your firm' investment research and portfolio perspectives.",
     executiveSummary:
       "Market movements vary over short periods and should be considered in context. An investor's objectives and time horizon are important when deciding whether a portfolio remains appropriate.",
     readingTime: 2,
@@ -113,7 +113,7 @@ const profiles: Record<string, Omit<ResearchArticle, "slug" | "title" | "date" |
       "Consult an authorised financial adviser before making investment changes.",
     ],
     perspective:
-      "PLACEHOLDER BRAND focuses on portfolio construction and risk across investment horizons; market commentary is not a forecast or investment recommendation.",
+      "your firm focuses on portfolio construction and risk across investment horizons; market commentary is not a forecast or investment recommendation.",
     relatedSlugs: ["building-resilient-portfolios", "understanding-investment-costs"],
     source: company.legalName,
     featured: false,

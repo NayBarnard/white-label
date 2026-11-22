@@ -18,13 +18,13 @@ import { getPublishedHomePage } from "@/lib/supabase/site-pages";
 import { LocalStudioHomepage } from "@/components/studio/LocalStudioHomepage";
 
 export const metadata: Metadata = {
-  title: "PLACEHOLDER BRAND | Independent Fund Management",
+  title: "your firm | Independent Fund Management",
   description:
-    "Explore PLACEHOLDER BRAND' diversified investment strategies, published performance and client-first advisory approach.",
+    "Explore your firm' diversified investment strategies, published performance and client-first advisory approach.",
   openGraph: {
-    title: "PLACEHOLDER BRAND | Independent Fund Management",
+    title: "your firm | Independent Fund Management",
     description:
-      "Explore PLACEHOLDER BRAND' diversified investment strategies, published performance and client-first advisory approach.",
+      "Explore your firm' diversified investment strategies, published performance and client-first advisory approach.",
     url: "/",
   },
 };
@@ -81,14 +81,14 @@ function CurrentHomePage() {
   const strategySlides = [
     {
       eyebrow: "MODERATE TO AGGRESSIVE",
-      title: "PLACEHOLDER BRAND Balanced Strategy",
+      title: "your firm Balanced Strategy",
       description: "Long-term capital growth through diversified multi-asset allocation.",
       href: "/portfolios",
       linkLabel: "LEARN MORE",
     },
     {
       eyebrow: "CONSERVATIVE TO CAUTIOUS",
-      title: "PLACEHOLDER BRAND Cautious Strategy",
+      title: "your firm Cautious Strategy",
       description: "Capital preservation with steady real returns above inflation.",
       href: "/portfolios",
       linkLabel: "LEARN MORE",
@@ -157,7 +157,7 @@ function CurrentHomePage() {
           </div>
         </section>
 
-        <section className="mt-10 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="PLACEHOLDER BRAND at a glance">
+        <section className="mt-10 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="your firm at a glance">
           <div className="home-stat-card gold-glass aspect-square rounded-2xl p-4 xl:aspect-auto">
             <p className="text-2xl font-semibold tabular-nums text-[var(--accent)] sm:text-3xl"><CountUp value={65} /></p>
             <p className="mt-2 text-[10px] font-semibold uppercase leading-4 tracking-wide text-[var(--muted)] sm:text-xs sm:leading-5">
@@ -190,7 +190,7 @@ function CurrentHomePage() {
           <div className="mb-6">
             <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">OUR APPROACH</p>
             <h2 id="why-placeholder-heading" className="heading-slow-pulse mt-2 text-2xl font-semibold sm:text-3xl">
-              WHY PLACEHOLDER BRAND
+              WHY your firm
             </h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

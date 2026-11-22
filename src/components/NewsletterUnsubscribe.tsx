@@ -37,7 +37,7 @@ export function NewsletterUnsubscribe({ token }: { token: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <p className="text-sm leading-6 text-[var(--muted)]">
-        Confirm that you want to stop receiving PLACEHOLDER BRAND email updates.
+        Confirm that you want to stop receiving your firm email updates.
       </p>
       <button
         type="submit"

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { canAccessAdviserPortal } from "@/lib/adviser/access";
 import { getPortalSupabaseClient } from "@/lib/supabase/portal";
 import { clearAbsoluteSignInDeadline, getAbsoluteSignInDeadline } from "@/lib/staff/mfa";
 import { getPostLoginDestination } from "@/lib/staff/routing";
@@ -18,7 +17,11 @@ function hasSupabaseConfig() {
 const inputClass =
   "mt-2 min-h-12 w-full rounded-xl border border-[var(--border-strong)] bg-[var(--background)] px-4 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20";
 
-export function AdvisorLoginForm() {
+type AdvisorLoginFormProps = {
+  allowedRole?: "adviser" | "admin";
+};
+
+export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormProps) {
   const router = useRouter();
   const isConfigured = hasSupabaseConfig();
   const [email, setEmail] = useState("");
@@ -36,7 +39,7 @@ export function AdvisorLoginForm() {
   const [message, setMessage] = useState(
     isConfigured
       ? ""
-      : "Staff sign-in is unavailable right now. Please contact PLACEHOLDER BRAND.",
+      : "Staff sign-in is unavailable right now. Please contact your organisation.",
   );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -49,7 +52,7 @@ export function AdvisorLoginForm() {
       const preflight = await fetch("/api/auth/staff-signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, expectedRole: allowedRole }),
         cache: "no-store",
       });
       if (preflight.status === 429 || preflight.status === 503) {
@@ -60,19 +63,27 @@ export function AdvisorLoginForm() {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         console.error("Advisor authentication failed.", error);
-        setMessage("We couldn't sign you in. Check your details or contact PLACEHOLDER BRAND for staff access.");
+        setMessage("We couldn't sign you in. Check your details or contact your organisation for staff access.");
         return;
       }
 
-      if (!canAccessAdviserPortal(data.user.app_metadata.role)) {
+      const actualRole = data.user.app_metadata.role;
+      if (
+        (allowedRole === "adviser" && actualRole !== "adviser") ||
+        (allowedRole === "admin" && actualRole !== "admin")
+      ) {
         const { error: signOutError } = await supabase.auth.signOut({ scope: "global" });
         if (signOutError) {
           console.error("A non-staff session could not be cleared after staff login.", signOutError);
         }
-        setMessage("This is staff sign-in only. Please use the client portal to access your account.");
+        setMessage(
+          allowedRole === "admin"
+            ? "This sign-in is for authorised administrators only."
+            : "This sign-in is for authorised advisers only.",
+        );
         return;
       }
-      const signedInRole = data.user.app_metadata.role === "admin" ? "admin" : "adviser";
+      const signedInRole = actualRole === "admin" ? "admin" : "adviser";
       setStaffRole(signedInRole);
 
       const assurance = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -104,7 +115,7 @@ export function AdvisorLoginForm() {
           return;
         }
 
-        const enrollment = await supabase.auth.mfa.enroll({ factorType: "totp", friendlyName: "PLACEHOLDER BRAND staff authenticator" });
+        const enrollment = await supabase.auth.mfa.enroll({ factorType: "totp", friendlyName: "Firm staff authenticator" });
         if (enrollment.error) {
           console.error("Staff MFA enrollment could not be started.", enrollment.error);
           setMessage("Secure sign-in setup is unavailable right now.");
@@ -129,7 +140,7 @@ export function AdvisorLoginForm() {
       router.refresh();
     } catch (error) {
       console.error("Could not complete advisor sign-in.", error);
-      setMessage("We couldn't complete sign-in right now. Please try again or contact placeholder.");
+      setMessage("We couldn't complete sign-in right now. Please try again or contact your organisation.");
     } finally {
       setBusy(false);
     }
@@ -183,7 +194,7 @@ export function AdvisorLoginForm() {
       }
       const recoveryStatus = await supabase.auth.mfa.recoveryCodes.getStatus();
       if (recoveryStatus.error) {
-        const generated = await supabase.auth.mfa.recoveryCodes.generate({ friendlyName: "PLACEHOLDER BRAND staff recovery codes" });
+        const generated = await supabase.auth.mfa.recoveryCodes.generate({ friendlyName: "Firm staff recovery codes" });
         if (!generated.error) {
           setRecoveryCodes(generated.data.codes);
           setMfaCode("");
@@ -224,7 +235,10 @@ export function AdvisorLoginForm() {
         return;
       }
       const role = user.data.user.app_metadata.role;
-      if (!canAccessAdviserPortal(role)) {
+      const roleMatches =
+        (allowedRole === "adviser" && role === "adviser") ||
+        (allowedRole === "admin" && role === "admin");
+      if (!roleMatches) {
         await supabase.auth.signOut({ scope: "global" });
         clearAbsoluteSignInDeadline();
         setMessage("This is staff sign-in only.");
@@ -255,7 +269,7 @@ export function AdvisorLoginForm() {
               Staff sign-in
             </h1>
             <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-              Sign in with your PLACEHOLDER BRAND staff account credentials.
+              Sign in with your authorised {allowedRole === "admin" ? "administrator" : "adviser"} account credentials.
             </p>
           </div>
         </div>
@@ -401,12 +415,12 @@ export function AdvisorLoginForm() {
         )}
 
         <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-          Only authorised PLACEHOLDER BRAND staff accounts can sign in here.
+          Only authorised staff accounts can sign in here.
           <a
             className="ml-1 font-semibold text-[var(--accent)] underline underline-offset-2"
-            href="mailto:info@placeholder-am.co.za?subject=Staff%20Sign-in%20Access"
+            href="/contact"
           >
-            Contact PLACEHOLDER BRAND for sign-in help.
+            Contact your organisation for sign-in help.
           </a>
         </p>
         <Link

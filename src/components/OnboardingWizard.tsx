@@ -130,7 +130,7 @@ export function OnboardingWizard() {
         height: 54,
         color: rgb(0.035, 0.07, 0.14),
       });
-      page.drawText("PLACEHOLDER BRAND", {
+      page.drawText("your firm", {
         x: 48,
         y: 758,
         size: 12,
@@ -362,8 +362,8 @@ export function OnboardingWizard() {
                 className={inputClass}
               >
                 <option value="">Select a strategy</option>
-                <option>PLACEHOLDER BRAND Cautious</option>
-                <option>PLACEHOLDER BRAND Balanced</option>
+                <option>your firm Cautious</option>
+                <option>your firm Balanced</option>
                 <option>Discuss options with my advisor</option>
               </select>
             </label>
@@ -422,7 +422,7 @@ export function OnboardingWizard() {
               ))}
             </dl>
             <p className="mt-4 rounded-lg border border-[#C5A880]/25 bg-[#C5A880]/5 p-3 text-xs leading-5 text-[var(--muted)]">
-              This summary is generated in your browser{features.onboardingSubmit ? " and is only sent if you choose to submit it below" : " and is not sent to PLACEHOLDER BRAND"}. It is not an official application, a completed KYC/AML check, an investment instruction, or financial advice. Obtain the current official application from your financial advisor. Any required signature must be completed separately using an appropriate signing process.
+              This summary is generated in your browser{features.onboardingSubmit ? " and is only sent if you choose to submit it below" : " and is not sent to your firm"}. It is not an official application, a completed KYC/AML check, an investment instruction, or financial advice. Obtain the current official application from your financial advisor. Any required signature must be completed separately using an appropriate signing process.
             </p>
             {features.onboardingSubmit ? (
               <div className="mt-5 space-y-4 rounded-xl border border-[var(--border)] bg-[var(--background)] p-4">
@@ -446,7 +446,7 @@ export function OnboardingWizard() {
                     onChange={(event) => setPopiConsent(event.target.checked)}
                     className="mt-1 accent-[var(--accent)]"
                   />
-                  I consent to PLACEHOLDER BRAND processing my personal information to respond to this enquiry.
+                  I consent to your firm processing my personal information to respond to this enquiry.
                 </label>
                 <button
                   type="button"

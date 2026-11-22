@@ -42,7 +42,7 @@ export async function MarketSnapshotStrip() {
             <p className="mt-3 text-sm font-medium">No verified quote available</p>
             <p className="mt-1 text-xs text-[var(--muted)]">Feed not connected · {indicator.source}</p>
             <Link href={`/insights/${indicator.researchSlug}`} className="mt-3 inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">
-              Related PLACEHOLDER BRAND research
+              Related your firm research
             </Link>
           </li>
         ))}
@@ -50,7 +50,7 @@ export async function MarketSnapshotStrip() {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-4 text-xs text-[var(--muted)]">
         <p>Values are withheld until a timestamped, attributable data feed is configured.</p>
         <Link href="/insights" className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline">
-          Related PLACEHOLDER BRAND research <ExternalLink size={13} aria-hidden="true" />
+          Related your firm research <ExternalLink size={13} aria-hidden="true" />
         </Link>
       </div>
     </section>

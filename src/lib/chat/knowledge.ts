@@ -68,7 +68,7 @@ const performanceAnswer = () => {
 
 export function fundFactsAnswer(message: string, factsByStrategy = fundFacts): string {
   const requestedStrategies = strategies.filter((strategy) =>
-    new RegExp(`\\b${strategy.id}\\b|\\b${strategy.name.replace(/^PLACEHOLDER BRAND /, "")}\\b`, "i").test(message),
+    new RegExp(`\\b${strategy.id}\\b|\\b${strategy.name.replace(/^your firm /, "")}\\b`, "i").test(message),
   );
   const selectedStrategies = requestedStrategies.length ? requestedStrategies : strategies;
   const wantsMinimum = /\b(minimum|min\.?)\b/i.test(message);

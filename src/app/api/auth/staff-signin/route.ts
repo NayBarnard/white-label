@@ -26,6 +26,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign-in information could not be read." }, { status: 400 });
   }
   const record = payload as Record<string, unknown>;
+  const expectedRole = record.expectedRole;
+  if (expectedRole !== "adviser" && expectedRole !== "admin") {
+    return NextResponse.json({ error: "A valid staff sign-in role is required." }, { status: 400 });
+  }
   if (!isEmail(record.email) || typeof record.password !== "string" || record.password.length < 1 || record.password.length > 256) {
     return NextResponse.json({ error: "We couldn't verify those details." }, { status: 400 });
   }
@@ -47,7 +51,7 @@ export async function POST(request: Request) {
     if (result.error || !result.data.user) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
-    if (!["adviser", "admin"].includes(String(result.data.user.app_metadata.role))) {
+    if (String(result.data.user.app_metadata.role) !== expectedRole) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
     return NextResponse.json({ ok: true }, { status: 200 });

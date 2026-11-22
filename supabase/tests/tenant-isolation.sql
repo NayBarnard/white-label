@@ -16,6 +16,7 @@ declare
   v_decision jsonb;
   v_decision_id uuid;
   v_count integer;
+  v_search_count integer;
   v_tenants text[];
   v_projects text[];
   v_visible_user_ids uuid[];
@@ -106,6 +107,13 @@ begin
       (v_tenant_a, v_adviser_a, 'process', 'Tenant A pending', 'Test record', 'local-test', false),
       (v_tenant_b, v_adviser_b, 'process', 'Tenant B approved', 'Test record', 'local-test', true);
 
+    insert into public.universal_search_records (
+      tenant_id, category, title, description, entity_type, internal_path, is_published
+    )
+    values
+      (v_tenant_a, 'resource', 'Tenant A search fixture', 'A-only search record', 'resource', '/resources', true),
+      (v_tenant_b, 'resource', 'Tenant B search fixture', 'B-only search record', 'resource', '/resources', true);
+
     perform set_config('role', 'authenticated', true);
     perform set_config('request.jwt.claim.sub', v_adviser_a::text, true);
     perform set_config(
@@ -148,6 +156,12 @@ begin
     where approved;
     if v_count <> 1 then
       raise exception 'Tenant A adviser observed % approved knowledge records, expected 1', v_count;
+    end if;
+
+    select count(*) into v_search_count
+    from public.universal_search_records;
+    if v_search_count <> 1 then
+      raise exception 'Tenant A adviser observed % universal search records, expected 1', v_search_count;
     end if;
 
     if not public.wealth_os_tenant_data_enabled(v_tenant_a) then

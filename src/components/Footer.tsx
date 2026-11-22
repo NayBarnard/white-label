@@ -21,7 +21,7 @@ export function Footer() {
     return (
       <footer className="workspace-footer mt-auto">
         <p>
-          <span>© PLACEHOLDER BRAND | {company.workspaceFooterNotice}</span>
+          <span>© your firm | {company.workspaceFooterNotice}</span>
         </p>
       </footer>
     );
@@ -31,7 +31,7 @@ export function Footer() {
     <footer className="public-footer mt-auto">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[1fr_1fr] lg:px-8">
         <div className="space-y-2 text-sm leading-6 text-white/90">
-          <p className="text-base font-semibold text-white">PLACEHOLDER BRAND</p>
+          <p className="text-base font-semibold text-white">your firm</p>
           <p>Independent Investment Management</p>
           <p>{company.publicFooterNotice}</p>
           <p>Category: Discretionary Investment Management</p>
@@ -59,7 +59,7 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/20 px-5 py-5 text-xs text-white/85 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-        <span>© 2026 PLACEHOLDER BRAND. All rights reserved.</span>
+        <span>© 2026 your firm. All rights reserved.</span>
         <nav className="flex flex-wrap gap-x-5 gap-y-2" aria-label="Legal links">
           <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-white">Terms of Service</Link>

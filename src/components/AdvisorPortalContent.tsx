@@ -139,7 +139,7 @@ export function AdvisorPortalContent() {
         <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">PROFESSIONAL EXPERIENCE</p>
         <h1 className="mt-2 text-4xl font-semibold sm:text-5xl">Advisor Portal</h1>
         <p className="mt-4 text-base leading-7 text-[var(--muted)]">
-          Published PLACEHOLDER BRAND fund information and resources for financial advisors.
+          Published your firm fund information and resources for financial advisors.
         </p>
       </header>
 
@@ -147,7 +147,7 @@ export function AdvisorPortalContent() {
         <SectionHeading
           id="advisor-dashboard-heading"
           title="Advisor Dashboard"
-          description="A quick view of published PLACEHOLDER BRAND resources and adviser access."
+          description="A quick view of published your firm resources and adviser access."
         />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className={cardClass}>
@@ -199,7 +199,7 @@ export function AdvisorPortalContent() {
         </div>
         <p className={`mt-4 ${quietClass}`}>
           <Link className="font-semibold text-[var(--accent)] hover:underline" href="/insights">
-            View PLACEHOLDER BRAND announcements and insights <ArrowRight className="inline" size={14} />
+            View your firm announcements and insights <ArrowRight className="inline" size={14} />
           </Link>
         </p>
       </section>
@@ -208,7 +208,7 @@ export function AdvisorPortalContent() {
         <SectionHeading
           id="fund-centre-heading"
           title="Fund Centre"
-          description="Search published PLACEHOLDER BRAND strategies by fund name, strategy, JSE code, or ISIN."
+          description="Search published your firm strategies by fund name, strategy, JSE code, or ISIN."
         />
         <SearchField
           label="Search funds"
@@ -254,7 +254,7 @@ export function AdvisorPortalContent() {
             })}
           </div>
         ) : (
-          <p className={`mt-5 ${quietClass}`}>No published PLACEHOLDER BRAND funds match that search.</p>
+          <p className={`mt-5 ${quietClass}`}>No published your firm funds match that search.</p>
         )}
       </section>
 
@@ -298,7 +298,7 @@ export function AdvisorPortalContent() {
         <SectionHeading
           id="documents-heading"
           title="Document Centre"
-          description="Search and filter public PLACEHOLDER BRAND documents. Client-specific documents are not included here."
+          description="Search and filter public your firm documents. Client-specific documents are not included here."
         />
         <div className={`${cardClass} space-y-5`}>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -421,13 +421,13 @@ export function AdvisorPortalContent() {
         <div className={cardClass}>
           <p className="font-semibold">Client information is not shown to adviser accounts by default.</p>
           <p className={`mt-2 ${quietClass}`}>
-            Adviser access requires client authorization, PLACEHOLDER BRAND approval, a defined access scope, and an auditable active link. No client profiles, investments, reports, or documents are available until that workflow is configured.
+            Adviser access requires client authorization, your firm approval, a defined access scope, and an auditable active link. No client profiles, investments, reports, or documents are available until that workflow is configured.
           </p>
           <a
             className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)] hover:underline"
             href={`mailto:${company.email}?subject=Advisor%20portal%20access`}
           >
-            Contact PLACEHOLDER BRAND about adviser access <ArrowRight size={14} />
+            Contact your firm about adviser access <ArrowRight size={14} />
           </a>
         </div>
       </section>
@@ -436,7 +436,7 @@ export function AdvisorPortalContent() {
         <SectionHeading
           id="resources-heading"
           title="Advisor Resources"
-          description="Published PLACEHOLDER BRAND commentary and general information."
+          description="Published your firm commentary and general information."
         />
         <PublishedResearchFeed />
       </section>

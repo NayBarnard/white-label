@@ -149,7 +149,7 @@ const contactDefaults: HomePageComponents["Contact"] = {
 const homePageConfig: Config<HomePageComponents> = {
   categories: {
     sections: {
-      title: "PLACEHOLDER BRAND homepage sections",
+      title: "your firm homepage sections",
       components: ["Hero", "Performance", "Pillars", "Strategies", "Contact"],
     },
   },

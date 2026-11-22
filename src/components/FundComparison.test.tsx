@@ -42,7 +42,7 @@ describe("FundComparison", () => {
       "fetch",
       vi.fn<typeof fetch>().mockResolvedValue(
         jsonResponse({
-          source: "PLACEHOLDER BRAND fund data",
+          source: "your firm fund data",
           updatedAt: null,
           funds: [
             { id: "balanced", name: "Balanced", benchmark: "Benchmark", inceptionDate: null },
@@ -75,7 +75,7 @@ describe("FundComparison", () => {
       .fn<typeof fetch>()
       .mockRejectedValueOnce(new Error("network unavailable"))
       .mockResolvedValueOnce(
-        jsonResponse({ source: "PLACEHOLDER BRAND fund data", updatedAt: null, funds: [], observations: [] }),
+        jsonResponse({ source: "your firm fund data", updatedAt: null, funds: [], observations: [] }),
       );
     vi.stubGlobal("fetch", fetchMock);
 

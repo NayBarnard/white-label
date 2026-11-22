@@ -14,7 +14,7 @@ describe("staff sign-in preflight", () => {
     const response = await POST(new Request("https://staff.example/api/auth/staff-signin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "not-an-email", password: "x" }),
+      body: JSON.stringify({ email: "not-an-email", password: "x", expectedRole: "adviser" }),
     }));
     expect(response.status).toBe(400);
     const body = await response.json();
@@ -27,7 +27,7 @@ describe("staff sign-in preflight", () => {
     const response = await POST(new Request("https://staff.example/api/auth/staff-signin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "staff@example.com", password: "password" }),
+      body: JSON.stringify({ email: "staff@example.com", password: "password", expectedRole: "adviser" }),
     }));
     expect(response.status).toBe(503);
     vi.unstubAllEnvs();

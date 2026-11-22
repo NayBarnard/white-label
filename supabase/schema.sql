@@ -33,8 +33,8 @@ create index if not exists fund_metrics_fund_date_idx
 
 insert into public.funds (id, name, benchmark, inception_date)
 values
-  ('balanced', 'PLACEHOLDER BRAND Balanced', 'CPI + 5%', '2018-05-02'),
-  ('cautious', 'PLACEHOLDER BRAND Cautious', 'CPI + 3%', '2020-06-18')
+  ('balanced', 'your firm Balanced', 'CPI + 5%', '2018-05-02'),
+  ('cautious', 'your firm Cautious', 'CPI + 3%', '2020-06-18')
 on conflict (id) do update
 set name = excluded.name,
     benchmark = excluded.benchmark,

@@ -95,14 +95,14 @@ export async function GET(
   for (const paragraph of article.body.split(/(?<=[.!?])\s+/).filter(Boolean)) write(paragraph);
   write("Key takeaways", 13, true, navy);
   article.keyTakeaways.forEach((takeaway, index) => write(`${index + 1}. ${takeaway}`));
-  write("PLACEHOLDER BRAND perspective", 13, true, navy);
+  write("your firm perspective", 13, true, navy);
   write(article.perspective);
   write("Published performance context", 13, true, navy);
   write(`Published cumulative return summary: ${returnSummary.period}; as at ${returnSummary.asAt}. Source: ${returnSummary.source}. This context is not a market quote or forecast.`);
   write("Related research", 13, true, navy);
   for (const relatedSlug of article.relatedSlugs) write(`/insights/${relatedSlug}`);
   write(`Source attribution: ${article.source}`);
-  write(`FSCA and FAIS disclosure: ${company.regulatoryNotice}. PLACEHOLDER BRAND is regulated by the Financial Sector Conduct Authority (FSCA). ${performanceDisclosures.advice}`);
+  write(`FSCA and FAIS disclosure: ${company.regulatoryNotice}. your firm is regulated by the Financial Sector Conduct Authority (FSCA). ${performanceDisclosures.advice}`);
   write(performanceDisclosures.pastPerformance, 8);
 
   if (branding !== "clean") {

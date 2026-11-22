@@ -5,11 +5,11 @@ import { company, faqs } from "@/data/firmData";
 import { LargeTitle } from "@/components/IOSKit";
 
 export const metadata: Metadata = {
-  title: "Contact PLACEHOLDER BRAND",
-  description: "Speak to PLACEHOLDER BRAND about investment strategies, client enquiries and advisory partnerships.",
+  title: "Contact your firm",
+  description: "Speak to your firm about investment strategies, client enquiries and advisory partnerships.",
   openGraph: {
-    title: "Contact PLACEHOLDER BRAND",
-    description: "Speak to PLACEHOLDER BRAND about investment strategies, client enquiries and advisory partnerships.",
+    title: "Contact your firm",
+    description: "Speak to your firm about investment strategies, client enquiries and advisory partnerships.",
     url: "/contact",
   },
 };
@@ -26,7 +26,7 @@ export default function ContactPage() {
       <LargeTitle
         eyebrow="CONTACT placeholder"
         title="Let’s talk."
-        description="Get in touch with PLACEHOLDER BRAND for information about our investment strategies and resources."
+        description="Get in touch with your firm for information about our investment strategies and resources."
       />
 
       <section className="mx-auto grid w-full max-w-7xl gap-12 px-5 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">

@@ -9,8 +9,8 @@ import {
 } from "./model";
 
 const funds: AdvisorFundSearchRecord[] = [
-  { id: "balanced", name: "PLACEHOLDER BRAND Balanced", strategy: "Moderate to Aggressive", jseCode: null, isin: null },
-  { id: "cautious", name: "PLACEHOLDER BRAND Cautious", strategy: "Conservative to Cautious", jseCode: null, isin: null },
+  { id: "balanced", name: "your firm Balanced", strategy: "Moderate to Aggressive", jseCode: null, isin: null },
+  { id: "cautious", name: "your firm Cautious", strategy: "Conservative to Cautious", jseCode: null, isin: null },
 ];
 
 describe("searchAdvisorFunds", () => {
@@ -49,7 +49,7 @@ describe("canReadLinkedClientRecord", () => {
     revokedAt: null,
   };
 
-  it("requires active status, client consent, PLACEHOLDER BRAND approval, and the requested scope", () => {
+  it("requires active status, client consent, your firm approval, and the requested scope", () => {
     expect(canReadLinkedClientRecord(activeGrant, "investments")).toBe(true);
     expect(canReadLinkedClientRecord(activeGrant, "documents")).toBe(false);
     expect(canReadLinkedClientRecord({ ...activeGrant, clientConsentedAt: null }, "investments")).toBe(false);

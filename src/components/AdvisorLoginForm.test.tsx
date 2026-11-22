@@ -60,7 +60,7 @@ describe("AdvisorLoginForm", () => {
       data: { user: { app_metadata: { role: "adviser" } } },
       error: null,
     });
-    render(<AdvisorLoginForm />);
+    render(<AdvisorLoginForm allowedRole="adviser" />);
 
     fireEvent.change(screen.getByRole("textbox", { name: "Email address" }), {
       target: { value: "advisor@example.com" },
@@ -86,7 +86,7 @@ describe("AdvisorLoginForm", () => {
       data: { user: { app_metadata: { role: "admin" } } },
       error: null,
     });
-    render(<AdvisorLoginForm />);
+    render(<AdvisorLoginForm allowedRole="admin" />);
 
     fireEvent.change(screen.getByRole("textbox", { name: "Email address" }), {
       target: { value: "admin@example.com" },
@@ -119,7 +119,7 @@ describe("AdvisorLoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: "SIGN IN" }));
 
     expect(await screen.findByRole("status")).toHaveTextContent(
-      "This is staff sign-in only.",
+      "This sign-in is for authorised advisers only.",
     );
     expect(signOut).toHaveBeenCalled();
     expect(replace).not.toHaveBeenCalled();

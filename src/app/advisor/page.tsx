@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import { LocalAdviserPortal } from "@/components/local/LocalAdviserPortal";
+import { redirect } from "next/navigation";
+import { AdvisorPortalContent } from "@/components/AdvisorPortalContent";
+import { getAdviserPageUser } from "@/lib/adviser/server";
 
 export const metadata: Metadata = {
   title: "Adviser demonstration portal",
-  description: "A local, fictional-data adviser portal demonstration for PLACEHOLDER BRAND.",
+  description: "A local, fictional-data adviser portal demonstration for your firm.",
   robots: { index: false, follow: false },
 };
 
 export const instant = false;
 
-export default function AdvisorPage() {
-  return <LocalAdviserPortal />;
+export default async function AdvisorPage() {
+  const user = await getAdviserPageUser();
+  if (!user) redirect("/advisor/login");
+  return <AdvisorPortalContent />;
 }

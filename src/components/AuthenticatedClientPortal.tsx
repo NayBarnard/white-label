@@ -164,7 +164,7 @@ const demoDocuments: VaultItem[] = [
   },
   {
     id: "placeholder-balanced-factsheet",
-    title: "PLACEHOLDER BRAND Balanced Strategy Fact Sheet",
+    title: "your firm Balanced Strategy Fact Sheet",
     category: "Strategy Fact Sheets",
     issuedAt: "2026-09-30",
     description: "Strategy objectives, asset allocation and published performance overview.",
@@ -312,7 +312,7 @@ function AccountEmptyState({ message }: { message: string }) {
     <EmptyState>
       {message}
       <br />
-      Contact PLACEHOLDER BRAND at{" "}
+      Contact your firm at{" "}
       <a className="font-semibold text-[var(--foreground)] underline" href={`tel:${company.phone.replaceAll(" ", "")}`}>
         {company.phone}
       </a>{" "}
@@ -323,12 +323,6 @@ function AccountEmptyState({ message }: { message: string }) {
       .
     </EmptyState>
   );
-}
-
-function isDemoAccount(email: string) {
-  return (process.env.NEXT_PUBLIC_DEMO_ACCOUNT_EMAILS ?? "")
-    .split(",")
-    .some((demoEmail) => demoEmail.trim().toLowerCase() === email.trim().toLowerCase());
 }
 
 function DocumentRow({
@@ -587,7 +581,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
     };
   }, [client, router, user.id]);
 
-  const isDemo = isDemoAccount(user.email);
+  const isDemo = false;
   const hasCompleteValuation =
     isDemo ||
     (portfolioRows.length > 0 && portfolioRows.every((portfolio) => portfolio.valuation_zar !== null));
@@ -931,7 +925,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
         return;
       }
       if (!isDemo) {
-        setActionError("This document is not available for download. Please contact PLACEHOLDER BRAND for help.");
+        setActionError("This document is not available for download. Please contact your firm for help.");
         return;
       }
       const pdf = await createClientPdf(document.title, [
@@ -1064,8 +1058,8 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
                 <p className="text-xs text-[var(--muted)]">Assigned adviser</p>
                 {adviser ? (
                   <>
-                    <p className="mt-2 font-semibold text-[var(--foreground)]">{adviser.name || "PLACEHOLDER BRAND adviser"}</p>
-                    <p className="mt-1 text-xs text-[var(--muted)]">{adviser.email || adviser.phone || "Use the PLACEHOLDER BRAND adviser team contact."}</p>
+                    <p className="mt-2 font-semibold text-[var(--foreground)]">{adviser.name || "your firm adviser"}</p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">{adviser.email || adviser.phone || "Use the your firm adviser team contact."}</p>
                     {adviser.phone ? (
                       <a href={`tel:${adviser.phone.replaceAll(" ", "")}`} className="mt-3 inline-flex min-h-10 items-center rounded-full border border-[var(--border-strong)] px-4 text-xs font-semibold">
                         Call adviser
@@ -1224,7 +1218,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
           ) : null}
 
           <aside className={`${panelClass} mt-5 border-l-4 border-l-[var(--accent)]`}>
-            <p className="text-[10px] font-bold tracking-[0.16em] text-[var(--accent)]">PLACEHOLDER BRAND INVESTMENT COMMITTEE · POSITIONING NOTE</p>
+            <p className="text-[10px] font-bold tracking-[0.16em] text-[var(--accent)]">your firm INVESTMENT COMMITTEE · POSITIONING NOTE</p>
             <p className="mt-2 text-sm leading-6 text-[var(--foreground)]">
               Portfolios remain diversified across growth and defensive assets. The committee continues to balance long-term return objectives with liquidity and valuation discipline as market conditions evolve.
             </p>
@@ -1599,7 +1593,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
           <SectionTitle
             eyebrow="CLIENT SERVICE"
             title="Requests, fees & adviser"
-            detail="Submit a secure instruction request or get in touch with the PLACEHOLDER BRAND team."
+            detail="Submit a secure instruction request or get in touch with the your firm team."
           />
           {requestTableError ? (
             <p className="mb-4 rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 text-xs leading-5 text-[var(--muted)]">
@@ -1712,7 +1706,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
                 feeInformation.performanceFee === null &&
                 feeInformation.initialFee === null ? (
                   <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
-                    Your fees are set out in your signed mandate and fee schedule. Contact the PLACEHOLDER BRAND team for a copy.
+                    Your fees are set out in your signed mandate and fee schedule. Contact the your firm team for a copy.
                   </p>
                 ) : null}
               </section>
@@ -1747,7 +1741,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
           <SectionTitle
             eyebrow="FUND MANAGER NOTES"
             title="Manager Updates"
-            detail="Published updates from the PLACEHOLDER BRAND investment team."
+            detail="Published updates from the your firm investment team."
           />
           {managerUpdatesError ? (
             <p role="status" className="mb-4 rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 text-xs leading-5 text-[var(--muted)]">
@@ -1766,7 +1760,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
                   <a href={`/insights/${update.public_slug}`} className="mt-2 inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">
                     Open canonical research
                   </a>
-                  <p className="mt-2 text-xs text-[var(--muted)]">{update.category} · {update.author_name ?? "PLACEHOLDER BRAND Investment Team"}</p>
+                  <p className="mt-2 text-xs text-[var(--muted)]">{update.category} · {update.author_name ?? "your firm Investment Team"}</p>
                   {update.pdf_object_path ? (
                     <a href={`/api/insights/${update.public_slug}/pdf?branding=clean`} className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-[var(--accent)] hover:underline">
                       <ArrowDownToLine size={14} aria-hidden="true" /> Download attached PDF

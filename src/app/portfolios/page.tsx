@@ -18,10 +18,10 @@ import { LargeTitle } from "@/components/IOSKit";
 
 export const metadata: Metadata = {
   title: "Our portfolios",
-  description: "Review PLACEHOLDER BRAND' investment strategies, published performance and portfolio positioning.",
+  description: "Review your firm' investment strategies, published performance and portfolio positioning.",
   openGraph: {
     title: "Our portfolios",
-    description: "Review PLACEHOLDER BRAND' investment strategies, published performance and portfolio positioning.",
+    description: "Review your firm' investment strategies, published performance and portfolio positioning.",
     url: "/portfolios",
   },
 };

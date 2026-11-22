@@ -194,7 +194,7 @@ type PortalDatabase = {
           key_takeaways: string[];
           placeholder_perspective: string | null;
           related_slugs: string[];
-          strategy: "PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious" | "Both";
+          strategy: "your firm Balanced" | "your firm Cautious" | "Both";
           featured: boolean;
           scheduled_at: string | null;
           pdf_object_path: string | null;
@@ -222,7 +222,7 @@ type PortalDatabase = {
           key_takeaways?: string[];
           placeholder_perspective?: string | null;
           related_slugs?: string[];
-          strategy?: "PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious" | "Both";
+          strategy?: "your firm Balanced" | "your firm Cautious" | "Both";
           featured?: boolean;
           scheduled_at?: string | null;
           pdf_object_path?: string | null;
@@ -250,7 +250,7 @@ type PortalDatabase = {
           key_takeaways?: string[];
           placeholder_perspective?: string | null;
           related_slugs?: string[];
-          strategy?: "PLACEHOLDER BRAND Balanced" | "PLACEHOLDER BRAND Cautious" | "Both";
+          strategy?: "your firm Balanced" | "your firm Cautious" | "Both";
           featured?: boolean;
           scheduled_at?: string | null;
           pdf_object_path?: string | null;
@@ -306,6 +306,7 @@ type PortalDatabase = {
           id: string;
           adviser_user_id: string;
           client_user_id: string;
+          tenant_id: string;
           status: "active" | "inactive";
           created_at: string;
           updated_at: string;
@@ -314,6 +315,7 @@ type PortalDatabase = {
           id?: string;
           adviser_user_id: string;
           client_user_id: string;
+          tenant_id?: string;
           status?: "active" | "inactive";
           created_at?: string;
           updated_at?: string;
@@ -322,6 +324,7 @@ type PortalDatabase = {
           id?: string;
           adviser_user_id?: string;
           client_user_id?: string;
+          tenant_id?: string;
           status?: "active" | "inactive";
           created_at?: string;
           updated_at?: string;
@@ -846,6 +849,52 @@ type PortalDatabase = {
           published_by?: string | null;
           published_at?: string | null;
           source_version_id?: string | null;
+        };
+        Relationships: [];
+      };
+      universal_search_records: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          category: "fund" | "provider" | "platform" | "document" | "insight" | "resource" | "task" | "client" | "request" | "other";
+          title: string;
+          description: string;
+          entity_type: string;
+          entity_id: string | null;
+          client_user_id: string | null;
+          internal_path: string;
+          is_published: boolean;
+          search_vector: unknown;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          tenant_id: string;
+          category: "fund" | "provider" | "platform" | "document" | "insight" | "resource" | "task" | "client" | "request" | "other";
+          title: string;
+          description?: string;
+          entity_type: string;
+          entity_id?: string | null;
+          client_user_id?: string | null;
+          internal_path: string;
+          is_published?: boolean;
+          search_vector?: unknown;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          tenant_id?: string;
+          category?: "fund" | "provider" | "platform" | "document" | "insight" | "resource" | "task" | "client" | "request" | "other";
+          title?: string;
+          description?: string;
+          entity_type?: string;
+          entity_id?: string | null;
+          client_user_id?: string | null;
+          internal_path?: string;
+          is_published?: boolean;
+          search_vector?: unknown;
+          updated_at?: string;
         };
         Relationships: [];
       };

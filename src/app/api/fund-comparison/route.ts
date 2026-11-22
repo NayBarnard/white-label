@@ -116,7 +116,7 @@ export async function GET() {
     }, null);
 
     return NextResponse.json({
-      source: "PLACEHOLDER BRAND fund data",
+      source: "your firm fund data",
       updatedAt,
       funds,
       observations,

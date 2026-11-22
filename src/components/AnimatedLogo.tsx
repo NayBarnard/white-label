@@ -11,7 +11,7 @@ export function AnimatedLogo({ compact = false, prominent = false }: Props) {
   return (
     <Image
       src="/logo-still.png"
-      alt="PLACEHOLDER BRAND"
+      alt="your firm"
       width={960}
       height={468}
       priority={compact}

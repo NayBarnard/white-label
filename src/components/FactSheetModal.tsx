@@ -47,7 +47,7 @@ export function FactSheetModal({ title, href }: Props) {
             <header className="flex items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--surface)] px-4 py-3 sm:px-6">
               <div>
                 <p className="text-[10px] font-semibold tracking-[0.16em] text-[var(--accent)]">
-                  PLACEHOLDER BRAND · PRODUCT RESOURCE
+                  your firm · PRODUCT RESOURCE
                 </p>
                 <h2 id="factsheet-dialog-title" className="mt-1 text-sm font-semibold sm:text-base">
                   {title}

@@ -74,7 +74,7 @@ alter table public.manager_updates
 
 alter table public.manager_updates
   add constraint manager_updates_strategy_check check (
-    strategy in ('PLACEHOLDER BRAND Balanced', 'PLACEHOLDER BRAND Cautious', 'Both')
+    strategy in ('your firm Balanced', 'your firm Cautious', 'Both')
   );
 
 alter table public.manager_updates
@@ -167,7 +167,7 @@ alter table public.site_documents
 
 alter table public.site_documents
   add constraint site_documents_strategy_check check (
-    strategy is null or strategy in ('PLACEHOLDER BRAND Balanced', 'PLACEHOLDER BRAND Cautious', 'Both')
+    strategy is null or strategy in ('your firm Balanced', 'your firm Cautious', 'Both')
   );
 
 alter table public.site_documents

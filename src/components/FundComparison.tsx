@@ -228,7 +228,7 @@ export function FundComparison() {
           <p className="funds-card-label font-bold tracking-[0.16em]">FUND COMPARISON</p>
           <h2 className="funds-card-title mt-2">Fund NAV vs active benchmark</h2>
           <p className="mt-2 text-sm text-[var(--muted)]">
-            Compare indexed fund NAV and benchmark values using PLACEHOLDER BRAND fund data.
+            Compare indexed fund NAV and benchmark values using your firm fund data.
           </p>
         </div>
         {loading || selectedObservations.length > 0 ? (
