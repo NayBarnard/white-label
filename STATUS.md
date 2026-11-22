@@ -114,3 +114,18 @@ Static site export is independent of WEALTH OS and requires no Supabase,
 Firebase, Vercel or paid API. It exports public website content, not a secure
 client portal, financial database, transaction workflow or authentication
 system.
+
+## 2026-11-22 financial intelligence implementation
+
+- Added a seeded, versioned digital twin with confidence ranges and life events.
+- Added consequence graph analysis for proposed planning changes.
+- Added append-only browser decision context and Supabase API storage.
+- Added parallel plan comparison and concentration/currency/liquidity findings.
+- Added evidence-only opportunity review, relationship verification, approved
+  knowledge records, hypothetical crisis rehearsal and a discovery register.
+- Added unit coverage for reproducibility, risk thresholds, opportunities and
+  linear crisis assumptions.
+- Optional Supabase migrations are required before hosted persistence can be
+  enabled; standalone planning remains browser-local.
+- Hosted tenant/RLS validation, authorised real holdings data and regulatory
+  review remain outstanding and are not represented as production-ready.

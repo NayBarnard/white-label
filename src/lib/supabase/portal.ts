@@ -885,6 +885,48 @@ type PortalDatabase = {
         Update: { content?: string; updated_at?: string };
         Relationships: [];
       };
+      wealth_financial_twins: {
+        Row: { id: string; tenant_id: string; user_id: string; client_id: string | null; name: string; calculation_version: string; seed: number; assumptions: Json; observed_data: Json; result: Json; methodology: Json; created_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; client_id?: string | null; name: string; calculation_version: string; seed: number; assumptions: Json; observed_data?: Json; result: Json; methodology: Json; created_at?: string };
+        Update: { name?: string; seed?: number; assumptions?: Json; observed_data?: Json; result?: Json; methodology?: Json };
+        Relationships: [];
+      };
+      wealth_decisions: {
+        Row: { id: string; tenant_id: string; user_id: string; client_id: string | null; title: string; status: "open" | "approved" | "declined" | "superseded"; created_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; client_id?: string | null; title: string; status?: "open" | "approved" | "declined" | "superseded"; created_at?: string };
+        Update: { title?: string; status?: "open" | "approved" | "declined" | "superseded" };
+        Relationships: [];
+      };
+      wealth_decision_events: {
+        Row: { id: string; tenant_id: string; decision_id: string; user_id: string; event_type: "context" | "alternative" | "assumption" | "approval" | "outcome" | "comparison" | "correction"; payload: Json; created_at: string };
+        Insert: { id?: string; tenant_id: string; decision_id: string; user_id: string; event_type: "context" | "alternative" | "assumption" | "approval" | "outcome" | "comparison" | "correction"; payload: Json; created_at?: string };
+        Update: never;
+        Relationships: [];
+      };
+      wealth_parallel_plans: {
+        Row: { id: string; tenant_id: string; user_id: string; client_id: string | null; name: string; assumptions: Json; result: Json; tradeoffs: Json; calculation_version: string; created_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; client_id?: string | null; name: string; assumptions: Json; result: Json; tradeoffs: Json; calculation_version: string; created_at?: string };
+        Update: { name?: string; assumptions?: Json; result?: Json; tradeoffs?: Json };
+        Relationships: [];
+      };
+      wealth_risk_analyses: {
+        Row: { id: string; tenant_id: string; user_id: string; client_id: string | null; holdings: Json; findings: Json; methodology: Json; created_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; client_id?: string | null; holdings: Json; findings: Json; methodology: Json; created_at?: string };
+        Update: { holdings?: Json; findings?: Json; methodology?: Json };
+        Relationships: [];
+      };
+      wealth_opportunities: {
+        Row: { id: string; tenant_id: string; user_id: string; client_id: string | null; title: string; evidence: Json; rationale: string; missing_information: Json; benefits: Json; risks: Json; review_status: "pending" | "reviewed" | "accepted" | "declined"; created_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; client_id?: string | null; title: string; evidence: Json; rationale: string; missing_information?: Json; benefits: Json; risks: Json; review_status?: "pending" | "reviewed" | "accepted" | "declined"; created_at?: string };
+        Update: { review_status?: "pending" | "reviewed" | "accepted" | "declined"; missing_information?: Json; benefits?: Json; risks?: Json };
+        Relationships: [];
+      };
+      wealth_crisis_scenarios: {
+        Row: { id: string; tenant_id: string; user_id: string; name: string; assumptions: Json; estimated_exposure: Json; methodology: Json; created_at: string };
+        Insert: { id?: string; tenant_id: string; user_id: string; name: string; assumptions: Json; estimated_exposure: Json; methodology: Json; created_at?: string };
+        Update: { name?: string; assumptions?: Json; estimated_exposure?: Json; methodology?: Json };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

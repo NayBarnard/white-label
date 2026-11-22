@@ -238,3 +238,22 @@ All three endpoints cap the request body size. Enquiry and newsletter forms
 also include a hidden honeypot field. Required server-side environment
 variables remain `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`;
 the service-role key must only be configured in server-side environments.
+
+## Financial intelligence programme
+
+The standalone `/planning` journey includes a seeded financial twin,
+consequence graph, append-only decision context, parallel plan comparison,
+holding-risk demonstration, evidence-first opportunity review, relationship
+verification, approved-source knowledge, crisis rehearsal and innovation lab.
+The browser implementation clearly identifies all demo and hypothetical data.
+Optional Supabase persistence migrations are in
+`supabase/migrations/202611220002_financial_intelligence.sql`,
+`supabase/migrations/202611220003_decisions_plans_risk.sql`, and
+`supabase/migrations/202611220004_enterprise_intelligence.sql`.
+
+These calculations are not guarantees or regulated advice. They must not be
+used for real financial decisions until authorised data, legal review,
+tenant validation and human verification are complete. See
+[`docs/INNOVATION_CAPABILITY_AUDIT.md`](./docs/INNOVATION_CAPABILITY_AUDIT.md),
+[`docs/DIFFERENTIATION_MATRIX.md`](./docs/DIFFERENTIATION_MATRIX.md), and
+[`docs/INNOVATION_REGISTER.md`](./docs/INNOVATION_REGISTER.md).
