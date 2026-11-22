@@ -9,6 +9,7 @@ import { analyseHoldingRisk, compareTwinPlans, type Holding } from "@/lib/wealth
 import { orchestrateOpportunity, rehearseCrisis, evaluateInnovationProposal } from "@/lib/wealth-intelligence/enterprise";
 
 type Scenario = { id: string; name: string; present: number; monthly: number; years: number; rate: number; result: number };
+type HostedRecord = { path: string; payload: object };
 
 export function WealthPlanningLab() {
   const [present, setPresent] = useState(100000);
@@ -33,6 +34,35 @@ export function WealthPlanningLab() {
   const [taxAllowance, setTaxAllowance] = useState<number | null>(30000);
   const [relationshipEntities, setRelationshipEntities] = useLocalState<Array<{ id: string; type: string; label: string; verified: boolean }>>("example-wealth.relationship.entities", []);
   const [knowledgeRecords, setKnowledgeRecords] = useLocalState<Array<{ id: string; title: string; summary: string; sourceReference: string; approved: boolean }>>("example-wealth.knowledge.records", []);
+  const [savedEnterpriseRuns, setSavedEnterpriseRuns] = useLocalState<Array<{ id: string; opportunityCount: number; estimatedExposureZar: number | null }>>("example-wealth.planning.enterprise-runs", []);
+  const [persistenceNotice, setPersistenceNotice] = useState<{ kind: "pending" | "success" | "error"; message: string } | null>(null);
+
+  async function persistHostedRecords(records: HostedRecord[], label: string) {
+    if (process.env.NEXT_PUBLIC_STUDIO_STORAGE_MODE !== "supabase") return;
+    setPersistenceNotice({ kind: "pending", message: `Saving ${label} to the configured account…` });
+    try {
+      const responses = await Promise.all(records.map(({ path, payload }) =>
+        fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }),
+      ));
+      if (responses.some((response) => !response.ok)) {
+        setPersistenceNotice({
+          kind: "error",
+          message: `Hosted save failed for ${label}. The local illustration remains available on this page; no hosted save is confirmed.`,
+        });
+        return;
+      }
+      setPersistenceNotice({ kind: "success", message: `${label} saved to the authenticated account.` });
+    } catch {
+      setPersistenceNotice({
+        kind: "error",
+        message: `Hosted save failed for ${label}. The local illustration remains available on this page; no hosted save is confirmed.`,
+      });
+    }
+  }
 
   const twinResult = useMemo(() => simulateFinancialTwin({
     startingAmount: present,
@@ -116,17 +146,14 @@ export function WealthPlanningLab() {
       ...current,
       scenario,
     ]);
-    if (process.env.NEXT_PUBLIC_STUDIO_STORAGE_MODE === "supabase") {
-      void fetch("/api/wealth-os/scenarios", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+    void persistHostedRecords([{
+      path: "/api/wealth-os/scenarios",
+      payload: {
           name,
           assumptions: { present, monthly, years, nominalRate: rate, inflation },
           result: { nominal, realInflationAdjusted: real },
-        }),
-      }).catch(() => undefined);
-    }
+      },
+    }], "scenario");
   }
 
   function exportScenarios() {
@@ -174,17 +201,14 @@ export function WealthPlanningLab() {
       },
     };
     setTwinRuns((current) => [run, ...current].slice(0, 20));
-    if (process.env.NEXT_PUBLIC_STUDIO_STORAGE_MODE === "supabase") {
-      void fetch("/api/wealth-os/intelligence", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+    void persistHostedRecords([{
+      path: "/api/wealth-os/intelligence",
+      payload: {
           name: run.name,
           assumptions: run.assumptions,
           observedData: { source: "manual-illustrative-entry", liveDataImported: false },
-        }),
-      }).catch(() => undefined);
-    }
+      },
+    }], "financial twin run");
   }
 
   function addDecisionContext() {
@@ -214,17 +238,14 @@ export function WealthPlanningLab() {
         }],
       },
     ]);
-    if (process.env.NEXT_PUBLIC_STUDIO_STORAGE_MODE === "supabase") {
-      void fetch("/api/wealth-os/decisions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+    void persistHostedRecords([{
+      path: "/api/wealth-os/decisions",
+      payload: {
           title: decisionTitle,
           eventType: "context",
           payload: { context: decisionContext, calculationVersion: FINANCIAL_TWIN_VERSION, humanApprovalRequired: true },
-        }),
-      }).catch(() => undefined);
-    }
+      },
+    }], "decision context");
   }
 
   function loadFictionalRiskDemo() {
@@ -236,32 +257,46 @@ export function WealthPlanningLab() {
   }
 
   function saveEnterpriseIllustrations() {
-    if (process.env.NEXT_PUBLIC_STUDIO_STORAGE_MODE === "supabase") {
-      void fetch("/api/wealth-os/enterprise", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+    const localOpportunities = orchestrateOpportunity({
+      verifiedMonthlySurplusZar: monthlySurplus,
+      targetShortfallZar: target > twinResult.percentile50 ? target - twinResult.percentile50 : 0,
+      taxAllowanceRemainingZar: taxAllowance,
+    });
+    const localCrisis = rehearseCrisis(target, {
+      marketShockPercent: 20,
+      inflationShockPercent: 10,
+      currencyShockPercent: 5,
+      liquidityShockPercent: 10,
+    });
+    setSavedEnterpriseRuns((current) => [{
+      id: `enterprise-${Date.now()}`,
+      opportunityCount: localOpportunities.length,
+      estimatedExposureZar: localCrisis?.estimatedExposureZar ?? null,
+    }, ...current].slice(0, 20));
+    void persistHostedRecords([
+      {
+        path: "/api/wealth-os/enterprise",
+        payload: {
           kind: "opportunity",
           input: {
             verifiedMonthlySurplusZar: monthlySurplus,
             targetShortfallZar: target > twinResult.percentile50 ? target - twinResult.percentile50 : 0,
             taxAllowanceRemainingZar: taxAllowance,
           },
-        }),
-      }).catch(() => undefined);
-      void fetch("/api/wealth-os/enterprise", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        },
+      },
+      {
+        path: "/api/wealth-os/enterprise",
+        payload: {
           kind: "crisis",
           input: {
             name: "Illustrative combined shock",
             portfolioZar: target,
             assumptions: { marketShockPercent: 20, inflationShockPercent: 10, currencyShockPercent: 5, liquidityShockPercent: 10 },
           },
-        }),
-      }).catch(() => undefined);
-    }
+        },
+      },
+    ], "opportunity and crisis scenarios");
   }
 
   function addFictionalRelationship() {
@@ -312,6 +347,15 @@ export function WealthPlanningLab() {
       <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">WEALTH PLANNING LAB</p>
       <h1 className="mt-2 text-3xl font-semibold">Illustrative growth scenarios</h1>
       <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--muted)]">Fictional calculations only. Results are not forecasts, guarantees or personalised advice.</p>
+      {persistenceNotice && (
+        <p
+          className={`mt-4 max-w-3xl text-sm ${persistenceNotice.kind === "error" ? "text-red-700 dark:text-red-300" : "text-[var(--muted)]"}`}
+          role={persistenceNotice.kind === "error" ? "alert" : "status"}
+          aria-live="polite"
+        >
+          {persistenceNotice.message}
+        </p>
+      )}
 
       <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_1.25fr]">
         <section className="glass rounded-3xl p-5 sm:p-7">
@@ -333,7 +377,7 @@ export function WealthPlanningLab() {
           <p className="mt-1 text-2xl font-semibold text-[var(--accent)]">R {real.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}</p>
           <div className="mt-6 h-3 overflow-hidden rounded-full bg-[var(--border)]"><div className="h-full rounded-full bg-[var(--accent-fill)]" style={{ width: `${Math.min(100, Math.max(8, nominal / 100000))}%` }} /></div>
           <label className="mt-6 block text-sm">Scenario name<input value={name} onChange={(event) => setName(event.target.value)} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
-          <div className="mt-4 flex flex-wrap gap-3"><button type="button" onClick={saveScenario} className="min-h-11 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Save local scenario</button><button type="button" onClick={exportScenarios} className="min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Export JSON</button><button type="button" onClick={() => void exportPdf()} className="min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Export branded PDF</button></div>
+          <div className="mt-4 flex flex-wrap gap-3"><button type="button" onClick={saveScenario} className="min-h-11 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Save scenario</button><button type="button" onClick={exportScenarios} className="min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Export JSON</button><button type="button" onClick={() => void exportPdf()} className="min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Export branded PDF</button></div>
         </section>
       </div>
 
@@ -439,7 +483,16 @@ export function WealthPlanningLab() {
         <h2 id="crisis-heading" className="mt-2 text-xl font-semibold">Illustrative institution-style shock</h2>
         {crisisResult ? <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><article className="rounded-2xl border border-[var(--border)] p-4"><p className="text-xs text-[var(--muted)]">Estimated adjusted exposure</p><p className="mt-2 text-xl font-semibold">R {crisisResult.estimatedExposureZar.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}</p></article><article className="rounded-2xl border border-[var(--border)] p-4"><p className="text-xs text-[var(--muted)]">Market impact</p><p className="mt-2 text-xl font-semibold">R {crisisResult.shocks.marketImpact.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}</p></article><article className="rounded-2xl border border-[var(--border)] p-4"><p className="text-xs text-[var(--muted)]">Currency impact</p><p className="mt-2 text-xl font-semibold">R {crisisResult.shocks.currencyImpact.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}</p></article><article className="rounded-2xl border border-[var(--border)] p-4"><p className="text-xs text-[var(--muted)]">Liquidity impact</p><p className="mt-2 text-xl font-semibold">R {crisisResult.shocks.liquidityImpact.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}</p></article></div> : null}
         <p className="mt-4 text-xs leading-5 text-[var(--muted)]">Hypothetical simulation only: 20% market, 10% inflation, 5% currency and 10% liquidity assumptions. This linear demo does not model correlations or contagion.</p>
-        <button type="button" onClick={saveEnterpriseIllustrations} className="mt-4 min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Save enterprise illustrations when Supabase is enabled</button>
+        <button type="button" onClick={saveEnterpriseIllustrations} className="mt-4 min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Save illustrative review</button>
+        {savedEnterpriseRuns.length ? (
+          <ul className="mt-4 space-y-2" aria-label="Saved illustrative enterprise reviews">
+            {savedEnterpriseRuns.map((run) => (
+              <li key={run.id} className="rounded-xl border border-[var(--border)] p-3 text-sm">
+                Review saved locally · {run.opportunityCount} candidate opportunities · estimated hypothetical adjusted exposure: {run.estimatedExposureZar === null ? "unavailable" : `R ${run.estimatedExposureZar.toLocaleString("en-ZA", { maximumFractionDigits: 0 })}`}
+              </li>
+            ))}
+          </ul>
+        ) : <p className="mt-3 text-sm text-[var(--muted)]">No illustrative review has been saved yet.</p>}
       </section>
 
       <section className="glass mt-5 rounded-3xl p-5 sm:p-7" aria-labelledby="discovery-heading">

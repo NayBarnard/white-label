@@ -1,21 +1,17 @@
 import { NextResponse } from "next/server";
-import { getAuthenticatedUser } from "@/lib/admin/server";
-import { createClient } from "@supabase/supabase-js";
-import type { PortalDatabase } from "@/lib/supabase/portal";
-import { readJsonBody } from "@/lib/server/rate-limit";
+import { authorizeWealthOsApi, isJsonObject } from "@/lib/wealth-intelligence/server";
+import { enforceAuthenticatedRateLimit, readJsonBody } from "@/lib/server/rate-limit";
 
 function jsonError(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
 
 export async function GET() {
-  const user = await getAuthenticatedUser(false).catch(() => null);
-  if (!user) return jsonError("Sign-in is required.", 401);
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return jsonError("Supabase scenario storage is not configured.", 503);
-  const supabase = createClient<PortalDatabase>(url, key);
-  const tenantId = typeof user.app_metadata.tenant_id === "string" ? user.app_metadata.tenant_id : "default";
+  const access = await authorizeWealthOsApi();
+  if (!access.ok) return access.response;
+  const { supabase, tenantId, user } = access;
+  const limit = await enforceAuthenticatedRateLimit(user.id, "wealth-os-scenarios-read", 60, 60);
+  if (!limit.ok) return limit.response;
   const { data, error } = await supabase
     .from("wealth_os_scenarios")
     .select("id, name, assumptions, result, created_at, updated_at")
@@ -27,21 +23,18 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = await getAuthenticatedUser(false).catch(() => null);
-  if (!user) return jsonError("Sign-in is required.", 401);
+  const access = await authorizeWealthOsApi();
+  if (!access.ok) return access.response;
+  const { supabase, tenantId, user } = access;
+  const limit = await enforceAuthenticatedRateLimit(user.id, "wealth-os-scenarios", 20, 60);
+  if (!limit.ok) return limit.response;
   const body = await readJsonBody(request, 64 * 1024);
-  if (!body.ok) return jsonError("The scenario request is invalid.", 400);
-  const value = body.value as { name?: unknown; assumptions?: unknown; result?: unknown };
+  if (!body.ok || !isJsonObject(body.value)) return jsonError("The scenario request is invalid.", 400);
+  const value = body.value;
   if (typeof value.name !== "string" || !value.name.trim() ||
-      !value.assumptions || typeof value.assumptions !== "object" ||
-      !value.result || typeof value.result !== "object") {
+      !isJsonObject(value.assumptions) || !isJsonObject(value.result)) {
     return jsonError("The scenario is incomplete.", 400);
   }
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return jsonError("Supabase scenario storage is not configured.", 503);
-  const tenantId = typeof user.app_metadata.tenant_id === "string" ? user.app_metadata.tenant_id : "default";
-  const supabase = createClient<PortalDatabase>(url, key);
   const { data, error } = await supabase
     .from("wealth_os_scenarios")
     .insert({

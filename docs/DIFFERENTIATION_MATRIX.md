@@ -1,35 +1,40 @@
-# Wealth management differentiation matrix
+# Wealth management differentiation assessment
 
-## Competitive evidence reviewed
+Assessment date: 2026-11-22
 
-- eMoney: goals, financial planning, data organisation, stress testing and what-if conversations.
-- Orion: connected CRM, planning, portfolio management, reporting, risk and an institutional intelligence layer.
-- HolistiPlan-style tax planning: tax-document intake and planning opportunities.
-- This repository: a local-first wealth planning lab, portfolio and adviser workflows, tax allowance tracking, renewal evidence, RLS foundations and a Studio.
+This is a repository-level hypothesis, not a claim of market uniqueness,
+patentability or legal defensibility. The cited vendor pages below are existing
+reference links from the project; no new competitive diligence was performed
+for this implementation review.
 
-Sources: vendor public websites reviewed on 2026-11-22:
-https://emoneyadvisor.com/
-https://www.orion.com/
-https://www.holistiplan.com/
+## Code-evidenced capability
 
-## Differentiation assessment
-
-| Capability | Existing comparable pattern | Repository differentiation | Defensibility assessment |
+| Area | Comparable market pattern | Current repository evidence | Factual assessment |
 |---|---|---|---|
-| Digital twin | Common planning projections and what-if tools | A traceable, reproducible seed-based twin with confidence bands, observed/derived/assumed/predicted labels and embedded methodology | Potentially defensible as a composable evidence-and-explanation workflow, not a claimed patent |
-| Consequence engine | What-if and goal dependencies | Explain every edge and changed-node relationship, preserving affected assumptions and human review state | Defensible execution details must come from implementation and validation |
-| Decision history | Review notes and approval records in many systems | Append-only reconstructable context plus actual later outcomes and alternatives | Differentiation is in reconstruction and audit semantics |
-| Parallel planning | Scenario/what-if comparison | Side-by-side stable scenarios with trade-offs, downside ranges and immutable assumptions | Moderate differentiation |
-| Risk discovery | Portfolio risk systems and stress tests | Evidence-first overlap and liquidity explanation across incomplete authorised data | Requires real holdings data to leave demonstration stage |
-| Opportunity orchestration | Tax and planning opportunity engines | Human-review opportunities with evidence, missing information and both benefits and risks | Differentiation is governance, explainability and no-execution policy |
+| Planning projections | Goal planning and what-if projections | Nominal/real future-value planning and a seeded Monte Carlo helper | Reproducible calculations are present, but not independently validated or a complete client twin workflow |
+| Consequence analysis | Scenario and goal-impact tools | Typed graph nodes/edges and a basic affected-node function | A prototype, not a full financial dependency model or source-record approval flow |
+| Decision history | Adviser notes and review records | Browser-local history and an optional API; an additive migration defines atomic append-only context writes | Potential reconstruction workflow, not yet validated against tenant-isolated storage or later observed outcomes |
+| Scenario comparison | What-if and planning scenario comparisons | Three fixed illustrative assumptions in the local planning UI | Not an arbitrary named, versioned plan workspace |
+| Risk discovery | Portfolio exposures and stress testing | Basic concentration, currency and liquidity findings from entered holding values | No dated authorized holdings feed, supported look-through or robust risk methodology |
+| Opportunity review | Tax and planning opportunity tools | Rules produce example prompts with evidence text, missing-information, benefit and risk fields | Candidate generation is a prototype; evidence verification, duplicate handling, disposition and audit are incomplete |
+| Relationship and institutional information | CRM relationship maps and knowledge tools | Browser-local demonstration state and optional schema | No hosted permission-aware graph or search workflow |
+| Crisis rehearsal | Portfolio stress and scenario analysis | Linear shock helper | No correlations, contagion or liquidation cascade model |
+| Website authoring | Visual CMS and publishing tools | Browser-local Studio, static ZIP export and local snapshots | No confirmed hosted deployment or public-domain publishing |
 
-No globally unique claim is made. "Protectable" is not synonymous with "patentable".
+## Potential positioning hypothesis
 
-## Technical architecture
+If completed and independently verified, WEALTH OS could emphasize transparent
+assumptions, reproducible scenarios, evidence lineage, human review and a
+no-execution boundary. These are product-design goals, not unique technical
+claims. Established vendors already offer planning, stress tests, what-if
+tools, risk analysis and institutional intelligence.
 
-- Deterministic pure TypeScript calculation modules in `src/lib/wealth-intelligence`.
-- Versioned assumptions and result schemas in JSON.
-- Supabase tables for immutable twin runs and consequence analyses with tenant/user RLS.
-- Existing adviser client route used to expose information only to authorised advisers.
-- Browser-local demonstration fallback using `useLocalState`.
-- Optional Supabase persistence; no mandatory paid service or CRON dependency.
+## Evidence limits and references
+
+- eMoney: https://emoneyadvisor.com/
+- Orion: https://www.orion.com/
+- Holistiplan: https://www.holistiplan.com/
+
+The repository does not establish that these vendors lack similar features.
+Implementation quality, adoption, ownership, protectability, regulatory
+fitness and value require separate technical, commercial and legal diligence.

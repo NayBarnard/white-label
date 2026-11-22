@@ -17,6 +17,11 @@ at `/client`, `/portal`, `/advisor`, `/admin` and `/planning` when no deployment
 mode or Supabase credentials are configured. Do not enter real or sensitive
 information into browser-only demonstrations.
 
+For an isolated local Supabase development stack, see
+[`docs/LOCAL_SUPABASE.md`](./docs/LOCAL_SUPABASE.md). It uses the repository's
+ordered migrations and local-only Auth/Storage services; it is not a production
+financial-data environment.
+
 The Studio supports multiple local website projects, visual page and section
 editing, responsive previews, browser-local undo/version history, reusable
 sections, starter and custom templates, deterministic creative suggestions,
@@ -246,14 +251,39 @@ consequence graph, append-only decision context, parallel plan comparison,
 holding-risk demonstration, evidence-first opportunity review, relationship
 verification, approved-source knowledge, crisis rehearsal and innovation lab.
 The browser implementation clearly identifies all demo and hypothetical data.
-Optional Supabase persistence migrations are in
+These are prototypes, not complete hosted financial workflows: the consequence
+graph, arbitrary saved plan comparison, holdings-level evidence, relationship
+authorization and permission-aware knowledge search are incomplete.
+
+The optional authenticated WEALTH OS APIs require a cookie-backed Supabase
+session and an explicitly provisioned, non-default `app_metadata.tenant_id`.
+Financial row reads and writes use the authenticated user's Supabase client so
+database RLS applies; these routes do not use the service-role key for financial
+records. The shared authenticated rate-limit store still requires the
+server-only service-role key and the rate-limit migration. Apply the financial
+intelligence migrations in this order:
+
 `supabase/migrations/202611220002_financial_intelligence.sql`,
-`supabase/migrations/202611220003_decisions_plans_risk.sql`, and
-`supabase/migrations/202611220004_enterprise_intelligence.sql`.
+`supabase/migrations/202611220003_decisions_plans_risk.sql`,
+`supabase/migrations/202611220004_enterprise_intelligence.sql`, and
+`supabase/migrations/202611220005_wealth_intelligence_security.sql`, after
+`202611210001_wealth_os_local_sync.sql` and the rate-limit migration. Do not
+apply these migrations to production without explicit human approval. They
+have been applied successfully to a fresh local Supabase stack with the full
+migration set. `npm run test:supabase:rls` passes selected two-tenant,
+multiple-role SQL isolation assertions against that local stack; the test uses
+simulated JWT claims in Postgres and is not an Auth-issued-session, API-route,
+or hosted isolation test.
+The security migration adds a default-disabled tenant readiness gate. Its
+service-role-only record must remain absent/disabled until a trusted operator
+has independently verified every required checklist item; never treat
+attestation fields as proof by themselves.
 
 These calculations are not guarantees or regulated advice. They must not be
 used for real financial decisions until authorised data, legal review,
-tenant validation and human verification are complete. See
+tenant/role isolation tests, storage controls and human verification are
+complete. Browser-local data is not secure production financial storage. See
 [`docs/INNOVATION_CAPABILITY_AUDIT.md`](./docs/INNOVATION_CAPABILITY_AUDIT.md),
 [`docs/DIFFERENTIATION_MATRIX.md`](./docs/DIFFERENTIATION_MATRIX.md), and
-[`docs/INNOVATION_REGISTER.md`](./docs/INNOVATION_REGISTER.md).
+[`docs/INNOVATION_REGISTER.md`](./docs/INNOVATION_REGISTER.md), and
+[`docs/IMPLEMENTATION_PLAN.md`](./docs/IMPLEMENTATION_PLAN.md).

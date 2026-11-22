@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { getAuthenticatedUser } from "@/lib/admin/server";
-import type { PortalDatabase } from "@/lib/supabase/portal";
-import { readJsonBody } from "@/lib/server/rate-limit";
+import { authorizeWealthOsApi, isJsonObject } from "@/lib/wealth-intelligence/server";
+import { enforceAuthenticatedRateLimit, readJsonBody } from "@/lib/server/rate-limit";
 import { simulateFinancialTwin, validateTwinAssumptions } from "@/lib/wealth-intelligence/twin";
 
 function jsonError(message: string, status: number) {
@@ -10,13 +8,11 @@ function jsonError(message: string, status: number) {
 }
 
 export async function GET() {
-  const user = await getAuthenticatedUser(false).catch(() => null);
-  if (!user) return jsonError("Sign-in is required.", 401);
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return jsonError("Supabase financial intelligence storage is not configured.", 503);
-  const tenantId = typeof user.app_metadata.tenant_id === "string" ? user.app_metadata.tenant_id : "default";
-  const supabase = createClient<PortalDatabase>(url, key);
+  const access = await authorizeWealthOsApi();
+  if (!access.ok) return access.response;
+  const { supabase, tenantId, user } = access;
+  const limit = await enforceAuthenticatedRateLimit(user.id, "wealth-os-intelligence-read", 60, 60);
+  if (!limit.ok) return limit.response;
   const { data, error } = await supabase
     .from("wealth_financial_twins")
     .select("id, name, calculation_version, seed, assumptions, observed_data, result, methodology, created_at")
@@ -29,26 +25,23 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = await getAuthenticatedUser(false).catch(() => null);
-  if (!user) return jsonError("Sign-in is required.", 401);
+  const access = await authorizeWealthOsApi();
+  if (!access.ok) return access.response;
+  const { supabase, tenantId, user } = access;
+  const limit = await enforceAuthenticatedRateLimit(user.id, "wealth-os-intelligence-write", 20, 60);
+  if (!limit.ok) return limit.response;
   const body = await readJsonBody(request, 64 * 1024);
-  if (!body.ok) return jsonError("The financial intelligence request is invalid.", 400);
-  const value = body.value as {
-    name?: unknown;
-    assumptions?: unknown;
-    observedData?: unknown;
-  };
+  if (!body.ok || !isJsonObject(body.value)) return jsonError("The financial intelligence request is invalid.", 400);
+  const value = body.value;
   const assumptions = validateTwinAssumptions(value.assumptions);
   if (typeof value.name !== "string" || !value.name.trim() || !assumptions) {
     return jsonError("The financial twin assumptions are incomplete or invalid.", 400);
   }
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return jsonError("Supabase financial intelligence storage is not configured.", 503);
-  const tenantId = typeof user.app_metadata.tenant_id === "string" ? user.app_metadata.tenant_id : "default";
-  const observedData = value.observedData && typeof value.observedData === "object" ? value.observedData : {};
+  if (value.observedData !== undefined && !isJsonObject(value.observedData)) {
+    return jsonError("Observed data must be a JSON object.", 400);
+  }
+  const observedData = value.observedData ?? {};
   const result = simulateFinancialTwin(assumptions);
-  const supabase = createClient<PortalDatabase>(url, key);
   const { data, error } = await supabase
     .from("wealth_financial_twins")
     .insert({

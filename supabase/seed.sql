@@ -1,0 +1,1 @@
+-- No client or portfolio test records are seeded into the local project.

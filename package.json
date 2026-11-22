@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:supabase:rls": "npx --yes supabase@3.2.0 db query --file supabase/tests/tenant-isolation.sql",
     "test:e2e": "playwright test",
     "sync:fund-data": "tsx scripts/sync_fund_data.ts"
   },

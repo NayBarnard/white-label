@@ -26,6 +26,27 @@ describe("enterprise intelligence modules", () => {
     expect(result?.shocks.marketImpact).toBe(200000);
   });
 
+  it("rejects out-of-range or excessive combined shock assumptions", () => {
+    expect(rehearseCrisis(1_000_000, {
+      marketShockPercent: -1,
+      inflationShockPercent: 0,
+      currencyShockPercent: 0,
+      liquidityShockPercent: 0,
+    })).toBeNull();
+    expect(rehearseCrisis(1_000_000, {
+      marketShockPercent: 80,
+      inflationShockPercent: 0,
+      currencyShockPercent: 20,
+      liquidityShockPercent: 1,
+    })).toBeNull();
+    expect(rehearseCrisis(1_000_000, {
+      marketShockPercent: 101,
+      inflationShockPercent: 0,
+      currencyShockPercent: 0,
+      liquidityShockPercent: 0,
+    })).toBeNull();
+  });
+
   it("scores discovery proposals without promising patentability", () => {
     const result = evaluateInnovationProposal({
       existsRepository: false,

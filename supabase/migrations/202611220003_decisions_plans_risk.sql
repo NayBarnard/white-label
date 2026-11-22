@@ -62,11 +62,25 @@ create policy "Users manage own tenant decisions"
   using (user_id = auth.uid() and tenant_id = coalesce(auth.jwt() -> 'app_metadata' ->> 'tenant_id', 'default'))
   with check (user_id = auth.uid() and tenant_id = coalesce(auth.jwt() -> 'app_metadata' ->> 'tenant_id', 'default'));
 
+drop policy if exists "Users read own tenant decision events" on public.wealth_decision_events;
+create policy "Users read own tenant decision events"
+  on public.wealth_decision_events for select to authenticated
+  using (user_id = auth.uid() and tenant_id = coalesce(auth.jwt() -> 'app_metadata' ->> 'tenant_id', 'default'));
+
 drop policy if exists "Users append own tenant decision events" on public.wealth_decision_events;
 create policy "Users append own tenant decision events"
-  on public.wealth_decision_events for select, insert to authenticated
-  using (user_id = auth.uid() and tenant_id = coalesce(auth.jwt() -> 'app_metadata' ->> 'tenant_id', 'default'))
-  with check (user_id = auth.uid() and tenant_id = coalesce(auth.jwt() -> 'app_metadata' ->> 'tenant_id', 'default'));
+  on public.wealth_decision_events for insert to authenticated
+  with check (
+    user_id = auth.uid()
+    and tenant_id = coalesce(auth.jwt() -> 'app_metadata' ->> 'tenant_id', 'default')
+    and exists (
+      select 1
+      from public.wealth_decisions d
+      where d.id = wealth_decision_events.decision_id
+        and d.user_id = auth.uid()
+        and d.tenant_id = wealth_decision_events.tenant_id
+    )
+  );
 
 drop policy if exists "Users manage own tenant parallel plans" on public.wealth_parallel_plans;
 create policy "Users manage own tenant parallel plans"

@@ -13,7 +13,11 @@ export function orchestrateOpportunity(input: {
   taxAllowanceRemainingZar: number | null;
 }): Opportunity[] {
   const opportunities: Opportunity[] = [];
-  if (input.verifiedMonthlySurplusZar !== null && input.verifiedMonthlySurplusZar >= 2000) {
+  if (
+    input.verifiedMonthlySurplusZar !== null &&
+    Number.isFinite(input.verifiedMonthlySurplusZar) &&
+    input.verifiedMonthlySurplusZar >= 2000
+  ) {
     opportunities.push({
       title: "Review additional monthly contribution",
       evidence: [`Verified monthly surplus entered: R ${input.verifiedMonthlySurplusZar.toLocaleString("en-ZA")}`],
@@ -23,7 +27,11 @@ export function orchestrateOpportunity(input: {
       risks: ["Reduced liquidity", "Opportunity cost", "Projection assumptions may not occur"],
     });
   }
-  if (input.taxAllowanceRemainingZar !== null && input.taxAllowanceRemainingZar > 0) {
+  if (
+    input.taxAllowanceRemainingZar !== null &&
+    Number.isFinite(input.taxAllowanceRemainingZar) &&
+    input.taxAllowanceRemainingZar > 0
+  ) {
     opportunities.push({
       title: "Human review unused tax allowance",
       evidence: [`Reported remaining allowance: R ${input.taxAllowanceRemainingZar.toLocaleString("en-ZA")}`],
@@ -33,7 +41,11 @@ export function orchestrateOpportunity(input: {
       risks: ["Allowance rules may change", "Incorrect external contribution data", "No execution or regulated advice"],
     });
   }
-  if (input.targetShortfallZar !== null && input.targetShortfallZar > 0) {
+  if (
+    input.targetShortfallZar !== null &&
+    Number.isFinite(input.targetShortfallZar) &&
+    input.targetShortfallZar > 0
+  ) {
     opportunities.push({
       title: "Investigate goal shortfall",
       evidence: [`Illustrative target shortfall: R ${input.targetShortfallZar.toLocaleString("en-ZA")}`],
@@ -51,15 +63,21 @@ export function rehearseCrisis(
   assumptions: { marketShockPercent: number; inflationShockPercent: number; currencyShockPercent: number; liquidityShockPercent: number },
 ) {
   if (![portfolioZar, ...Object.values(assumptions)].every(Number.isFinite) || portfolioZar < 0) return null;
+  const { marketShockPercent, inflationShockPercent, currencyShockPercent, liquidityShockPercent } = assumptions;
+  const percentages = [marketShockPercent, inflationShockPercent, currencyShockPercent, liquidityShockPercent];
+  if (percentages.some((percentage) => percentage < 0 || percentage > 100)) return null;
+  if (marketShockPercent + currencyShockPercent + liquidityShockPercent > 100) return null;
   const marketImpact = portfolioZar * (assumptions.marketShockPercent / 100);
   const currencyImpact = portfolioZar * (assumptions.currencyShockPercent / 100);
   const inflationImpact = portfolioZar * (assumptions.inflationShockPercent / 100);
   const liquidityImpact = portfolioZar * (assumptions.liquidityShockPercent / 100);
-  return {
+  const result = {
     estimatedExposureZar: portfolioZar - marketImpact - currencyImpact - liquidityImpact,
     shocks: { marketImpact, currencyImpact, inflationImpact, liquidityImpact },
     label: "hypothetical simulation only",
   };
+  if (![result.estimatedExposureZar, ...Object.values(result.shocks)].every(Number.isFinite)) return null;
+  return result;
 }
 
 export function evaluateInnovationProposal(input: {

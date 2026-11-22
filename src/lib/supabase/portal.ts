@@ -930,6 +930,18 @@ type PortalDatabase = {
     };
     Views: Record<string, never>;
     Functions: {
+      wealth_os_tenant_data_enabled: {
+        Args: { p_tenant_id: string };
+        Returns: boolean;
+      };
+      record_wealth_decision: {
+        Args: {
+          p_title: string;
+          p_event_type: "context" | "alternative" | "assumption" | "comparison";
+          p_payload: Json;
+        };
+        Returns: Json;
+      };
       consume_api_rate_limit: {
         Args: {
           p_route_key: string;

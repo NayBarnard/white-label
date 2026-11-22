@@ -1,5 +1,30 @@
 # Changelog
 
+## WEALTH OS acquisition-readiness security follow-up
+
+- Added `docs/IMPLEMENTATION_PLAN.md` with an evidence-based capability matrix,
+  phase dependencies, risks, acceptance gates and release blockers.
+- Reconciled the innovation audit/register with source-code wiring and actual
+  hosted-workflow limits; modules that lack end-to-end evidence are labelled
+  prototypes or partial.
+- Changed WEALTH OS financial-intelligence APIs to use cookie-authenticated
+  Supabase clients and RLS instead of a service-role client for financial rows.
+  Requests require a trusted explicit non-default tenant claim and use the
+  shared authenticated rate limiter.
+- Added strict owner/tenant policies and append-only decision history with an
+  atomic decision/context RPC in migration
+  `202611220005_wealth_intelligence_security.sql`; corrected the invalid
+  combined policy command in `202611220003_decisions_plans_risk.sql`.
+- Added a default-closed tenant readiness gate; enabling hosted financial
+  records requires trusted attestations for auth/MFA, tenant and relationship
+  isolation, private storage, audit, recovery, data sources and legal review.
+- Planning-lab hosted save failures are now visible, and the standalone
+  enterprise-review action saves a clearly illustrative local record rather
+  than behaving as an inert button.
+- No migrations were applied. Supabase tenant/role isolation and live
+  authenticated workflows remain unverified; this does not enable real client
+  financial data.
+
 ## White Label Studio placeholder demo
 - Kept a separate Puck-based Studio workspace with generic editable homepage
   placeholders and responsive local preview.

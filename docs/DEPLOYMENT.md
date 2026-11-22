@@ -79,6 +79,35 @@ Then apply the additive migrations:
 20. Optional future Studio CMS migration:
     `supabase/migrations/202611200001_white_label_studio_versions.sql`
 
+## Optional WEALTH OS financial-intelligence migrations
+
+Only apply these to a dedicated development Supabase project after reviewing
+the SQL. Apply the existing tenant foundation and shared rate-limit migration
+first, then apply in order:
+
+1. `supabase/migrations/202611220002_financial_intelligence.sql`
+2. `supabase/migrations/202611220003_decisions_plans_risk.sql`
+3. `supabase/migrations/202611220004_enterprise_intelligence.sql`
+4. `supabase/migrations/202611220005_wealth_intelligence_security.sql`
+
+Create test users with trusted `app_metadata.tenant_id` values and keep the
+sample `default` tenant out of authenticated financial-intelligence use. Verify
+tenant, user, role and relationship isolation before handling any client
+records. The current review did not apply these migrations or validate them
+against a hosted Supabase project. The full ordered chain was successfully
+applied to the isolated local stack; no hosted tenant/role isolation tests were
+run. Never apply or deploy them to production without explicit human approval.
+
+The security migration creates `wealth_os_tenant_readiness` with access
+restricted to `service_role`; there is no readiness row by default, so
+authenticated financial-intelligence APIs and RLS access fail closed. Only
+after the corresponding checks are independently evidenced may a trusted
+operator enable a tenant and set all required verification fields, `verified_at`
+and `verified_by`. The gate covers auth/MFA, tenant isolation, relationship
+authorization, private storage, audit controls, backup/restore,
+incident/retention, authorized data sources and legal review. Do not use the
+service-role key in the browser or mark an item verified without evidence.
+
 Import only approved NAV and benchmark observations into `fund_metrics`. Set
 the admin `app_metadata.role` claim through a trusted Supabase Admin API
 process. Confirm the private `client-documents` bucket is present. The
