@@ -7,7 +7,7 @@ import { TaxYearSummary } from "./TaxYearSummary";
 afterEach(cleanup);
 
 describe("TaxYearSummary", () => {
-  it("shows verified limits and your firm TFSA contributions during tax-year-end season", () => {
+  it("shows reported contribution activity without inventing unverified annual limits", () => {
     render(
       <TaxYearSummary
         limits={taxYearLimits}
@@ -19,18 +19,18 @@ describe("TaxYearSummary", () => {
       />,
     );
 
-    expect(screen.getByText(taxYearLimits.taxYearLabel)).toBeInTheDocument();
+    expect(screen.getByText("Current tax year (confirm with SARS)")).toBeInTheDocument();
     expect(screen.getByText(/89\s*days left/)).toBeInTheDocument();
     expect(screen.getByText(/R\s*10\s*000,00/)).toBeInTheDocument();
-    expect(screen.getByText(/R\s*36\s*000,00/)).toBeInTheDocument();
-    expect(screen.getByText(/Verified on 2026-11-17/)).toBeInTheDocument();
+    expect(screen.getAllByText("Not published")).toHaveLength(4);
+    expect(screen.getByText(/not been independently verified/)).toBeInTheDocument();
     expect(screen.getByText(/This only counts contributions made through placeholder/)).toBeInTheDocument();
     expect(screen.queryByText(/Retirement annuity deductions/)).not.toBeInTheDocument();
   });
 
   it("omits the seasonal card outside December through February but keeps the note", () => {
     render(<TaxYearSummary limits={taxYearLimits} transactions={[]} date={new Date("2027-03-01T12:00:00Z")} />);
-    expect(screen.queryByText(taxYearLimits.taxYearLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText("Current tax year (confirm with SARS)")).not.toBeInTheDocument();
     expect(screen.getByText(/This only counts contributions made through placeholder/)).toBeInTheDocument();
   });
 });

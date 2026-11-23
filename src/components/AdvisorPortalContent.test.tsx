@@ -30,14 +30,14 @@ describe("AdvisorPortalContent", () => {
   it("filters the fund catalogue using published fund names", () => {
     render(<AdvisorPortalContent />);
     fireEvent.change(screen.getByRole("textbox", { name: "Search funds" }), { target: { value: "cautious" } });
-    expect(screen.getByRole("heading", { name: "Example Cautious Strategy" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Example Balanced Strategy" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "your firm Cautious Strategy" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "your firm Balanced Strategy" })).not.toBeInTheDocument();
   });
 
   it("tracks recent fund selection within the adviser session", () => {
     render(<AdvisorPortalContent />);
     fireEvent.click(screen.getAllByRole("button", { name: "Record as recently accessed" })[0]);
-    expect(screen.getByRole("link", { name: "Example Balanced" })).toHaveAttribute("href", "/portfolios#balanced");
+    expect(screen.getByRole("link", { name: "your firm Balanced" })).toHaveAttribute("href", "/portfolios#balanced");
   });
 
   it("filters the public document catalogue by category", () => {

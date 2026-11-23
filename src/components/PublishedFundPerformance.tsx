@@ -108,7 +108,7 @@ export function PublishedFundPerformance() {
         </dl>
       ) : (
         <p role={error ? "alert" : "status"} className="mt-4 text-sm text-[var(--muted)]">
-          {error || (loading ? "Loading published figures…" : "Performance data is being updated")}
+          {error || (loading ? "Loading published figures…" : "No verified performance figures have been published.")}
         </p>
       )}
       <p className="mt-3 text-[10px] leading-5 text-[var(--muted)]">

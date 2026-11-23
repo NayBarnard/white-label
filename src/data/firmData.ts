@@ -24,8 +24,8 @@ export const returnSummary = {
 export const strategies = [
   {
     id: "balanced",
-    name: "Example Balanced",
-    title: "Example Balanced Strategy",
+    name: "your firm Balanced",
+    title: "your firm Balanced Strategy",
     profile: "Not reported",
     benchmark: "Not reported",
     source: "Not reported",
@@ -49,8 +49,8 @@ export const strategies = [
   },
   {
     id: "cautious",
-    name: "Example Cautious",
-    title: "Example Cautious Strategy",
+    name: "your firm Cautious",
+    title: "your firm Cautious Strategy",
     profile: "Not reported",
     benchmark: "Not reported",
     source: "Not reported",
@@ -277,14 +277,14 @@ export const fundFacts: Record<FundStrategyId, FundFactsRecord> = {
 };
 
 export const taxYearLimits = {
-  taxYearLabel: "2027 (1 Mar 2026 to 28 Feb 2027)",
-  tfsaAnnual: 46000,
-  tfsaLifetime: 500000,
-  tfsaPenaltyPercent: 40,
+  taxYearLabel: null as string | null,
+  tfsaAnnual: null as number | null,
+  tfsaLifetime: null as number | null,
+  tfsaPenaltyPercent: null as number | null,
   source: "https://www.sars.gov.za/types-of-tax/personal-income-tax/tax-free-investments/",
-  verifiedOn: "2026-11-17",
-  raDeductionPercent: 27.5,
-  raDeductionCap: 350000,
+  verifiedOn: null as string | null,
+  raDeductionPercent: null as number | null,
+  raDeductionCap: null as number | null,
   raVerified: false,
 };
 export type TaxYearLimits = typeof taxYearLimits;
