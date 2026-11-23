@@ -15,92 +15,69 @@ export const company = {
 };
 
 export const returnSummary = {
-  period: "31 Dec 2008 – 30 Jun 2026",
-  asAt: "30 June 2026",
-  source: "FE Analytics / FE fundinfo 2026",
-  rows: [
-    { name: "your firm Balanced", value: 569.7, label: "569.70%" },
-    { name: "your firm Cautious", value: 416.63, label: "416.63%" },
-    {
-      name: "SA MA High Equity (Benchmark)",
-      value: 399.97,
-      label: "399.97%",
-    },
-    {
-      name: "SA MA Low Equity (Benchmark)",
-      value: 309.17,
-      label: "309.17%",
-    },
-  ],
+  period: null as string | null,
+  asAt: null as string | null,
+  source: null as string | null,
+  rows: [] as { name: string; value: number; label: string }[],
 };
 
 export const strategies = [
   {
     id: "balanced",
-    name: "your firm Balanced",
-    title: "your firm Balanced Strategy",
-    profile: "Moderate to Aggressive",
-    benchmark: "CPI+5%",
-    source: company.legalName,
-    performanceDate: "30 September 2026",
-    inceptionDate: "02 May 2018",
+    name: "Example Balanced",
+    title: "Example Balanced Strategy",
+    profile: "Not reported",
+    benchmark: "Not reported",
+    source: "Not reported",
+    performanceDate: "Not reported",
+    inceptionDate: "Not reported",
     cumulative: {
-      oneMonth: "-2.1%",
-      oneYear: "6.7%",
-      oneYearBenchmark: "8.8%",
-      threeYear: "43.6%",
-      threeYearBenchmark: "28.9%",
+      oneMonth: "Not reported",
+      oneYear: "Not reported",
+      oneYearBenchmark: "Not reported",
+      threeYear: "Not reported",
+      threeYearBenchmark: "Not reported",
     },
     annualised: {
-      threeYear: "12.8%",
-      threeYearBenchmark: "8.8%",
-      fiveYear: "10.2%",
-      fiveYearBenchmark: "10.0%",
+      threeYear: "Not reported",
+      threeYearBenchmark: "Not reported",
+      fiveYear: "Not reported",
+      fiveYearBenchmark: "Not reported",
     },
-    risk: { oneYear: "3.73%", threeYears: "12.83%" },
-    sinceInceptionOneYear: { high: "35.9%", low: "-11.4%" },
+    risk: { oneYear: "Not reported", threeYears: "Not reported" },
+    sinceInceptionOneYear: { high: "Not reported", low: "Not reported" },
   },
   {
     id: "cautious",
-    name: "your firm Cautious",
-    title: "your firm Cautious Strategy",
-    profile: "Conservative to Cautious",
-    benchmark: "CPI+3%",
-    source: company.legalName,
-    performanceDate: "30 September 2026",
-    inceptionDate: "18 June 2020",
+    name: "Example Cautious",
+    title: "Example Cautious Strategy",
+    profile: "Not reported",
+    benchmark: "Not reported",
+    source: "Not reported",
+    performanceDate: "Not reported",
+    inceptionDate: "Not reported",
     cumulative: {
-      oneMonth: "-1.1%",
-      oneYear: "7.3%",
-      oneYearBenchmark: "7.0%",
-      threeYear: "39.1%",
-      threeYearBenchmark: "21.9%",
+      oneMonth: "Not reported",
+      oneYear: "Not reported",
+      oneYearBenchmark: "Not reported",
+      threeYear: "Not reported",
+      threeYearBenchmark: "Not reported",
     },
     annualised: {
-      threeYear: "11.6%",
-      threeYearBenchmark: "6.8%",
-      fiveYear: "9.0%",
-      fiveYearBenchmark: "7.9%",
+      threeYear: "Not reported",
+      threeYearBenchmark: "Not reported",
+      fiveYear: "Not reported",
+      fiveYearBenchmark: "Not reported",
     },
-    risk: { oneYear: "2.80%", threeYears: "6.42%" },
-    sinceInceptionOneYear: { high: "17.2%", low: "-1.0%" },
+    risk: { oneYear: "Not reported", threeYears: "Not reported" },
+    sinceInceptionOneYear: { high: "Not reported", low: "Not reported" },
   },
 ] as const;
 
 export const reportedPerformanceChartData = {
-  balanced: [
-    { period: "1M", return: -2.1, benchmark: null, metric: "Cumulative" },
-    { period: "1Y", return: 6.7, benchmark: 8.8, metric: "Cumulative" },
-    { period: "3Y", return: 43.6, benchmark: 28.9, metric: "Cumulative" },
-    { period: "5Y", return: 10.2, benchmark: 10, metric: "Annualised" },
-  ],
-  cautious: [
-    { period: "1M", return: -1.1, benchmark: null, metric: "Cumulative" },
-    { period: "1Y", return: 7.3, benchmark: 7, metric: "Cumulative" },
-    { period: "3Y", return: 39.1, benchmark: 21.9, metric: "Cumulative" },
-    { period: "5Y", return: 9, benchmark: 7.9, metric: "Annualised" },
-  ],
-  totalReturn: returnSummary.rows.map(({ name, value }) => ({ name, value })),
+  balanced: [],
+  cautious: [],
+  totalReturn: [],
 };
 
 export const beliefs = [
@@ -119,38 +96,13 @@ export type LeadershipMember = {
   photo?: string;
 };
 
-export const leadership: LeadershipMember[] = [
-  {
-    name: "Hermann Labuschagne",
-    role: "Managing Director",
-    credentials: "CFP, MBA, BCom (Management Accounting), Post Grad Diploma in Taxation Law",
-    bio: "Over 20 years of investment management experience across multiple asset classes.",
-  },
-  {
-    name: "Hendrik Vos",
-    role: "Portfolio Manager, Director",
-    credentials: "ICMQ (London), HCWM, MIFM",
-    bio: "Extensive experience in financial adviser relationships and fund distribution.",
-  },
-  {
-    name: "Simon Morrison",
-    role: "Fund Manager",
-    credentials: "BCom (Financial Management), CFA",
-    bio: "Specializes in diversified portfolio construction and risk management.",
-  },
-  {
-    name: "Johann Van Tonder",
-    role: "Independent Economist",
-    credentials: "MCom (Economics)",
-    bio: "Provides expert economic analysis and market insights to the investment committee.",
-  },
-];
+export const leadership: LeadershipMember[] = [];
 
 export const firmStats = {
-  yearsExperience: 65,
-  investmentStrategies: strategies.length,
+  yearsExperience: null as number | null,
+  investmentStrategies: null as number | null,
   satisfiedClients: null as number | null,
-  distributionPlatforms: 8,
+  distributionPlatforms: null as number | null,
 };
 
 export const faqs = [
@@ -172,7 +124,7 @@ export const faqs = [
   {
     question: "How can I access my fund performance information?",
     answer:
-      "Your financial advisor or investment platform can provide account-specific information. Our portfolio page also displays the performance figures published here.",
+      "Your financial advisor or investment platform can provide account-specific information. Current portfolio performance is not published on this demonstration website.",
   },
 ];
 
@@ -350,7 +302,7 @@ export const feeInformation: {
 };
 
 export const fundMetricsSnapshot = {
-  performanceDate: strategies[0].performanceDate,
+  performanceDate: null,
   returnSummary,
   strategies,
 };

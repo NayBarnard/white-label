@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import dynamic from "next/dynamic";
-import { strategies } from "@/data/firmData";
 
 const PerformanceChart = dynamic(
   () =>
@@ -42,12 +41,6 @@ type ComparisonResponse = {
 };
 
 const periods: Period[] = ["1M", "6M", "1Y", "YTD", "3Y Annualised", "ALL"];
-const fallbackFunds: Fund[] = strategies.map((strategy) => ({
-  id: strategy.id,
-  name: strategy.name,
-  benchmark: strategy.benchmark,
-  inceptionDate: strategy.inceptionDate,
-}));
 
 function subtractMonths(date: Date, months: number) {
   const result = new Date(date);
@@ -172,7 +165,7 @@ export function FundComparison() {
     };
   }, [retryVersion]);
 
-  const funds = data?.funds.length ? data.funds : fallbackFunds;
+  const funds = data?.funds ?? [];
   const selectedFund = funds.find((fund) => fund.id === fundId) ?? funds[0];
   const selectedObservations = useMemo(
     () =>
@@ -194,32 +187,26 @@ export function FundComparison() {
     );
   }, [period, selectedFund, selectedObservations]);
   const calculated = performance(filteredObservations, period);
-  const reportedStrategy = strategies.find((strategy) => strategy.id === selectedFund?.id);
-  const reported = reportedStrategy
-    ? period === "1Y"
-      ? {
-          fund: Number.parseFloat(reportedStrategy.cumulative.oneYear),
-          benchmark: Number.parseFloat(reportedStrategy.cumulative.oneYearBenchmark),
-        }
-      : period === "3Y Annualised"
-        ? {
-            fund: Number.parseFloat(reportedStrategy.annualised.threeYear),
-            benchmark: Number.parseFloat(reportedStrategy.annualised.threeYearBenchmark),
-          }
-        : null
-    : null;
-  const visiblePerformance = calculated ?? reported;
-  const performanceAsAt =
-    calculated || reported === null
-      ? latestObservationDate
-      : reportedStrategy?.performanceDate ?? null;
-  const performanceSource = calculated
-    ? data?.source
-    : reported !== null
-      ? reportedStrategy?.source
-      : data?.source;
-
-  if (!selectedFund) return null;
+  if (!selectedFund) {
+    return (
+      <section className="glass-card w-full p-4 sm:p-8" aria-label="Fund comparison">
+        <p className="funds-card-label font-bold tracking-[0.16em]">FUND COMPARISON</p>
+        <h2 className="funds-card-title mt-2">Fund NAV vs active benchmark</h2>
+        {loading ? (
+          <p role="status" className="mt-6 text-sm text-[var(--muted)]">Loading published fund catalogue…</p>
+        ) : error ? (
+          <div role="alert" className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[var(--border)] p-5">
+            <p className="text-sm text-[var(--muted)]">{error}</p>
+            <button type="button" onClick={() => { setError(""); setRetryVersion((version) => version + 1); }} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--border-strong)] px-4 text-sm font-semibold">Retry</button>
+          </div>
+        ) : (
+          <p role="status" className="mt-6 rounded-xl border border-dashed border-[var(--border-strong)] p-5 text-sm text-[var(--muted)]">
+            No published funds or NAV observations are available.
+          </p>
+        )}
+      </section>
+    );
+  }
 
   return (
     <section className="glass-card w-full p-4 sm:p-8">
@@ -331,7 +318,7 @@ export function FundComparison() {
               role="status"
               className="mt-6 flex min-h-56 items-center justify-center rounded-xl border border-dashed border-[var(--border-strong)] px-6 text-center"
             >
-              <p className="font-semibold">Chart data will appear here soon.</p>
+              <p className="font-semibold">No NAV observations have been published for this fund.</p>
             </div>
           ) : (
             <>
@@ -339,13 +326,13 @@ export function FundComparison() {
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-4 transition hover:border-[var(--accent)]">
                   <p className="text-xs text-[var(--muted)]">{selectedFund.name} · {period}</p>
                   <p className="mt-2 text-2xl font-semibold tabular-nums text-[var(--accent)]">
-                    {formatPercent(visiblePerformance?.fund)}
+                    {formatPercent(calculated?.fund)}
                   </p>
                 </div>
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-4 transition hover:border-[var(--accent)]">
                   <p className="text-xs text-[var(--muted)]">{selectedFund.benchmark} · {period}</p>
                   <p className="mt-2 text-2xl font-semibold tabular-nums">
-                    {formatPercent(visiblePerformance?.benchmark)}
+                    {formatPercent(calculated?.benchmark)}
                   </p>
                 </div>
               </div>
@@ -364,7 +351,7 @@ export function FundComparison() {
                   role="status"
                   className="mt-5 flex min-h-56 items-center justify-center rounded-xl border border-dashed border-[var(--border-strong)] px-6 text-center"
                 >
-                  <p className="font-semibold">Chart data will appear here soon.</p>
+                  <p className="font-semibold">No NAV observations have been published for this fund.</p>
                 </div>
               )}
             </>
@@ -374,7 +361,7 @@ export function FundComparison() {
       {selectedObservations.length > 0 ? (
         <p className="mt-4 text-[11px] leading-5 text-[var(--muted)]">
           {!loading && !error
-            ? `As at ${formatDate(performanceAsAt)} · Source: ${performanceSource ?? "Not available"}. `
+            ?             `As at ${formatDate(latestObservationDate)} · Source: ${data?.source ?? "Not available"}. `
             : ""}
           {data?.updatedAt ? `NAV history last synced ${new Date(data.updatedAt).toLocaleString("en-ZA")}. ` : ""}
           {!error && !loading && "Fund history refreshes automatically every five minutes. "}

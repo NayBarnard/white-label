@@ -112,9 +112,11 @@ export default function PortfoliosPage() {
         <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-5 sm:py-12 lg:px-8">
           <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">LONG-TERM TOTAL RETURNS</p>
           <h2 className="mt-2 text-xl font-semibold sm:text-2xl">Cumulative total return comparison</h2>
-          <p className="mt-2 break-words text-xs leading-5 text-[var(--muted)] sm:text-sm">
-            As at {returnSummary.asAt} · Period: {returnSummary.period} · Source: {returnSummary.source}
-          </p>
+          {returnSummary.asAt && returnSummary.period && returnSummary.source ? (
+            <p className="mt-2 break-words text-xs leading-5 text-[var(--muted)] sm:text-sm">
+              As at {returnSummary.asAt} · Period: {returnSummary.period} · Source: {returnSummary.source}
+            </p>
+          ) : null}
           <div className="glass-inset mt-5 overflow-hidden">
             <table className="w-full table-fixed text-left text-xs sm:text-sm">
               <colgroup>
@@ -137,13 +139,20 @@ export default function PortfoliosPage() {
               </tbody>
             </table>
           </div>
+          {!returnSummary.rows.length ? (
+            <p role="status" className="mt-4 rounded-xl border border-dashed border-[var(--border-strong)] p-4 text-sm text-[var(--muted)]">
+              No verified long-term return figures have been published.
+            </p>
+          ) : null}
           <ImportantDisclosure text={performanceDisclosures.importantDisclosure} />
           <p className="glass-inset mt-5 px-4 py-4 text-sm leading-6 text-[var(--muted)]">
             {performanceDisclosures.pastPerformance}
           </p>
-          <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
-            Long-term returns are reported to {returnSummary.asAt}, while strategy returns are as at {strategies[0].performanceDate}. These blocks use separate reporting dates.
-          </p>
+          {returnSummary.asAt ? (
+            <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
+              Long-term returns are reported to {returnSummary.asAt}; strategy returns are as at {strategies[0].performanceDate}.
+            </p>
+          ) : null}
         </div>
       </section>
     </>

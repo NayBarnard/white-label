@@ -3,7 +3,6 @@ import { Render } from "@puckeditor/core/rsc";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { DeferredFundComparison } from "@/components/DeferredFundComparison";
-import { CountUp } from "@/components/CountUp";
 import {
   homePageConfig,
   isHomePageData,
@@ -50,7 +49,6 @@ export default async function HomePage() {
 }
 
 function CurrentHomePage() {
-  const platformNames = ["Absa", "Momentum", "Sanlam", "Old Mutual"];
   const beliefs = [
     {
       title: "Active Management",
@@ -141,47 +139,36 @@ function CurrentHomePage() {
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-16 sm:pb-20 lg:px-8">
         <section className="home-platform-marquee -mx-5 mt-3 sm:-mx-5 lg:-mx-8" aria-label="Distribution platforms">
-          <p className="sr-only">Available through Absa, Momentum, Sanlam and Old Mutual.</p>
-          <div className="platform-marquee" aria-hidden="true">
-            <div className="platform-marquee-track">
-              {[0, 1].map((group) => (
-                <div className="platform-marquee-group" key={group}>
-                  {platformNames.map((name) => (
-                    <span className={`platform-wordmark platform-wordmark-${name.toLowerCase().replace(" ", "-")}`} key={`${group}-${name}`}>
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
+          <p className="py-6 text-center text-sm text-[var(--muted)]">
+            Distribution platform availability has not been published.
+          </p>
         </section>
 
         <section className="mt-10 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="your firm at a glance">
           <div className="home-stat-card gold-glass aspect-square rounded-2xl p-4 xl:aspect-auto">
-            <p className="text-2xl font-semibold tabular-nums text-[var(--accent)] sm:text-3xl"><CountUp value={65} /></p>
+            <p className="text-lg font-semibold text-[var(--accent)] sm:text-xl">Not published</p>
             <p className="mt-2 text-[10px] font-semibold uppercase leading-4 tracking-wide text-[var(--muted)] sm:text-xs sm:leading-5">
-              Years combined investment experience
+              Combined investment experience
             </p>
           </div>
           <div className="home-stat-card gold-glass aspect-square rounded-2xl p-4 xl:aspect-auto">
-            <p className="text-2xl font-semibold tabular-nums text-[var(--accent)] sm:text-3xl"><CountUp value={4942} suffix="+" /></p>
+            <p className="text-lg font-semibold text-[var(--accent)] sm:text-xl">Not published</p>
             <p className="mt-2 text-[10px] font-semibold uppercase leading-4 tracking-wide text-[var(--muted)] sm:text-xs sm:leading-5">
-              Clients invested across our strategies
+              Clients invested across strategies
             </p>
           </div>
           <div className="home-stat-card gold-glass aspect-square rounded-2xl p-4 xl:aspect-auto">
-            <p className="text-2xl font-semibold tabular-nums text-[var(--accent)] sm:text-3xl"><CountUp value={8} /></p>
+            <p className="text-lg font-semibold text-[var(--accent)] sm:text-xl">Not published</p>
             <p className="mt-2 text-[10px] font-semibold uppercase leading-4 tracking-wide text-[var(--muted)] sm:text-xs sm:leading-5">
               Distribution platforms
             </p>
           </div>
           <div className="home-stat-card gold-glass aspect-square rounded-2xl p-4 xl:aspect-auto">
             <p className="text-2xl font-semibold tabular-nums text-[var(--accent)] sm:text-3xl">
-              FSP <CountUp value={622} />
+              Not published
             </p>
             <p className="mt-2 text-[10px] font-semibold uppercase leading-4 tracking-wide text-[var(--muted)] sm:text-xs sm:leading-5">
-              Licensed by the FSCA
+              Regulatory authorization
             </p>
           </div>
         </section>
@@ -261,22 +248,30 @@ function CurrentHomePage() {
                 Long-term total returns
               </h2>
             </div>
-            <p className="text-xs text-[var(--muted)]">
-              As at {returnSummary.asAt} · Period: {returnSummary.period} · Source: {returnSummary.source}
-            </p>
+            {returnSummary.rows.length && returnSummary.asAt && returnSummary.period && returnSummary.source ? (
+              <p className="text-xs text-[var(--muted)]">
+                As at {returnSummary.asAt} · Period: {returnSummary.period} · Source: {returnSummary.source}
+              </p>
+            ) : null}
           </div>
-          <dl className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {returnSummary.rows.map((row, index) => (
-              <div
-                key={row.name}
-                className="placeholder-glass-card rounded-2xl p-5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(2,6,23,0.16)] motion-safe:animate-[placeholder-rise-in_500ms_ease-out_both]"
-                style={{ animationDelay: `${index * 70}ms` }}
-              >
-                <dt className="text-sm leading-5 text-[var(--muted)]">{row.name}</dt>
-                <dd className="mt-3 text-3xl font-semibold tabular-nums text-[var(--accent)]">{row.label}</dd>
-              </div>
-            ))}
-          </dl>
+          {returnSummary.rows.length ? (
+            <dl className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {returnSummary.rows.map((row, index) => (
+                <div
+                  key={row.name}
+                  className="placeholder-glass-card rounded-2xl p-5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(2,6,23,0.16)] motion-safe:animate-[placeholder-rise-in_500ms_ease-out_both]"
+                  style={{ animationDelay: `${index * 70}ms` }}
+                >
+                  <dt className="text-sm leading-5 text-[var(--muted)]">{row.name}</dt>
+                  <dd className="mt-3 text-3xl font-semibold tabular-nums text-[var(--accent)]">{row.label}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <p role="status" className="rounded-2xl border border-dashed border-[var(--border-strong)] p-5 text-sm text-[var(--muted)]">
+              No verified long-term performance figures have been published.
+            </p>
+          )}
         </section>
 
         <section className="mt-14" aria-label="Interactive fund performance comparison">

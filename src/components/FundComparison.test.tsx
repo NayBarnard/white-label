@@ -63,7 +63,7 @@ describe("FundComparison", () => {
 
     render(<FundComparison />);
 
-    expect(await screen.findByText("Chart data will appear here soon.")).toBeInTheDocument();
+    expect(await screen.findByText("No NAV observations have been published for this fund.")).toBeInTheDocument();
     expect(screen.queryByTestId("performance-chart")).not.toBeInTheDocument();
     expect(screen.queryByText("Loading fund data…")).not.toBeInTheDocument();
     expect(screen.queryByText(/supabase|sync|database|postgres/i)).not.toBeInTheDocument();
@@ -86,8 +86,22 @@ describe("FundComparison", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
 
-    expect(await screen.findByText("Chart data will appear here soon.")).toBeInTheDocument();
+    expect(await screen.findByText("No published funds or NAV observations are available.")).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not invent a fallback fund catalogue when no published funds are available", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(
+        jsonResponse({ source: "Published performance data", updatedAt: null, funds: [], observations: [] }),
+      ),
+    );
+
+    render(<FundComparison />);
+
+    expect(await screen.findByText("No published funds or NAV observations are available.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Balanced/ })).not.toBeInTheDocument();
   });
 
   it("times out a stalled request and exposes the retry action", async () => {

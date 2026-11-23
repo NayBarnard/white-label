@@ -50,16 +50,8 @@ const supportAnswer = () =>
 const contactAnswer = () =>
   `Phone: ${company.phone}\nEmail: ${company.email}\nAddress: ${company.address}\nThe team aims to respond within ${company.responseTime}.`;
 const performanceAnswer = () => {
-  const strategyDetails = strategies.map((strategy) =>
-    `${strategy.name}: ${strategy.profile}; benchmark ${strategy.benchmark}; inception ${strategy.inceptionDate}; performance as at ${strategy.performanceDate}. Cumulative returns: 1 month ${strategy.cumulative.oneMonth}, 1 year ${strategy.cumulative.oneYear} (benchmark ${strategy.cumulative.oneYearBenchmark}), 3 years ${strategy.cumulative.threeYear} (benchmark ${strategy.cumulative.threeYearBenchmark}). Annualised returns: 3 years ${strategy.annualised.threeYear} (benchmark ${strategy.annualised.threeYearBenchmark}), 5 years ${strategy.annualised.fiveYear} (benchmark ${strategy.annualised.fiveYearBenchmark}). Risk statistics: 1-year ${strategy.risk.oneYear}, 3-year ${strategy.risk.threeYears}. The since-inception 1-year high is ${strategy.sinceInceptionOneYear.high} and low is ${strategy.sinceInceptionOneYear.low}.`,
-  );
-  const returnComparisons = returnSummary.rows
-    .map((row) => `${row.name}: ${row.label}`)
-    .join("; ");
-
   return [
-    `Published performance information: ${strategyDetails.join(" ")}`,
-    `FE Analytics / FE fundinfo total-return comparison for ${returnSummary.period} (as at ${returnSummary.asAt}): ${returnComparisons}.`,
+    "No verified fund performance figures or NAV observations are currently published on this demonstration website.",
     performanceDisclosures.advice,
     performanceDisclosures.pastPerformance,
     performanceDisclosures.factualInformation,
@@ -209,7 +201,7 @@ const intents: KnowledgeIntent[] = [
   {
     id: "company",
     patterns: [/\b(about placeholder|what is placeholder|what does placeholder|company|business|tagline|mission|purpose|who are placeholder)\b/i],
-    answer: () => `${company.legalName} is an independent, owner-managed fund management business. Its stated purpose is: “${company.tagline}”`,
+    answer: () => `${company.legalName} is an illustrative brand. ${company.regulatoryNotice} Firm ownership and service details have not been independently verified.`,
     links: [{ label: `About ${company.legalName}`, href: "/about" }],
   },
   {
@@ -244,7 +236,9 @@ const intents: KnowledgeIntent[] = [
     id: "leadership",
     patterns: [/\b(leadership|team|managing director|portfolio manager|fund manager|economist|credentials|biograph|who is)\b/i],
     answer: () =>
-      `Leadership team: ${leadership.map((person) => `${person.name} — ${person.role}. Credentials: ${person.credentials}. ${person.bio}`).join(" ")}`,
+      leadership.length
+        ? `Leadership team: ${leadership.map((person) => `${person.name} — ${person.role}. Credentials: ${person.credentials}. ${person.bio}`).join(" ")}`
+        : "No verified leadership profiles have been published.",
     links: [{ label: "Meet the team", href: "/about" }],
   },
   {
