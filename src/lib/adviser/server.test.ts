@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { authorizeAdviserApi } from "./server";
 
 const state = vi.hoisted(() => ({
-  user: null as { id: string; app_metadata: { role: string } } | null,
+  user: null as { id: string; app_metadata: { role: string; tenant_id?: string } } | null,
   getUser: vi.fn(),
   getClaims: vi.fn(),
 }));
@@ -10,6 +10,18 @@ const state = vi.hoisted(() => ({
 vi.mock("@supabase/ssr", () => ({
   createServerClient: () => ({
     auth: { getUser: state.getUser, getClaims: state.getClaims },
+    from: () => {
+      const query = {
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        in: vi.fn(() => query),
+        maybeSingle: vi.fn(async () => ({
+          data: { role: "financial_adviser", status: "active" },
+          error: null,
+        })),
+      };
+      return query;
+    },
   }),
 }));
 
@@ -36,7 +48,10 @@ describe("authorizeAdviserApi", () => {
 
   it("allows adviser and admin app-metadata roles", async () => {
     for (const role of ["adviser", "admin"]) {
-      state.user = { id: "staff-user", app_metadata: { role } };
+      state.user = {
+        id: "staff-user",
+        app_metadata: { role, tenant_id: "firm_a" },
+      };
       const access = await authorizeAdviserApi();
       expect(access.ok).toBe(true);
     }

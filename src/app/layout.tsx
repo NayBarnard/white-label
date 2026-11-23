@@ -12,48 +12,34 @@ import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistratio
 import { company } from "@/data/firmData";
 import { APP_MODE } from "@/config/deployment";
 import { headers } from "next/headers";
+import { loadTenantBranding } from "@/lib/branding/server";
+import { TenantBrandProvider } from "@/components/TenantBrandProvider";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: {
-    default: `${company.legalName} | Independent Fund Management`,
-    template: `%s | ${company.legalName}`,
-  },
-  description:
-    "Genuinely diversified, cost-conscious fund management, so you can focus on relations, and not portfolio construction.",
-  ...(APP_MODE === "staff" ? { robots: { index: false, follow: false } } : {}),
-  applicationName: company.legalName,
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "placeholder",
-  },
-  icons: {
-    apple: "/icons/apple-touch-icon.png",
-  },
-  keywords: [
-    company.legalName,
-    "discretionary investment management",
-    "South African fund management",
-    "diversified investment",
-    "FAIS compliant",
-  ],
-  openGraph: {
-    title: company.legalName,
-    description:
-      "Independent discretionary investment management with a client-first, cost-conscious approach.",
-    url: "/",
-    siteName: company.legalName,
-    type: "website",
-    locale: "en_ZA",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: company.legalName,
-    description:
-      "Independent discretionary investment management with a client-first, cost-conscious approach.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const branding = await loadTenantBranding(requestHeaders.get("host"));
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    title: {
+      default: branding.tradingName,
+      template: `%s | ${branding.tradingName}`,
+    },
+    description: "Secure wealth management platform.",
+    ...(APP_MODE === "staff" ? { robots: { index: false, follow: false } } : {}),
+    applicationName: branding.tradingName,
+    icons: branding.faviconUrl
+      ? { icon: branding.faviconUrl, apple: branding.logoUrl ?? undefined }
+      : { apple: "/icons/apple-touch-icon.png" },
+    openGraph: {
+      title: branding.tradingName,
+      description: "Secure wealth management platform.",
+      url: "/",
+      siteName: branding.tradingName,
+      type: "website",
+      locale: "en_ZA",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   viewportFit: "cover",
@@ -67,10 +53,19 @@ type LayoutProps = {
 };
 
 export default async function RootLayout({ children }: LayoutProps) {
-  if (APP_MODE === "staff") await headers();
+  const requestHeaders = await headers();
+  const branding = await loadTenantBranding(requestHeaders.get("host"));
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col">
+      <body
+        className="min-h-full flex flex-col"
+        style={{
+          "--tenant-primary": branding.primaryColor,
+          "--tenant-secondary": branding.secondaryColor,
+          "--tenant-accent": branding.accentColor,
+        } as React.CSSProperties}
+      >
+        <TenantBrandProvider branding={branding}>
         {APP_MODE === "public" && <ServiceWorkerRegistration />}
         <ThemeProvider>
           <PortalSessionProvider>
@@ -85,6 +80,7 @@ export default async function RootLayout({ children }: LayoutProps) {
             </RouteAccentScope>
           </PortalSessionProvider>
         </ThemeProvider>
+        </TenantBrandProvider>
       </body>
     </html>
   );

@@ -54,6 +54,17 @@ export async function getAdminPageUser() {
   });
   const claims = await authClient.auth.getClaims();
   if (claims.error || !isAal2Claims(claims.data?.claims)) return null;
+  const tenantId = user.app_metadata.tenant_id;
+  if (typeof tenantId !== "string" || tenantId === "default") return null;
+  const membership = await authClient
+    .from("wealth_os_tenant_memberships")
+    .select("role,status")
+    .eq("tenant_id", tenantId)
+    .eq("user_id", user.id)
+    .in("role", ["firm_administrator", "platform_operator"])
+    .eq("status", "active")
+    .maybeSingle();
+  if (membership.error || !membership.data) return null;
   return user;
 }
 
@@ -109,6 +120,42 @@ export async function authorizeAdminApi(): Promise<AdminApiAccess> {
       ok: false,
       response: NextResponse.json(
         { error: "Additional sign-in verification is required." },
+        { status: 403 },
+      ),
+    };
+  }
+  const tenantId = user.app_metadata.tenant_id;
+  if (typeof tenantId !== "string" || tenantId === "default") {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "A verified organisation membership is required." },
+        { status: 403 },
+      ),
+    };
+  }
+  const membership = await authClient
+    .from("wealth_os_tenant_memberships")
+    .select("role,status")
+    .eq("tenant_id", tenantId)
+    .eq("user_id", user.id)
+    .in("role", ["firm_administrator", "platform_operator"])
+    .eq("status", "active")
+    .maybeSingle();
+  if (membership.error) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Organisation membership could not be verified." },
+        { status: 503 },
+      ),
+    };
+  }
+  if (!membership.data) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Active firm administrator or platform operator membership is required." },
         { status: 403 },
       ),
     };

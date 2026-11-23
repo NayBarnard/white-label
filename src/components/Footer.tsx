@@ -4,9 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { company } from "@/data/firmData";
+import { useTenantBranding } from "@/components/TenantBrandProvider";
 
 export function Footer() {
   const pathname = usePathname();
+  const branding = useTenantBranding();
+  const contact = branding.contactDetails;
+  const phone = typeof contact.phone === "string" ? contact.phone : company.phone;
+  const email = typeof contact.email === "string" ? contact.email : company.email;
+  const address = typeof contact.address === "string" ? contact.address : company.address;
   const isWorkspaceRoute =
     pathname === "/portal" ||
     pathname.startsWith("/portal/") ||
@@ -21,7 +27,7 @@ export function Footer() {
     return (
       <footer className="workspace-footer mt-auto">
         <p>
-          <span>© your firm | {company.workspaceFooterNotice}</span>
+          <span>© {branding.tradingName} | {company.workspaceFooterNotice}</span>
         </p>
       </footer>
     );
@@ -31,7 +37,7 @@ export function Footer() {
     <footer className="public-footer mt-auto">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[1fr_1fr] lg:px-8">
         <div className="space-y-2 text-sm leading-6 text-white/90">
-          <p className="text-base font-semibold text-white">your firm</p>
+          <p className="text-base font-semibold text-white">{branding.tradingName}</p>
           <p>Independent Investment Management</p>
           <p>{company.publicFooterNotice}</p>
           <p>Category: Discretionary Investment Management</p>
@@ -45,21 +51,21 @@ export function Footer() {
           <ul className="mt-4 space-y-3 text-sm leading-6 text-white/90">
             <li className="flex items-start gap-3">
               <Phone size={16} className="mt-1 shrink-0 text-white" aria-hidden="true" />
-              <a href={`tel:${company.phone.replaceAll(" ", "")}`}>{company.phone}</a>
+              <a href={`tel:${phone.replaceAll(" ", "")}`}>{phone}</a>
             </li>
             <li className="flex items-start gap-3">
               <Mail size={16} className="mt-1 shrink-0 text-white" aria-hidden="true" />
-              <a href={`mailto:${company.email}`}>{company.email}</a>
+              <a href={`mailto:${email}`}>{email}</a>
             </li>
             <li className="flex items-start gap-3">
               <MapPin size={16} className="mt-1 shrink-0 text-white" aria-hidden="true" />
-              <span>{company.address}</span>
+              <span>{address}</span>
             </li>
           </ul>
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/20 px-5 py-5 text-xs text-white/85 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-        <span>© 2026 your firm. All rights reserved.</span>
+        <span>© 2026 {branding.tradingName}. All rights reserved.</span>
         <nav className="flex flex-wrap gap-x-5 gap-y-2" aria-label="Legal links">
           <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-white">Terms of Service</Link>

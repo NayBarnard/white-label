@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { getStudioTenantId } from "./tenant";
 
 describe("getStudioTenantId", () => {
-  it("uses the default tenant when no tenant claim exists", () => {
-    expect(getStudioTenantId({ role: "admin" })).toBe("default");
+  it("rejects a missing tenant claim instead of assuming the default tenant", () => {
+    expect(getStudioTenantId({ role: "admin" })).toBeNull();
   });
 
   it("accepts a valid trusted tenant claim", () => {

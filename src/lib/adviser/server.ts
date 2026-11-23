@@ -38,6 +38,18 @@ export async function getAdviserPageUser() {
   if (error) throw error;
   const claims = await client.auth.getClaims();
   if (claims.error || !isAal2Claims(claims.data?.claims)) return null;
+  if (!data.user) return null;
+  const tenantId = data.user?.app_metadata.tenant_id;
+  if (typeof tenantId !== "string" || tenantId === "default") return null;
+  const membership = await client
+    .from("wealth_os_tenant_memberships")
+    .select("role,status")
+    .eq("tenant_id", tenantId)
+    .eq("user_id", data.user.id)
+    .in("role", ["financial_adviser", "firm_administrator", "platform_operator"])
+    .eq("status", "active")
+    .maybeSingle();
+  if (membership.error || !membership.data) return null;
   return data.user;
 }
 
@@ -78,6 +90,33 @@ export async function authorizeAdviserApi(): Promise<AdviserApiAccess> {
     return {
       ok: false,
       response: NextResponse.json({ error: "Additional sign-in verification is required." }, { status: 403 }),
+    };
+  }
+  const tenantId = user.app_metadata.tenant_id;
+  if (typeof tenantId !== "string" || tenantId === "default") {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "A verified organisation membership is required." }, { status: 403 }),
+    };
+  }
+  const membership = await client
+    .from("wealth_os_tenant_memberships")
+    .select("role,status")
+    .eq("tenant_id", tenantId)
+    .eq("user_id", user.id)
+    .in("role", ["financial_adviser", "firm_administrator", "platform_operator"])
+    .eq("status", "active")
+    .maybeSingle();
+  if (membership.error) {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "Organisation membership could not be verified." }, { status: 503 }),
+    };
+  }
+  if (!membership.data) {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "Active adviser membership is required." }, { status: 403 }),
     };
   }
   return { ok: true, user, supabase: client };

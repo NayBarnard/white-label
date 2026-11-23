@@ -2130,6 +2130,31 @@ Do not leave unfinished work behind.
 
 THE OBJECTIVE IS A FULLY FUNCTIONAL, SECURE, HOSTED, MULTI-TENANT, WHITE-LABEL WEALTH MANAGEMENT PLATFORM — NOT A DEMONSTRATION OF ONE.
 
+---
+
+## VERIFIED STARTING POSITION — 2026-11-22
+
+- Repository inspection task: **COMPLETE AND VERIFIED**.
+- Architecture, route, database, feature, dependency, and security maps are recorded in `docs/`.
+- The repository is a Next.js/Supabase application with substantial public, local-demo, staff, adviser, client, Studio, and intelligence functionality.
+- Browser-local demonstrations are the default in standalone mode; they are not production tenant storage.
+- There is partial tenant and RLS infrastructure, but no complete verified SaaS tenant model.
+- Current staff roles are `admin`, `adviser`, `compliance`, and `operations`; platform super-administrator and firm membership models are missing or incomplete.
+- Baseline unit test evidence: 68 test files pass, 1 fails; 255 tests pass, 1 fails.
+- The current exact next permitted task is **4.1 Tenant architecture**.
+
+## PROGRESS UPDATE — 2026-11-22
+
+- Repository inspection: **COMPLETE AND VERIFIED**
+- Phase One 4.1 Tenant architecture: **COMPLETE AND VERIFIED**
+- Exact next permitted task: **4.2 Dynamic white-label configuration**
+
+- 4.2 Dynamic white-label configuration: **COMPLETE AND VERIFIED**
+- 4.3 Hosted SaaS foundation: **BLOCKED**
+- Exact next permitted task: **NONE while 4.3 is blocked**
+- Correction: Supabase is connected remotely in the user's environment, but this workspace is not linked to that hosted project; the active CLI project is the separate local stack.
+- Remaining blocker: hosted project access/link, Vercel/domain/Auth/SMTP/MFA/storage verification and approvals.
+
 Your final declaration must be one of:
 
 FINISHED — VERIFIED: Every required task and acceptance criterion is complete, with evidence.

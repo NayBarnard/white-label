@@ -91,6 +91,32 @@ export async function authorizeWealthOsApi(): Promise<WealthOsAccess> {
     };
   }
 
+  const membership = await supabase
+    .from("wealth_os_tenant_memberships")
+    .select("role,status")
+    .eq("tenant_id", tenantId)
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .maybeSingle();
+  if (membership.error) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Organisation membership could not be verified." },
+        { status: 503 },
+      ),
+    };
+  }
+  if (!membership.data) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "Active organisation membership is required." },
+        { status: 403 },
+      ),
+    };
+  }
+
   if (isStaffRole(user.app_metadata.role)) {
     if (!canStaff(user.app_metadata.role, "adviser.portal")) {
       return {

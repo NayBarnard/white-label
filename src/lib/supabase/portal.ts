@@ -899,9 +899,58 @@ type PortalDatabase = {
         Relationships: [];
       };
       wealth_os_tenants: {
-        Row: { id: string; name: string; trading_name: string; configuration: Json; created_at: string; updated_at: string; updated_by: string | null };
-        Insert: { id: string; name: string; trading_name: string; configuration: Json; created_at?: string; updated_at?: string; updated_by?: string | null };
-        Update: { name?: string; trading_name?: string; configuration?: Json; updated_at?: string; updated_by?: string | null };
+        Row: {
+          id: string;
+          name: string;
+          trading_name: string;
+          configuration: Json;
+          status: "pending" | "active" | "suspended";
+          primary_domain: string | null;
+          logo_url: string | null;
+          favicon_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+          accent_color: string | null;
+          typography: Json;
+          contact_details: Json;
+          website_url: string | null;
+          login_branding: Json;
+          email_branding: Json;
+          document_branding: Json;
+          platform_settings: Json;
+          created_at: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          id: string;
+          name: string;
+          trading_name: string;
+          configuration?: Json;
+          status?: "pending" | "active" | "suspended";
+          primary_domain?: string | null;
+        };
+        Update: {
+          name?: string;
+          trading_name?: string;
+          configuration?: Json;
+          status?: "pending" | "active" | "suspended";
+          primary_domain?: string | null;
+          logo_url?: string | null;
+          favicon_url?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          accent_color?: string | null;
+          typography?: Json;
+          contact_details?: Json;
+          website_url?: string | null;
+          login_branding?: Json;
+          email_branding?: Json;
+          document_branding?: Json;
+          platform_settings?: Json;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
         Relationships: [];
       };
       wealth_os_projects: {
@@ -974,6 +1023,64 @@ type PortalDatabase = {
         Row: { id: string; tenant_id: string; user_id: string; name: string; assumptions: Json; estimated_exposure: Json; methodology: Json; created_at: string };
         Insert: { id?: string; tenant_id: string; user_id: string; name: string; assumptions: Json; estimated_exposure: Json; methodology: Json; created_at?: string };
         Update: { name?: string; assumptions?: Json; estimated_exposure?: Json; methodology?: Json };
+        Relationships: [];
+      };
+      wealth_os_domains: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          domain: string;
+          is_primary: boolean;
+          verification_status: "pending" | "verified" | "failed";
+          created_at: string;
+          verified_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          tenant_id: string;
+          domain: string;
+          is_primary?: boolean;
+          verification_status?: "pending" | "verified" | "failed";
+          verified_at?: string | null;
+        };
+        Update: {
+          is_primary?: boolean;
+          verification_status?: "pending" | "verified" | "failed";
+          verified_at?: string | null;
+        };
+        Relationships: [];
+      };
+      wealth_os_tenant_memberships: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          user_id: string;
+          role: "platform_operator" | "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support" | "client";
+          status: "invited" | "active" | "inactive" | "revoked";
+          invited_by: string | null;
+          invited_at: string | null;
+          accepted_at: string | null;
+          revoked_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          tenant_id: string;
+          user_id: string;
+          role: "platform_operator" | "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support" | "client";
+          status?: "invited" | "active" | "inactive" | "revoked";
+          invited_by?: string | null;
+          invited_at?: string | null;
+          accepted_at?: string | null;
+        };
+        Update: {
+          role?: "platform_operator" | "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support" | "client";
+          status?: "invited" | "active" | "inactive" | "revoked";
+          accepted_at?: string | null;
+          revoked_at?: string | null;
+        };
         Relationships: [];
       };
     };

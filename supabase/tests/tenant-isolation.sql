@@ -338,3 +338,96 @@ begin
   end;
 end;
 $test$;
+
+do $tenant_foundation$
+declare
+  v_suffix text := replace(gen_random_uuid()::text, '-', '');
+  v_tenant_a text := 'tenant-foundation-a-' || v_suffix;
+  v_tenant_b text := 'tenant-foundation-b-' || v_suffix;
+  v_admin_a uuid := gen_random_uuid();
+  v_adviser_a uuid := gen_random_uuid();
+  v_admin_b uuid := gen_random_uuid();
+  v_platform uuid := gen_random_uuid();
+  v_count integer;
+begin
+  insert into auth.users (
+    id, aud, role, email, encrypted_password, email_confirmed_at,
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+  )
+  values
+    (v_admin_a, 'authenticated', 'authenticated',
+     v_suffix || '-tenant-admin-a@example.test', '', now(),
+     jsonb_build_object('tenant_id', v_tenant_a, 'role', 'admin'), '{}', now(), now()),
+    (v_adviser_a, 'authenticated', 'authenticated',
+     v_suffix || '-tenant-adviser-a@example.test', '', now(),
+     jsonb_build_object('tenant_id', v_tenant_a, 'role', 'adviser'), '{}', now(), now()),
+    (v_admin_b, 'authenticated', 'authenticated',
+     v_suffix || '-tenant-admin-b@example.test', '', now(),
+     jsonb_build_object('tenant_id', v_tenant_b, 'role', 'admin'), '{}', now(), now()),
+    (v_platform, 'authenticated', 'authenticated',
+     v_suffix || '-platform@example.test', '', now(),
+     jsonb_build_object('tenant_id', v_tenant_a, 'role', 'platform_operator'), '{}', now(), now());
+
+  insert into public.wealth_os_tenants (
+    id, name, trading_name, status, primary_domain, configuration
+  )
+  values
+    (v_tenant_a, v_tenant_a, v_tenant_a, 'active', v_tenant_a || '.example.test', '{}'),
+    (v_tenant_b, v_tenant_b, v_tenant_b, 'active', v_tenant_b || '.example.test', '{}');
+
+  insert into public.wealth_os_domains (tenant_id, domain, is_primary, verification_status)
+  values
+    (v_tenant_a, v_tenant_a || '.example.test', true, 'verified'),
+    (v_tenant_b, v_tenant_b || '.example.test', true, 'verified');
+
+  insert into public.wealth_os_tenant_memberships (tenant_id, user_id, role, status)
+  values
+    (v_tenant_a, v_admin_a, 'firm_administrator', 'active'),
+    (v_tenant_a, v_adviser_a, 'financial_adviser', 'active'),
+    (v_tenant_b, v_admin_b, 'firm_administrator', 'active'),
+    (v_tenant_a, v_platform, 'platform_operator', 'active');
+
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claim.sub', v_admin_a::text, true);
+  perform set_config(
+    'request.jwt.claims',
+    jsonb_build_object(
+      'sub', v_admin_a,
+      'role', 'authenticated',
+      'aud', 'authenticated',
+      'app_metadata', jsonb_build_object(
+        'tenant_id', v_tenant_a,
+        'role', 'admin'
+      )
+    )::text,
+    true
+  );
+
+  select count(*) into v_count
+  from public.wealth_os_tenant_memberships;
+  if v_count <> 3 then
+    raise exception 'Tenant A administrator observed % memberships, expected 3 Tenant A memberships', v_count;
+  end if;
+
+  select count(*) into v_count
+  from public.wealth_os_domains;
+  if v_count <> 1 then
+    raise exception 'Tenant A administrator observed % domains, expected 1', v_count;
+  end if;
+
+  begin
+    update public.wealth_os_tenants
+    set name = 'Cross-tenant update'
+    where id = v_tenant_b;
+    if exists (
+      select 1
+      from public.wealth_os_tenants
+      where id = v_tenant_b and name = 'Cross-tenant update'
+    ) then
+      raise exception 'Tenant A administrator updated Tenant B';
+    end if;
+  exception
+    when insufficient_privilege then null;
+  end;
+end;
+$tenant_foundation$;

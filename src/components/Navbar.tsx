@@ -25,6 +25,7 @@ import { getPortalSupabaseClient } from "@/lib/supabase/portal";
 import { company } from "@/data/firmData";
 import { PortalNavigation } from "@/components/PortalNavigation";
 import { APP_MODE } from "@/config/deployment";
+import { useTenantBranding } from "@/components/TenantBrandProvider";
 
 const links = [
   { label: "HOME", href: "/" },
@@ -71,6 +72,11 @@ function formatReportedAmount(value: number | null) {
 
 export function Navbar() {
   const pathname = usePathname();
+  const branding = useTenantBranding();
+  const tenantEmail =
+    typeof branding.contactDetails.email === "string"
+      ? branding.contactDetails.email
+      : company.email;
   const router = useRouter();
   const isWorkspaceRoute =
     pathname.startsWith("/portal") ||
@@ -305,7 +311,7 @@ export function Navbar() {
                       )}
                       {portalSession.role === "client" && (
                         <a
-                          href={`mailto:${company.email}?subject=Client%20Portal%20Support`}
+                          href={`mailto:${tenantEmail}?subject=Client%20Portal%20Support`}
                           onClick={() => setUserMenuOpen(false)}
                           role="menuitem"
                           className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-white/90 transition hover:bg-white/10 hover:text-[var(--account-accent)]"

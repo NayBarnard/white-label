@@ -27,7 +27,7 @@ export default function GlobalError({
             Temporary error
           </p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-            your firm
+            WEALTH OS
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted)]">
             We couldn’t load the website. Please try again.

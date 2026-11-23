@@ -157,3 +157,138 @@ After creating the checklist:
 6. Do not begin unrelated new development until this control system is established.
 
 **This checklist is the permanent development control document for WEALTH OS. Maintain it throughout the project.**
+
+---
+
+# WEALTH OS Sequential Completion Checklist
+
+## Repository Inspection — Task One
+
+- [x] Repository-wide architecture and route/source/database/migration/environment/test inspection.
+  - Status: **COMPLETE AND VERIFIED**
+  - Evidence: `docs/WEALTH_OS_ARCHITECTURE.md`, `docs/WEALTH_OS_ROUTE_MAP.md`, `docs/WEALTH_OS_DATABASE_MAP.md`, `docs/WEALTH_OS_COMPLETION_REGISTER.md`
+  - Tests: baseline unit run: 255 passed, 1 failed.
+  - Remaining issue: baseline configured-email demo test failure.
+
+## Phase One — White-label SaaS Foundation
+
+- [x] 4.1 Proper tenant/firms model, relationships, membership, branding, domains, tenant-aware application and storage access.
+  - Status: **COMPLETE AND VERIFIED**
+  - Evidence: `supabase/migrations/202611230001_tenant_foundation.sql`, `src/lib/tenant/context.ts`, `src/lib/tenant/server.ts`, `src/lib/adviser/server.ts`, `src/lib/admin/server.ts`, `src/lib/wealth-intelligence/server.ts`
+  - Tests: 5 tenant/studio unit assertions passed; 10 focused tenant/adviser/admin assertions passed; TypeScript passed; local migration applied; direct RLS SQL suite passed for existing and new tenant/isolation fixtures.
+  - Remaining limitation: hosted domain and production Auth membership provisioning require external credentials and are not yet implemented operationally.
+- [x] 4.2 Dynamic white-label configuration for brand, domain, typography, contact and document/email settings.
+  - Status: **COMPLETE AND VERIFIED**
+  - Evidence: `src/lib/branding/config.ts`, `src/lib/branding/server.ts`, `src/components/TenantBrandProvider.tsx`, `src/app/api/admin/branding/route.ts`, `src/app/layout.tsx`
+  - Tests: 7 branding/tenant/studio unit assertions passed; TypeScript passed.
+  - Remaining limitation: persisted configuration can be read and updated through the protected API, but a dedicated administrator UI is scheduled under 6.5.
+- [!] 4.3 Hosted SaaS foundation: persistent storage, migrations, auth, Vercel, logging, error handling and production configuration.
+  - Status: **BLOCKED**
+  - Evidence: local migration chain and local Supabase RLS suite pass; `npm run build` succeeds; environment/security/error infrastructure exists.
+  - Correction: Supabase is connected in the user's hosted environment, but this workspace is not linked to that remote project. The only active CLI project is the local Docker stack and no hosted project reference or `.env` is available here.
+  - Remaining blocker: the hosted project must be linked/accessible from this workspace for migration and RLS verification; Vercel project/domain, production Auth redirect/MFA/SMTP configuration, private storage verification and live synthetic test identities remain unavailable.
+  - Required to unblock: link or expose the approved hosted Supabase project to this workspace (do not place secrets in chat); approved Vercel project and domain/DNS; Auth callback/SMTP/MFA configuration; synthetic production test identities; host/storage isolation verification.
+- [ ] 4.4 Platform operator vs firm administrator separation.
+- [ ] 4.5 Firm onboarding workflow.
+
+## Phase Two — Authentication, Roles and Access Control
+
+- [ ] 5.1 Separate administrator, adviser and client entry points.
+- [ ] 5.2 Sign-in, sign-out, reset/recovery, invitation, callback and session handling.
+- [ ] 5.3 Complete roles and permissions: platform operator, firm admin, compliance, adviser, support, client.
+- [ ] 5.4 Security enforcement on server/database; RLS and service-role review.
+
+## Phase Three — Firm Administrator Portal
+
+- [ ] 6.1 Administrator dashboard and real persisted statistics/tasks/notifications.
+- [ ] 6.2 User management and invitations.
+- [ ] 6.3 Client management.
+- [ ] 6.4 Adviser management.
+- [ ] 6.5 Firm configuration.
+- [ ] 6.6 Compliance administration.
+- [ ] 6.7 Platform operator administration.
+
+## Phase Four — Adviser Portal
+
+- [ ] 7.1 Adviser dashboard.
+- [ ] 7.2 Adviser client management.
+- [ ] 7.3 Unified tenant- and permission-aware adviser search.
+- [ ] 7.4 End-to-end adviser client workflows.
+- [ ] 7.5 Adviser reporting.
+
+## Phase Five — Client Portal
+
+- [ ] 8.1 Client dashboard.
+- [ ] 8.2 Client profile.
+- [ ] 8.3 Portfolios and investments.
+- [ ] 8.4 Client documents.
+- [ ] 8.5 Goals and planning.
+- [ ] 8.6 Communication.
+- [ ] 8.7 Client onboarding.
+
+## Phase Six — Core Wealth Data
+
+- [ ] 9.1 Complete core models and migrations.
+- [ ] 9.2 Referential and monetary integrity safeguards.
+- [ ] 9.3 Tenant ownership and RLS for wealth records.
+
+## Phase Seven — Document Management
+
+- [ ] 10.1 Private tenant/client/adviser document storage.
+- [ ] 10.2 Upload/download/version/category/status/expiry controls.
+- [ ] 10.3 Storage policy and signed URL verification.
+
+## Phase Eight — Workflows and Notifications
+
+- [ ] 11.1 Persistent workflow engine for onboarding, reviews and compliance.
+- [ ] 11.2 Task creation, assignment, statuses and overdue tracking.
+- [ ] 11.3 Recipient/tenant-aware in-app and configured email notifications.
+
+## Phase Nine — Intelligence and Reporting
+
+- [ ] 12.1 Verified portfolio analytics and reporting.
+- [ ] 12.2 Goal/risk/concentration/performance calculations.
+- [ ] 12.3 AI/insights boundaries and auditable material outputs.
+
+## Phase Ten — UX and Navigation
+
+- [ ] 13.1 Responsive premium design system.
+- [ ] 13.2 Complete visible actions, loading/error/empty/success states and validation.
+- [ ] 13.3 Accessibility, keyboard, navigation and deep-link verification.
+
+## Phase Eleven — Security and Compliance
+
+- [ ] 14.1 Route/API/role/tenant authorization review.
+- [ ] 14.2 RLS, storage, service-role and cross-tenant verification.
+- [ ] 14.3 Audit, retention, consent and compliance readiness.
+
+## Phase Twelve — Testing
+
+- [ ] 15.1 Unit/component/API/integration/database/E2E coverage.
+- [ ] 15.2 Two-tenant isolation verification.
+- [ ] 15.3 Complete workflow and regression pass.
+
+## Phase Thirteen — Deployment
+
+- [ ] 16.1 Vercel/Supabase/environment/domain configuration.
+- [ ] 16.2 Production build and live deployment only when credentials are available.
+- [ ] 16.3 Operational and recovery documentation.
+
+## Phase Fourteen — Documentation
+
+- [ ] 17.1 README rewrite.
+- [ ] 17.2 Architecture, route, database, deployment, security, testing and implementation docs.
+
+## Phase Fifteen — Final Audit
+
+- [ ] 18.1 Full route, workflow, API, migration, RLS and UI audit.
+- [ ] 18.2 Remove obsolete demo/fake production paths and dead controls.
+- [ ] 19.1 Final declaration only with complete evidence.
+
+## Progress
+
+- Current phase: Phase One, Task 4.3 Hosted SaaS foundation.
+- Completed: Repository Inspection — Task One; Phase One — 4.1 Tenant architecture; 4.2 Dynamic white-label configuration.
+- Remaining: all implementation phases.
+- Blocked: hosted Supabase/Vercel/SMTP/DNS/MFA/credentials and external production approval.
+- Exact next action: inspect and implement the tenant/firms and membership foundation; do not begin 4.2 until 4.1 is implemented, tested, documented and verified.
