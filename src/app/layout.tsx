@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     applicationName: branding.tradingName,
     icons: branding.faviconUrl
       ? { icon: branding.faviconUrl, apple: branding.logoUrl ?? undefined }
-      : { apple: "/icons/apple-touch-icon.png" },
+      : { icon: "/placeholder-logo.svg", apple: "/placeholder-logo.svg" },
     openGraph: {
       title: branding.tradingName,
       description: "Secure wealth management platform.",

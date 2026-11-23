@@ -34,7 +34,7 @@ The findings table records the pre-Task-2 baseline.
 The history contains the commit `ed10b02 Add protected Puck homepage studio`.
 The studio experience is implemented by `src/app/studio/page.tsx`,
 `src/components/home/HomePageStudio.tsx`, and
-`src/components/home/HomePageEditorConfig.tsx`, with `supabase/puck-studio.sql`
+`src/components/home/HomePageEditorConfig.tsx`, with `supabase/migrations/20260101000003_puck_studio.sql`
 supporting persistence. The current commit history also tracks `FundComparison`
 and `src/app/page.tsx` as the interactive public fund-comparison experience;
 the homepage mounts it through `DeferredFundComparison.tsx`. No available

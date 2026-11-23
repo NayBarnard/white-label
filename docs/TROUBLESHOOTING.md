@@ -23,7 +23,7 @@ silently disabling production rate limits.
 
 ## Supabase setup and data import
 
-1. In the Supabase project SQL Editor, run `supabase/schema.sql`. It creates
+1. In the Supabase project SQL Editor, run `supabase/migrations/20260101000001_schema.sql`. It creates
    `funds` and `fund_metrics` and seeds the `balanced` and `cautious` fund
    records.
 2. Obtain approved, dated NAV and benchmark index observations from the firm's
@@ -71,7 +71,7 @@ After the existing schema, apply these additive migrations in order:
 3. `supabase/migrations/202611160003_newsletter_consent_timestamps.sql` to
    store the timestamp for new newsletter consent records.
 4. `supabase/migrations/202611160004_portal_data_deletion_request.sql` after
-   `supabase/client-portal.sql` to enable the portal's personal-data deletion
+   `supabase/migrations/20260101000002_client_portal.sql` to enable the portal's personal-data deletion
    request type.
 5. `supabase/migrations/202611160005_admin_audit_logs.sql` to create the
    service-role-only audit table used for admin mutations.

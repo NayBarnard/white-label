@@ -64,7 +64,7 @@ capabilities only to active memberships.
 ## RLS status
 
 - RLS is enabled across many tenant and intelligence tables.
-- Legacy client tables contain client-owned policies in `supabase/client-portal.sql` and the base migration.
+- Legacy client tables contain client-owned policies in `supabase/migrations/20260101000002_client_portal.sql` and the base migration.
 - Staff tables use app metadata role claims or service-role operations in some areas.
 - RLS verification is partial: `supabase/tests/tenant-isolation.sql` exists and is documented as not equivalent to Auth-issued-session or API-route testing.
 

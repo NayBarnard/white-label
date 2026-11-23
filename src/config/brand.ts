@@ -3,7 +3,7 @@ export const brand = {
   legalName: "Example Wealth",
   tagline: "A considered approach to long-term wealth.",
   websiteTitle: "Example Wealth",
-  logo: "/icons/apple-touch-icon.png",
+  logo: "/placeholder-logo.svg",
   favicon: "/app/favicon.ico",
   colors: {
     primary: "#D4AF37",

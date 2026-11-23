@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { beliefs, company, leadership } from "@/data/firmData";
+import { beliefs, company } from "@/data/firmData";
 import { FirmStats } from "@/components/FirmStats";
-import { ScrollReveal } from "@/components/ScrollReveal";
-import { ScrollPopOut } from "@/components/ScrollPopOut";
 import { LargeTitle } from "@/components/IOSKit";
 
 export const metadata: Metadata = {
   title: "About your firm",
-  description: "Learn about your firm' independent, owner-managed investment approach and leadership team.",
+  description: "Learn about your firm' independent, owner-managed investment approach.",
   openGraph: {
     title: "About your firm",
-    description: "Learn about your firm' independent, owner-managed investment approach and leadership team.",
+    description: "Learn about your firm' independent, owner-managed investment approach.",
     url: "/about",
   },
 };
@@ -42,41 +39,6 @@ export default function AboutPage() {
         </div>
         <div className="self-center">
           <FirmStats className="grid-cols-1" />
-        </div>
-      </section>
-
-      <section className="border-y border-[var(--border)] bg-[var(--surface)]">
-        <div className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold tracking-[0.18em] text-[var(--accent)]">OUR LEADERSHIP TEAM</p>
-            <h2 className="mt-3 text-3xl font-semibold">Leadership team</h2>
-            <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-              Our experienced team serves on various investment committees alongside other investment professionals of prominent Assurers and Fund Managers.
-            </p>
-          </div>
-          <div className="mt-9 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {leadership.map((person, index) => (
-              <ScrollPopOut key={person.name}>
-                <article className="glass h-full rounded-3xl p-6">
-                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--background)] text-lg font-semibold text-[var(--accent)]">
-                    {person.photo ? (
-                      <Image src={person.photo} alt={person.name} width={64} height={64} className="h-full w-full object-cover" />
-                    ) : (
-                      person.name.split(/\s+/).filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase()
-                    )}
-                  </div>
-                  <ScrollReveal className="mt-5" delayMs={index * 1100}>
-                    <div>
-                      <h3 className="text-lg font-semibold">{person.name}</h3>
-                      <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[var(--accent)]">{person.role}</p>
-                    </div>
-                  </ScrollReveal>
-                  <p className="mt-4 text-xs leading-5 text-[var(--muted)]">{person.credentials}</p>
-                  <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{person.bio}</p>
-                </article>
-              </ScrollPopOut>
-            ))}
-          </div>
         </div>
       </section>
 

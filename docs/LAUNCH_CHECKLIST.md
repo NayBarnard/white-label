@@ -16,14 +16,14 @@ client-facing workflow before real client data is used.
 
 ## 2. Supabase database
 
-- [ ] Apply `supabase/schema.sql`.
-- [ ] Apply `supabase/client-portal.sql`.
-- [ ] Apply `supabase/puck-studio.sql`.
+- [ ] Apply `supabase/migrations/20260101000001_schema.sql`.
+- [ ] Apply `supabase/migrations/20260101000002_client_portal.sql`.
+- [ ] Apply `supabase/migrations/20260101000003_puck_studio.sql`.
 - [ ] Apply additive migrations `202611160001` through `202611180009` in
   timestamp order.
 - [ ] Optional only if a future Supabase CMS mode is approved: apply
   `supabase/migrations/202611200001_white_label_studio_versions.sql` after
-  `supabase/puck-studio.sql` and the existing additive migrations. The current
+  `supabase/migrations/20260101000003_puck_studio.sql` and the existing additive migrations. The current
   browser-only placeholder Studio does not use this migration.
 - [ ] Confirm no existing migration has failed or been only partially applied.
 - [ ] Assign administrator/adviser/client roles exclusively through trusted

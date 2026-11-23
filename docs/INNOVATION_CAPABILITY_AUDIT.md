@@ -14,7 +14,7 @@ review.
 | Creator Studio | `src/components/studio/UniversalStudio.tsx`, `src/lib/studio/*`, Studio tests | Browser-local project editing, IndexedDB media and static ZIP export exist; hosted public deployment does not |
 | Wealth planning lab | `src/components/WealthPlanningLab.tsx`, `src/lib/goals/calculations.ts` | The planning route is a local interactive illustration; some results are browser-local |
 | Adviser/client workflows | `src/components/adviser/*`, `src/lib/adviser/*`, adviser APIs | Auth and relationship checks exist in some adviser paths; broader tenant/role isolation has not been verified |
-| Portfolio and account reporting | Portal components and `supabase/client-portal.sql` | Depends on configured Supabase and authorized source records; the demonstration is not live market data |
+| Portfolio and account reporting | Portal components and `supabase/migrations/20260101000002_client_portal.sql` | Depends on configured Supabase and authorized source records; the demonstration is not live market data |
 | Tax allowance tracking | `src/components/TaxAllowanceTracker.tsx`, tax API and migrations | Rule and contribution tracking exists; user-entered/external figures require review |
 | Staff role/MFA foundations | `src/lib/staff/permissions.ts`, `src/lib/staff/mfa.ts` | Code paths exist; real deployment settings, recovery and tenant-role tests remain unverified |
 

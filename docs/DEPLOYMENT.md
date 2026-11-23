@@ -51,9 +51,9 @@ cookie scope.
 
 Apply the project base SQL files once, in this order:
 
-1. `supabase/schema.sql`
-2. `supabase/client-portal.sql`
-3. `supabase/puck-studio.sql`
+1. `supabase/migrations/20260101000001_schema.sql`
+2. `supabase/migrations/20260101000002_client_portal.sql`
+3. `supabase/migrations/20260101000003_puck_studio.sql`
 
 Then apply the additive migrations:
 
@@ -125,7 +125,7 @@ stored in the browser, and publishing is disabled.
 
 The additive Studio migration and protected server routes are reserved for a
 future opt-in CMS mode. If that mode is deliberately enabled with the
-server-only `STUDIO_STORAGE_MODE=supabase` setting, keep `supabase/puck-studio.sql`
+server-only `STUDIO_STORAGE_MODE=supabase` setting, keep `supabase/migrations/20260101000003_puck_studio.sql`
 and the legacy `site_pages` table. The migration grants read access only to
 published default-tenant content and trusted admin reads; server endpoints
 require admin/AAL2 and the service role. Tenant provisioning and public

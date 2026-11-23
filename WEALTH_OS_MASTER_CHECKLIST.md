@@ -368,8 +368,8 @@ After creating the checklist:
 
 - [!] 16.1 Vercel/Supabase/environment/domain configuration.
   - Status: **BLOCKED**
-  - Evidence: production build and environment/deployment guides exist; local Supabase migration stack passes.
-  - Blocker: approved hosted project link, production domain/DNS, Auth callbacks/MFA/SMTP and Vercel project are not available in this workspace.
+  - Evidence: production build and environment/deployment guides exist; local Supabase migration stack passes; `npx --yes supabase --version` reports 3.2.0.
+  - Blocker: `npx --yes supabase projects list` requires a Supabase access token; `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` are unset. No hosted project was linked or queried. The approved project reference, production domain/DNS, Auth callbacks/MFA/SMTP and Vercel project are still required.
 - [!] 16.2 Production build and live deployment only when credentials are available.
   - Status: **BLOCKED**
   - Evidence: production build passes locally.
@@ -399,15 +399,20 @@ After creating the checklist:
   - Status: **BLOCKED**
   - Evidence: all locally verifiable implementation and test gates pass.
   - Blocker: live hosted deployment, hosted Auth/MFA/SMTP/storage and external legal/security approval remain unavailable.
+- [x] About page employee removal and logo placeholder.
+  - Status: **COMPLETE AND VERIFIED**
+  - Evidence: `/about` no longer contains leadership cards/names; navbar/splash/layout logo surfaces use `/placeholder-logo.svg`; lint, TypeScript, build and direct HTTP checks passed.
+- [x] SQL migration reorganization.
+  - Status: **COMPLETE AND VERIFIED**
+  - Evidence: `schema.sql`, `client-portal.sql` and `puck-studio.sql` moved to timestamped migration filenames; `npx supabase db reset` and RLS suite passed.
 
 ## Progress
 
 - Current phase: Phase Thirteen, live deployment gate 16.1.
 - Current status: **NOT FINISHED — BLOCKED**
 - Completed: Repository inspection through Phase Twelve; Phase Fourteen documentation; local final audit.
-- Remaining blockers: hosted project access/link, Vercel/domain, production Auth MFA/SMTP, private storage and legal/security approvals.
-- Exact next permitted action: configure and independently verify the hosted deployment, then resume 16.1.
+- Remaining blockers: Supabase CLI authentication and approved hosted project reference; Vercel/domain; production Auth MFA/SMTP; private storage; legal/security approvals.
+- Exact next permitted action: authenticate the Supabase CLI through the user's secure local terminal, identify and confirm the intended hosted project, then inspect its migration history before any remote change.
 - Completed: Repository Inspection; Phase One tasks 4.1–4.5.
-- Remaining: all implementation phases.
-- Blocked: hosted Supabase/Vercel/SMTP/DNS/MFA/credentials and external production approval.
-- Exact next action: inspect and implement the tenant/firms and membership foundation; do not begin 4.2 until 4.1 is implemented, tested, documented and verified.
+- Remaining: hosted deployment and external verification gates in Phase Thirteen.
+- Blocked: hosted Supabase/Vercel/SMTP/DNS/MFA credentials and external production approval.

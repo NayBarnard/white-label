@@ -55,8 +55,8 @@ export function SplashGate() {
       <div className="connection-splash-panel">
         <div className="connection-splash-logo">
           <Image
-            src="/logo-splash-last.png"
-            alt="your firm logo"
+            src="/placeholder-logo.svg"
+            alt="WEALTH OS logo placeholder"
             width={1370}
             height={752}
             sizes="(max-width: 657px) 70vw, 460px"

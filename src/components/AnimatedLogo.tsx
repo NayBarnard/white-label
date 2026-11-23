@@ -10,8 +10,8 @@ type Props = {
 export function AnimatedLogo({ compact = false, prominent = false }: Props) {
   return (
     <Image
-      src="/logo-still.png"
-      alt="your firm"
+      src="/placeholder-logo.svg"
+      alt="WEALTH OS logo placeholder"
       width={960}
       height={468}
       priority={compact}

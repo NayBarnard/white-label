@@ -22,20 +22,22 @@
 | 13.1–13.3 — UX/navigation | COMPLETE AND VERIFIED | 51 Playwright tests, responsive/theme/navigation suites | Hosted visual/legal review remains external |
 | 14.1–14.3 — Security/compliance | COMPLETE AND VERIFIED | Central authorization, RLS and audit/compliance migrations | Independent hosted security/legal review remains external |
 | 15.1–15.3 — Testing | COMPLETE AND VERIFIED | 264 Vitest tests; 51 Playwright tests; lint, TypeScript, build and RLS suite | Hosted workflow tests remain external |
-| 16.1–16.2 — Live deployment | BLOCKED | Production build, deployment documentation and environment guide | Requires hosted Supabase, Vercel, domain/DNS, Auth/MFA/SMTP/storage and synthetic identities |
+| 16.1–16.2 — Live deployment | BLOCKED | Production build and deployment documentation exist; `npx --yes supabase --version` reports 3.2.0; `npx --yes supabase projects list` could not run without an access token | `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` are unset. No hosted project was linked or queried. Requires secure CLI authentication, confirmation of the intended hosted project, Vercel, domain/DNS, Auth/MFA/SMTP/storage and synthetic identities |
 | 16.3, 17.1–17.2 — Operations/documentation | COMPLETE AND VERIFIED | README, deployment, security, testing, architecture, route and database docs | Live operational telemetry remains external |
 | 18.1–18.2 — Final local audit | COMPLETE AND VERIFIED | Route/build/UI/test/RLS audit; standalone demo paths are explicit | Hosted audit remains external |
+| SQL migration reorganization — 20260101000001–0003 | COMPLETE AND VERIFIED | Moved base schema, client portal and Puck Studio SQL into `supabase/migrations/`; local reset and RLS suite passed | Hosted project migration push remains external |
+| About page and brand placeholder — employee removal/logo placeholder | COMPLETE AND VERIFIED | Removed leadership cards and team copy from `/about`; switched navbar/splash/layout branding surfaces to `/placeholder-logo.svg`; production build, lint, TypeScript and direct rendered-HTML checks passed | No hosted domain-specific logo has been supplied |
 
 ## Inspection evidence
 
 - Repository routes: 115 files under `src/app`; 300 source files in `src/app`, `src/lib`, and `src/components` inventories.
-- Database: 32 ordered migrations from `202611150001` through `202611240001`, plus legacy SQL scripts.
+- Database: 35 ordered migrations from `20260101000001_schema.sql` through `202611240001_core_wealth_tenant.sql`.
 - Unit tests: `npm test -- --reporter=dot` — 71 test files passed; 264 tests passed.
 - E2E tests: `npm run test:e2e` — 51 Playwright tests passed.
 - Build: `npm run build` passed; `npm run lint` and `npx tsc --noEmit` passed.
 - RLS: `npm run test:supabase:rls` passed against the local stack, including core portfolio/transaction and tenant assertions.
-- Working tree: inspected with `git --no-pager status --short`; no status entries were reported.
-- External blockers: Supabase project credentials, Vercel project credentials, SMTP/provider credentials, domain/DNS, and MFA/test identities were not available to inspect or verify.
+- Working tree: `git --no-pager status --short` shows outstanding local modifications; these were preserved. No commit was made.
+- External blockers: Supabase CLI authentication and approved project reference, Vercel project credentials, SMTP/provider credentials, domain/DNS, and MFA/test identities were not available to inspect or verify.
 
 ## Task 4.1 verification
 

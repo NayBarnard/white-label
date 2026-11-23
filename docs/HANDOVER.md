@@ -95,8 +95,8 @@ tile stays hidden until a count is confirmed.
    any approved leadership photos, and (if confirmed) the client count. Keep
    missing facts blank.
 4. **Configure hosting and database.** Set the required environment variables
-   in Vercel. Apply `supabase/schema.sql`, `supabase/client-portal.sql`, and
-   `supabase/puck-studio.sql`, then apply all additive migrations listed in
+   in Vercel. Apply `supabase/migrations/20260101000001_schema.sql`, `supabase/migrations/20260101000002_client_portal.sql`, and
+   `supabase/migrations/20260101000003_puck_studio.sql`, then apply all additive migrations listed in
    `docs/DEPLOYMENT.md` in timestamp order. Check `/admin/setup`; its amber
    items explain checks the application cannot verify automatically.
 5. **Configure sign-in and email.** Set the production and preview Auth
