@@ -31,6 +31,9 @@ export async function proxy(request: NextRequest) {
   if (standaloneLocalRoutes && request.nextUrl.pathname === "/advisor/login") {
     return NextResponse.redirect(new URL("/advisor", request.url));
   }
+  if (standaloneLocalRoutes && request.nextUrl.pathname === "/admin/login") {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  }
   const disposition = getRouteDisposition(mode, request.nextUrl.pathname, localStudioDemo, standaloneLocalRoutes);
 
   if (disposition === "not-found") {

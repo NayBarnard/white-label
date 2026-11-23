@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   }
   const record = payload as Record<string, unknown>;
   const expectedRole = record.expectedRole;
-  if (expectedRole !== "adviser" && expectedRole !== "admin") {
+  if (expectedRole !== "adviser" && expectedRole !== "admin" && expectedRole !== "platform_operator") {
     return NextResponse.json({ error: "A valid staff sign-in role is required." }, { status: 400 });
   }
   if (!isEmail(record.email) || typeof record.password !== "string" || record.password.length < 1 || record.password.length > 256) {

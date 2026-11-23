@@ -197,7 +197,7 @@ test("product onboarding creates a branded local website project", async ({ page
   await expect(page.getByLabel("SEO title")).toHaveValue("Home | Harbour Point Advisory");
   await expect(page.getByRole("combobox", { name: "Website project" })).toHaveValue(/project-/);
   await page.goto(`${standaloneOrigin}/licensing`);
-  await expect(page.getByText(/No commercial pricing/i)).toBeVisible();
+  await expect(page.getByText(/No commercial pricing/i).first()).toBeVisible();
 });
 
 test("template previews, application and local template duplication work", async ({ page }) => {

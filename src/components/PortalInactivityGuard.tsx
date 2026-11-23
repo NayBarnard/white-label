@@ -36,7 +36,15 @@ export function PortalInactivityGuard() {
       warningRef.current = false;
       setWarningOpen(false);
       clearAbsoluteSignInDeadline();
-      router.replace(session.role === "client" ? "/portal/dashboard" : "/advisor/login");
+      router.replace(
+        session.role === "client"
+          ? "/portal/dashboard"
+          : session.role === "admin"
+            ? "/admin/login"
+            : session.role === "platform_operator"
+              ? "/platform/login"
+              : "/advisor/login",
+      );
     } catch (error) {
       console.error("Automatic portal sign-out failed.", error);
       setSignOutError("We couldn't complete sign-out. Please try again or contact placeholder.");

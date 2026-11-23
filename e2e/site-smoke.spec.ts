@@ -2,9 +2,9 @@ import { expect, test } from "@playwright/test";
 import { company, documents } from "../src/data/firmData";
 
 test("portal opens its clearly labelled local demo without authentication", async ({ page }) => {
-  await page.goto("/portal");
-  await expect(page).toHaveURL(/\/portal$/);
-  await expect(page.getByText("ILLUSTRATIVE DEMONSTRATION")).toBeVisible();
+  await page.goto("/client");
+  await expect(page).toHaveURL(/\/client$/);
+  await expect(page.getByText("ILLUSTRATIVE DEMONSTRATION", { exact: true })).toBeVisible();
   await expect(page.getByText("Local browser data")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Welcome, Alex" })).toBeVisible();
 });
@@ -67,7 +67,7 @@ test("homepage shows firm stats and portfolio carousel keeps the side-peek inter
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
-  await expect(page.getByRole("region", { name: "PLACEHOLDER BRAND at a glance" }).getByText("65")).toBeVisible();
+  await expect(page.getByRole("region", { name: "your firm at a glance" }).getByText("65")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Long-term total returns" })).toBeVisible();
   await expect(page.getByRole("region", { name: "Fund comparison" })).toBeVisible();
 
@@ -79,8 +79,8 @@ test("homepage shows firm stats and portfolio carousel keeps the side-peek inter
   expect(firstCardWidth).toBeGreaterThan(carouselWidth * 0.8);
   expect(firstCardWidth).toBeLessThan(carouselWidth);
 
-  await page.getByRole("button", { name: "Show PLACEHOLDER BRAND Cautious" }).click();
-  await expect(page.getByRole("button", { name: "Show PLACEHOLDER BRAND Cautious" })).toHaveAttribute("aria-current", "true");
+  await page.getByRole("button", { name: "Show your firm Cautious" }).click();
+  await expect(page.getByRole("button", { name: "Show your firm Cautious" })).toHaveAttribute("aria-current", "true");
 });
 
 test("homepage shows requested strategy, insight and swipe sections", async ({ page }) => {
@@ -88,7 +88,7 @@ test("homepage shows requested strategy, insight and swipe sections", async ({ p
   await page.goto("/");
 
   await expect(page.getByRole("region", { name: "Distribution platforms" })).toContainText("Absa");
-  const statistics = page.getByRole("region", { name: "PLACEHOLDER BRAND at a glance" });
+  const statistics = page.getByRole("region", { name: "your firm at a glance" });
   await expect(statistics).toContainText(/4[\s,]942\+/);
   const statCards = statistics.locator(":scope > div");
   const statLayout = await statistics.evaluate((element) => {
@@ -106,14 +106,14 @@ test("homepage shows requested strategy, insight and swipe sections", async ({ p
   for (const { width, height } of statLayout.cardBounds) {
     expect(Math.abs(width - height)).toBeLessThan(1);
   }
-  await expect(page.getByRole("heading", { name: "WHY PLACEHOLDER BRAND" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "WHY your firm" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "OUR INVESTMENT STRATEGIES" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "MARKET COMMENTARY", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Q1 2026 Market Commentary" })).toBeVisible();
 
   const strategies = page.getByRole("region", { name: "Investment strategies" });
-  await expect(strategies.getByRole("heading", { name: "PLACEHOLDER BRAND Balanced Strategy" })).toBeVisible();
-  const cautiousControl = strategies.getByRole("button", { name: "Show PLACEHOLDER BRAND Cautious Strategy" });
+  await expect(strategies.getByRole("heading", { name: "your firm Balanced Strategy" })).toBeVisible();
+  const cautiousControl = strategies.getByRole("button", { name: "Show your firm Cautious Strategy" });
   await cautiousControl.click();
   await expect(cautiousControl).toHaveAttribute("aria-current", "true");
   await expect.poll(() => strategies.locator(".home-swipe-track").evaluate((element) => element.scrollLeft))
@@ -135,13 +135,13 @@ test("fund comparison controls respond to fund and timeframe input", async ({ pa
   await comparison.scrollIntoViewIfNeeded();
   const funds = comparison.getByRole("group", { name: "Select fund" });
   const periods = comparison.getByRole("group", { name: "Select comparison timeframe" });
-  const cautious = funds.getByRole("button", { name: "PLACEHOLDER BRAND Cautious" });
+  const cautious = funds.getByRole("button", { name: "your firm Cautious" });
   const threeYears = periods.getByRole("button", { name: "3Y Annualised" });
 
-  await expect(funds.getByRole("button", { name: "PLACEHOLDER BRAND Balanced" })).toHaveAttribute("aria-pressed", "true");
+  await expect(funds.getByRole("button", { name: "your firm Balanced" })).toHaveAttribute("aria-pressed", "true");
   await cautious.click();
   await expect(cautious).toHaveAttribute("aria-pressed", "true");
-  await expect(funds.getByRole("button", { name: "PLACEHOLDER BRAND Balanced" })).toHaveAttribute("aria-pressed", "false");
+  await expect(funds.getByRole("button", { name: "your firm Balanced" })).toHaveAttribute("aria-pressed", "false");
 
   await threeYears.click();
   await expect(threeYears).toHaveAttribute("aria-pressed", "true");
@@ -169,7 +169,7 @@ test("open navigation and chat panels dismiss when clicking elsewhere", async ({
 
   await page.locator(".island-chat-launcher").click();
   await expect(mobileMenu).toHaveCount(0);
-  const chatPanel = page.getByRole("region", { name: "PLACEHOLDER BRAND AI Assistant chat" });
+  const chatPanel = page.getByRole("region", { name: "your firm AI Assistant chat" });
   await expect(chatPanel).toBeVisible();
   await expect(chatPanel.locator(".chatbot-message-assistant")).toContainText("How can I help?");
   const chatStyle = await chatPanel.evaluate((element) => {

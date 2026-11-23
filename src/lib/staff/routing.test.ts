@@ -6,6 +6,7 @@ describe("post-login role routing", () => {
     expect(getPostLoginDestination("client")).toBe("/portal");
     expect(getPostLoginDestination("adviser")).toBe("/advisor");
     expect(getPostLoginDestination("admin")).toBe("/admin");
+    expect(getPostLoginDestination("platform_operator")).toBe("/platform");
   });
 
   it("treats missing role as client but refuses unknown roles", () => {

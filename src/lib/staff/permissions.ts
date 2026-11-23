@@ -1,4 +1,4 @@
-export type StaffRole = "admin" | "adviser" | "compliance" | "operations";
+export type StaffRole = "platform_operator" | "admin" | "adviser" | "compliance" | "operations";
 export type StaffAction =
   | "staff.sign-in"
   | "adviser.portal"
@@ -17,6 +17,10 @@ export type StaffAction =
   | "audit.export";
 
 export const STAFF_PERMISSIONS: Readonly<Record<StaffRole, ReadonlySet<StaffAction>>> = {
+  platform_operator: new Set([
+    "staff.sign-in", "platform.read", "platform.edit", "people.view",
+    "audit.read", "audit.export",
+  ]),
   admin: new Set([
     "staff.sign-in", "adviser.portal", "platform.read", "platform.edit",
     "people.manage", "people.view", "content.draft", "content.approve",
@@ -34,7 +38,7 @@ export const STAFF_PERMISSIONS: Readonly<Record<StaffRole, ReadonlySet<StaffActi
 };
 
 export function isStaffRole(value: unknown): value is StaffRole {
-  return value === "admin" || value === "adviser" || value === "compliance" || value === "operations";
+  return value === "platform_operator" || value === "admin" || value === "adviser" || value === "compliance" || value === "operations";
 }
 
 export function canStaff(role: unknown, action: StaffAction): boolean {

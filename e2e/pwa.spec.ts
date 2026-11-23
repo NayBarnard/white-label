@@ -6,8 +6,8 @@ test("PWA manifest exposes valid icons and shortcuts", async ({ request }) => {
   expect(manifestResponse.ok()).toBeTruthy();
   const manifest = await manifestResponse.json();
   expect(manifest).toMatchObject({
-    name: "PLACEHOLDER BRAND",
-    short_name: "placeholder",
+    name: "WEALTH OS",
+    short_name: "WEALTH OS",
     start_url: "/",
     display: "standalone",
     background_color: "#0A1124",
@@ -47,14 +47,14 @@ test("service worker registers, offline page has help and chat, and portal is no
   const offlineContent = page.getByRole("main");
   await expect(offlineContent.locator('a[href^="tel:"]')).toBeVisible();
   await expect(offlineContent.locator('a[href^="mailto:"]')).toBeVisible();
-  await expect(page.getByRole("button", { name: "Open PLACEHOLDER BRAND AI Assistant" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open your firm AI Assistant" })).toBeVisible();
 
-  await page.getByRole("button", { name: "Open PLACEHOLDER BRAND AI Assistant" }).click();
+  await page.getByRole("button", { name: "Open your firm AI Assistant" }).click();
   await page.context().setOffline(true);
-  await page.getByRole("textbox", { name: "Message PLACEHOLDER BRAND AI Assistant" }).fill("What is the phone number?");
+  await page.getByRole("textbox", { name: "Message your firm AI Assistant" }).fill("What is the phone number?");
   await page.getByRole("button", { name: "Send message" }).click();
   await expect(
-    page.getByLabel("PLACEHOLDER BRAND AI Assistant chat").locator(".placeholder-chat-message").filter({
+    page.getByLabel("your firm AI Assistant chat").locator(".placeholder-chat-message").filter({
       hasText: company.phone,
     }),
   ).toBeVisible();
@@ -75,9 +75,9 @@ test("service worker registers, offline page has help and chat, and portal is no
 
 test("chatbot answers questions after greetings and understands a follow-up", async ({ page }) => {
   await page.goto("/offline");
-  await page.getByRole("button", { name: "Open PLACEHOLDER BRAND AI Assistant" }).click();
-  const chat = page.getByLabel("PLACEHOLDER BRAND AI Assistant chat");
-  const input = page.getByRole("textbox", { name: "Message PLACEHOLDER BRAND AI Assistant" });
+  await page.getByRole("button", { name: "Open your firm AI Assistant" }).click();
+  const chat = page.getByLabel("your firm AI Assistant chat");
+  const input = page.getByRole("textbox", { name: "Message your firm AI Assistant" });
   const send = page.getByRole("button", { name: "Send message" });
 
   await input.fill("Hi, how are you? What is the FSP number?");
@@ -90,5 +90,5 @@ test("chatbot answers questions after greetings and understands a follow-up", as
 
   await input.fill("And what about Cautious?");
   await send.click();
-  await expect(chat.locator(".placeholder-chat-message").filter({ hasText: "PLACEHOLDER BRAND Cautious Strategy" })).toBeVisible();
+  await expect(chat.locator(".placeholder-chat-message").filter({ hasText: "your firm Cautious Strategy" })).toBeVisible();
 });

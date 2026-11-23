@@ -7,7 +7,7 @@ test("canonical research article exposes institutional sections and adviser PDFs
   await expect(page.getByRole("heading", { name: "Research", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Published fund-performance context" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Key takeaways" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "PLACEHOLDER BRAND perspective" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "your firm perspective" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Related research" })).toBeVisible();
   await expect(page.getByText(/Financial Sector Conduct Authority \(FSCA\)/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Clean PDF" })).toHaveAttribute("href", /branding=clean/);

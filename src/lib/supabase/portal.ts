@@ -16,6 +16,7 @@ type PortalDatabase = {
       client_portfolios: {
         Row: {
           id: string;
+          tenant_id: string | null;
           user_id: string;
           label: string;
           created_at: string;
@@ -70,6 +71,7 @@ type PortalDatabase = {
       client_transactions: {
         Row: {
           id: string;
+          tenant_id: string | null;
           user_id: string;
           transacted_at: string;
           description: string;
@@ -124,6 +126,7 @@ type PortalDatabase = {
       client_documents: {
         Row: {
           id: string;
+          tenant_id: string | null;
           user_id: string;
           title: string;
           document_type: string;
@@ -268,6 +271,7 @@ type PortalDatabase = {
       client_goals: {
         Row: {
           id: string;
+          tenant_id: string | null;
           user_id: string;
           name: string;
           target_amount: number;
@@ -1080,6 +1084,81 @@ type PortalDatabase = {
           status?: "invited" | "active" | "inactive" | "revoked";
           accepted_at?: string | null;
           revoked_at?: string | null;
+        };
+        Relationships: [];
+      };
+      wealth_os_firm_invitations: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          email: string;
+          role: "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support";
+          status: "pending" | "accepted" | "revoked" | "expired";
+          invited_by: string | null;
+          expires_at: string;
+          accepted_at: string | null;
+          revoked_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          tenant_id: string;
+          email: string;
+          role: "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support";
+          status?: "pending" | "accepted" | "revoked" | "expired";
+          invited_by?: string | null;
+          expires_at?: string;
+          accepted_at?: string | null;
+          revoked_at?: string | null;
+        };
+        Update: {
+          role?: "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support";
+          status?: "pending" | "accepted" | "revoked" | "expired";
+          accepted_at?: string | null;
+          revoked_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      wealth_os_firm_onboarding: {
+        Row: {
+          tenant_id: string;
+          status: "created" | "identity_captured" | "branding_configured" | "administrator_invited" | "administrator_active" | "advisers_enabled" | "complete" | "blocked";
+          identity_captured_at: string | null;
+          branding_configured_at: string | null;
+          administrator_invited_at: string | null;
+          administrator_active_at: string | null;
+          advisers_enabled_at: string | null;
+          completed_at: string | null;
+          notes: Json;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          status?: "created" | "identity_captured" | "branding_configured" | "administrator_invited" | "administrator_active" | "advisers_enabled" | "complete" | "blocked";
+          identity_captured_at?: string | null;
+          branding_configured_at?: string | null;
+          administrator_invited_at?: string | null;
+          administrator_active_at?: string | null;
+          advisers_enabled_at?: string | null;
+          completed_at?: string | null;
+          notes?: Json;
+          updated_by?: string | null;
+        };
+        Update: {
+          status?: "created" | "identity_captured" | "branding_configured" | "administrator_invited" | "administrator_active" | "advisers_enabled" | "complete" | "blocked";
+          identity_captured_at?: string | null;
+          branding_configured_at?: string | null;
+          administrator_invited_at?: string | null;
+          administrator_active_at?: string | null;
+          advisers_enabled_at?: string | null;
+          completed_at?: string | null;
+          notes?: Json;
+          updated_by?: string | null;
+          updated_at?: string;
         };
         Relationships: [];
       };

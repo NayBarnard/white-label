@@ -36,12 +36,14 @@ export function getRouteDisposition(
 
   if (mode === "public" && normalizedPath !== "/advisor/login" && isUnderPath(normalizedPath, [
     "/admin",
+    "/platform",
     "/advisor",
     "/studio",
     "/api/admin",
     "/api/advisor",
     "/api/auth",
     "/api/studio",
+    "/api/platform",
   ])) {
     return "not-found";
   }

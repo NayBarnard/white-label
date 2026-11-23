@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ClientDashboard } from "@/components/ClientDashboard";
+import { LocalClientPortal } from "@/components/local/LocalClientPortal";
+import { isStandaloneLocalMode } from "@/lib/deployment/routing";
 
 export const metadata: Metadata = {
   title: "Client demonstration portal",
@@ -17,5 +19,10 @@ export const metadata: Metadata = {
 export const instant = false;
 
 export default function PortalPage() {
-  return <ClientDashboard />;
+  const standalone = isStandaloneLocalMode(
+    process.env.APP_MODE,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+  return standalone ? <LocalClientPortal /> : <ClientDashboard />;
 }

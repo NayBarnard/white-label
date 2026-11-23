@@ -6,7 +6,7 @@ import { getPortalSupabaseClient } from "@/lib/supabase/portal";
 
 export type PortalSessionState = {
   status: "loading" | "signed-out" | "signed-in";
-  role: "client" | "adviser" | "admin" | null;
+  role: "client" | "platform_operator" | "adviser" | "admin" | "compliance" | "operations" | null;
   fullName: string;
   email: string;
   totalInvested: number | null;
@@ -88,7 +88,11 @@ export function PortalSessionProvider({ children }: { children: ReactNode }) {
           : user.email?.split("@")[0] ?? "";
       const appRole: unknown = user.app_metadata?.role;
       const role =
-        appRole === "admin" || appRole === "adviser"
+        appRole === "platform_operator" ||
+        appRole === "admin" ||
+        appRole === "adviser" ||
+        appRole === "compliance" ||
+        appRole === "operations"
           ? appRole
           : appRole === "client" || appRole === undefined || appRole === null
             ? "client"

@@ -146,6 +146,17 @@ create policy "Firm administrators update own tenant"
     and id = auth.jwt() -> 'app_metadata' ->> 'tenant_id'
   );
 
+drop policy if exists "Platform operators create tenants" on public.wealth_os_tenants;
+create policy "Platform operators create tenants"
+  on public.wealth_os_tenants for insert to authenticated
+  with check (public.is_platform_operator());
+
+drop policy if exists "Platform operators update tenants" on public.wealth_os_tenants;
+create policy "Platform operators update tenants"
+  on public.wealth_os_tenants for update to authenticated
+  using (public.is_platform_operator())
+  with check (public.is_platform_operator());
+
 drop policy if exists "Tenant members read domains" on public.wealth_os_domains;
 create policy "Tenant members read domains"
   on public.wealth_os_domains for select to authenticated
@@ -166,6 +177,12 @@ create policy "Firm administrators manage own domains"
     and tenant_id = auth.jwt() -> 'app_metadata' ->> 'tenant_id'
   );
 
+drop policy if exists "Platform operators manage domains" on public.wealth_os_domains;
+create policy "Platform operators manage domains"
+  on public.wealth_os_domains for all to authenticated
+  using (public.is_platform_operator())
+  with check (public.is_platform_operator());
+
 drop policy if exists "Users read own memberships" on public.wealth_os_tenant_memberships;
 create policy "Users read own memberships"
   on public.wealth_os_tenant_memberships for select to authenticated
@@ -181,4 +198,60 @@ create policy "Firm administrators read own tenant memberships"
     public.is_firm_administrator(tenant_id)
     and tenant_id = auth.jwt() -> 'app_metadata' ->> 'tenant_id'
   );
+
+create table if not exists public.wealth_os_firm_invitations (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id text not null references public.wealth_os_tenants(id) on delete cascade,
+  email text not null,
+  role text not null default 'firm_administrator'
+    check (role in ('firm_administrator', 'compliance_officer', 'financial_adviser', 'adviser_support')),
+  status text not null default 'pending'
+    check (status in ('pending', 'accepted', 'revoked', 'expired')),
+  invited_by uuid references auth.users(id) on delete set null,
+  expires_at timestamptz not null default (now() + interval '7 days'),
+  accepted_at timestamptz,
+  revoked_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (tenant_id, email, role)
+);
+
+create index if not exists wealth_os_firm_invitation_email_idx
+  on public.wealth_os_firm_invitations (lower(email), status);
+
+alter table public.wealth_os_firm_invitations enable row level security;
+revoke all on public.wealth_os_firm_invitations from anon, authenticated;
+grant select on public.wealth_os_firm_invitations to authenticated;
+
+drop policy if exists "Platform operators manage firm invitations" on public.wealth_os_firm_invitations;
+create policy "Platform operators manage firm invitations"
+  on public.wealth_os_firm_invitations for all to authenticated
+  using (public.is_platform_operator())
+  with check (public.is_platform_operator());
+
+create table if not exists public.wealth_os_firm_onboarding (
+  tenant_id text primary key references public.wealth_os_tenants(id) on delete cascade,
+  status text not null default 'created'
+    check (status in ('created', 'identity_captured', 'branding_configured', 'administrator_invited', 'administrator_active', 'advisers_enabled', 'complete', 'blocked')),
+  identity_captured_at timestamptz,
+  branding_configured_at timestamptz,
+  administrator_invited_at timestamptz,
+  administrator_active_at timestamptz,
+  advisers_enabled_at timestamptz,
+  completed_at timestamptz,
+  notes jsonb not null default '{}'::jsonb check (jsonb_typeof(notes) = 'object'),
+  updated_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.wealth_os_firm_onboarding enable row level security;
+revoke all on public.wealth_os_firm_onboarding from anon, authenticated;
+grant select on public.wealth_os_firm_onboarding to authenticated;
+
+drop policy if exists "Platform operators manage firm onboarding" on public.wealth_os_firm_onboarding;
+create policy "Platform operators manage firm onboarding"
+  on public.wealth_os_firm_onboarding for all to authenticated
+  using (public.is_platform_operator())
+  with check (public.is_platform_operator());
 

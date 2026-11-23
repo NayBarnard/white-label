@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "your firm",
-    short_name: "placeholder",
+    name: "WEALTH OS",
+    short_name: "WEALTH OS",
     start_url: "/",
     display: "standalone",
     background_color: "#0A1124",

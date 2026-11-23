@@ -194,6 +194,16 @@ function zar(value: number, decimals = 0) {
   }).format(value);
 }
 
+function isConfiguredDemoEmail(email: string): boolean {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) return false;
+  return (process.env.NEXT_PUBLIC_DEMO_ACCOUNT_EMAILS ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(normalizedEmail);
+}
+
 function percentage(value: number) {
   return `${value.toFixed(1)}%`;
 }
@@ -581,7 +591,7 @@ export function AuthenticatedClientPortal({ user }: { user: PortalUser }) {
     };
   }, [client, router, user.id]);
 
-  const isDemo = false;
+  const isDemo = isConfiguredDemoEmail(user.email);
   const hasCompleteValuation =
     isDemo ||
     (portfolioRows.length > 0 && portfolioRows.every((portfolio) => portfolio.valuation_zar !== null));

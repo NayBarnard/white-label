@@ -137,7 +137,15 @@ export function PortalNavigation() {
     const supabase = getPortalSupabaseClient();
     if (supabase) await supabase.auth.signOut({ scope: "global" });
     setOpen(false);
-    router.replace(isClient ? "/portal/dashboard" : isAdmin ? "/admin/login" : "/advisor/login");
+    router.replace(
+      isClient
+        ? "/portal/dashboard"
+        : role === "platform_operator"
+          ? "/platform/login"
+          : isAdmin
+            ? "/admin/login"
+            : "/advisor/login",
+    );
   }
 
   function chooseLink(link: PortalLink) {

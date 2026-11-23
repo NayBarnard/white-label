@@ -3,6 +3,7 @@ import type { CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { PortalDatabase } from "@/lib/supabase/portal";
+import { createClient } from "@supabase/supabase-js";
 
 type PendingCookie = {
   name: string;
@@ -56,6 +57,36 @@ export async function GET(request: Request) {
     destination.searchParams.set("authError", "verification");
   } else if (isRecovery) {
     destination.searchParams.set("authAction", "recovery");
+  } else {
+    const user = await supabase.auth.getUser();
+    if (!user.error && user.data.user) {
+      const metadata = user.data.user.app_metadata;
+      const tenantId = typeof metadata.tenant_id === "string" ? metadata.tenant_id : null;
+      const role = typeof metadata.role === "string" ? metadata.role : null;
+      if (tenantId && ["platform_operator", "firm_administrator", "compliance_officer", "financial_adviser", "adviser_support", "client"].includes(role ?? "")) {
+        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (serviceRoleKey) {
+          const admin = createClient<PortalDatabase>(supabaseUrl, serviceRoleKey, {
+            auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
+          });
+          await admin.from("wealth_os_tenant_memberships").upsert({
+            tenant_id: tenantId,
+            user_id: user.data.user.id,
+            role: role as "platform_operator" | "firm_administrator" | "compliance_officer" | "financial_adviser" | "adviser_support" | "client",
+            status: "active",
+            accepted_at: new Date().toISOString(),
+          }, { onConflict: "tenant_id,user_id" });
+          await admin.from("wealth_os_firm_invitations")
+            .update({ status: "accepted", accepted_at: new Date().toISOString() })
+            .eq("tenant_id", tenantId)
+            .ilike("email", user.data.user.email ?? "");
+        }
+        if (role === "firm_administrator") destination.pathname = "/admin";
+        if (role === "platform_operator") destination.pathname = "/platform";
+        if (role === "compliance_officer" || role === "financial_adviser" || role === "adviser_support") destination.pathname = "/advisor";
+        if (role === "client") destination.pathname = "/portal";
+      }
+    }
   }
 
   const response = NextResponse.redirect(destination);

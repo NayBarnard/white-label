@@ -48,7 +48,8 @@ describe("PortalInactivityGuard", () => {
   it.each([
     ["client", "/portal/dashboard"],
     ["adviser", "/advisor/login"],
-    ["admin", "/advisor/login"],
+    ["admin", "/admin/login"],
+    ["platform_operator", "/platform/login"],
   ])("warns before signing out an inactive %s session", async (role, destination) => {
     vi.useFakeTimers();
     state.role = role;

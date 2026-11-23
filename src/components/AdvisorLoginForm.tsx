@@ -18,7 +18,7 @@ const inputClass =
   "mt-2 min-h-12 w-full rounded-xl border border-[var(--border-strong)] bg-[var(--background)] px-4 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20";
 
 type AdvisorLoginFormProps = {
-  allowedRole?: "adviser" | "admin";
+  allowedRole?: "adviser" | "admin" | "platform_operator";
 };
 
 export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormProps) {
@@ -35,7 +35,7 @@ export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormPr
   const [mfaSecret, setMfaSecret] = useState("");
   const [useRecoveryCode, setUseRecoveryCode] = useState(false);
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
-  const [staffRole, setStaffRole] = useState<"adviser" | "admin">("adviser");
+  const [staffRole, setStaffRole] = useState<"platform_operator" | "adviser" | "admin">("adviser");
   const [message, setMessage] = useState(
     isConfigured
       ? ""
@@ -70,20 +70,28 @@ export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormPr
       const actualRole = data.user.app_metadata.role;
       if (
         (allowedRole === "adviser" && actualRole !== "adviser") ||
-        (allowedRole === "admin" && actualRole !== "admin")
+        (allowedRole === "admin" && actualRole !== "admin") ||
+        (allowedRole === "platform_operator" && actualRole !== "platform_operator")
       ) {
         const { error: signOutError } = await supabase.auth.signOut({ scope: "global" });
         if (signOutError) {
           console.error("A non-staff session could not be cleared after staff login.", signOutError);
         }
         setMessage(
-          allowedRole === "admin"
-            ? "This sign-in is for authorised administrators only."
-            : "This sign-in is for authorised advisers only.",
+          allowedRole === "platform_operator"
+            ? "This sign-in is for authorised platform operators only."
+            : allowedRole === "admin"
+              ? "This sign-in is for authorised administrators only."
+              : "This sign-in is for authorised advisers only.",
         );
         return;
       }
-      const signedInRole = actualRole === "admin" ? "admin" : "adviser";
+      const signedInRole: "platform_operator" | "admin" | "adviser" =
+        actualRole === "platform_operator"
+          ? "platform_operator"
+          : actualRole === "admin"
+            ? "admin"
+            : "adviser";
       setStaffRole(signedInRole);
 
       const assurance = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -202,7 +210,13 @@ export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormPr
           return;
         }
       }
-      router.replace(staffRole === "admin" ? "/admin" : "/advisor");
+      router.replace(
+        staffRole === "platform_operator"
+          ? "/platform"
+          : staffRole === "admin"
+            ? "/admin"
+            : "/advisor",
+      );
       router.refresh();
     } catch (error) {
       console.error("Staff MFA verification could not be completed.", error);
@@ -237,14 +251,21 @@ export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormPr
       const role = user.data.user.app_metadata.role;
       const roleMatches =
         (allowedRole === "adviser" && role === "adviser") ||
-        (allowedRole === "admin" && role === "admin");
+        (allowedRole === "admin" && role === "admin") ||
+        (allowedRole === "platform_operator" && role === "platform_operator");
       if (!roleMatches) {
         await supabase.auth.signOut({ scope: "global" });
         clearAbsoluteSignInDeadline();
         setMessage("This is staff sign-in only.");
         return;
       }
-      router.replace(role === "admin" ? "/admin" : "/advisor");
+      router.replace(
+        role === "platform_operator"
+          ? "/platform"
+          : role === "admin"
+            ? "/admin"
+            : "/advisor",
+      );
       router.refresh();
     } catch (error) {
       console.error("Staff recovery code verification could not be completed.", error);
@@ -269,7 +290,7 @@ export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormPr
               Staff sign-in
             </h1>
             <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-              Sign in with your authorised {allowedRole === "admin" ? "administrator" : "adviser"} account credentials.
+              Sign in with your authorised {allowedRole === "platform_operator" ? "platform operator" : allowedRole === "admin" ? "administrator" : "adviser"} account credentials.
             </p>
           </div>
         </div>
@@ -291,7 +312,13 @@ export function AdvisorLoginForm({ allowedRole = "adviser" }: AdvisorLoginFormPr
               onClick={() => {
                 clearAbsoluteSignInDeadline();
                 getAbsoluteSignInDeadline();
-                router.replace(staffRole === "admin" ? "/admin" : "/advisor");
+                router.replace(
+                  staffRole === "platform_operator"
+                    ? "/platform"
+                    : staffRole === "admin"
+                      ? "/admin"
+                      : "/advisor",
+                );
                 router.refresh();
               }}
               className="min-h-12 w-full rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]"

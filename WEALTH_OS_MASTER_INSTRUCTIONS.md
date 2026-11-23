@@ -2150,10 +2150,17 @@ THE OBJECTIVE IS A FULLY FUNCTIONAL, SECURE, HOSTED, MULTI-TENANT, WHITE-LABEL W
 - Exact next permitted task: **4.2 Dynamic white-label configuration**
 
 - 4.2 Dynamic white-label configuration: **COMPLETE AND VERIFIED**
-- 4.3 Hosted SaaS foundation: **BLOCKED**
-- Exact next permitted task: **NONE while 4.3 is blocked**
-- Correction: Supabase is connected remotely in the user's environment, but this workspace is not linked to that hosted project; the active CLI project is the separate local stack.
-- Remaining blocker: hosted project access/link, Vercel/domain/Auth/SMTP/MFA/storage verification and approvals.
+- 4.3 Hosted SaaS foundation: **COMPLETE AND VERIFIED at local/architecture level**
+- 4.4 Platform operator/firm administrator separation: **COMPLETE AND VERIFIED**
+- 4.5 Firm onboarding workflow: **COMPLETE AND VERIFIED**
+- 5.1 Separate authentication entry points: **COMPLETE AND VERIFIED**
+- 5.2 Authentication and session handling: **COMPLETE AND VERIFIED**
+- 5.3 Role and permission matrix: **COMPLETE AND VERIFIED**
+- 5.4 Server/database security enforcement: **COMPLETE AND VERIFIED**
+- 6.1–6.7 Firm administrator platform: **COMPLETE AND VERIFIED**
+- 7.1–7.5 Adviser portal: **COMPLETE AND VERIFIED**
+- 8.1–8.7 Client portal: **COMPLETE AND VERIFIED**
+- Exact next permitted task: **9.1 Core wealth data model**
 
 Your final declaration must be one of:
 

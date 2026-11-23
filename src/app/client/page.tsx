@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ClientDashboard } from "@/components/ClientDashboard";
+import { LocalClientPortal } from "@/components/local/LocalClientPortal";
 
 export const metadata: Metadata = {
   title: "Client experience",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ClientPage() {
-  return <ClientDashboard />;
+  return <LocalClientPortal />;
 }

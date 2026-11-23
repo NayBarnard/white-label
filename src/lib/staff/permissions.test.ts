@@ -19,4 +19,10 @@ describe("central staff permission map", () => {
     expect(canStaff("operations", "documents.manage")).toBe(true);
     expect(canStaff("operations", "content.publish")).toBe(false);
   });
+
+  it("separates platform operators from firm private administration", () => {
+    expect(canStaff("platform_operator", "platform.edit")).toBe(true);
+    expect(canStaff("platform_operator", "audit.read")).toBe(true);
+    expect(canStaff("platform_operator", "people.manage")).toBe(false);
+  });
 });

@@ -120,7 +120,7 @@ describe("deployment route isolation", () => {
     },
   );
 
-  it.each(["/admin", "/advisor", "/studio", "/api/admin/setup", "/api/advisor/platforms"])(
+  it.each(["/admin", "/advisor", "/platform", "/studio", "/api/admin/setup", "/api/advisor/platforms", "/api/platform/firms"])(
     "returns an HTTP 404 for public deployment path %s",
     async (pathname) => {
       vi.stubEnv("APP_MODE", "public");

@@ -9,7 +9,6 @@ import { RouteAccentScope } from "@/components/RouteAccentScope";
 import { PortalSessionProvider } from "@/components/PortalSessionProvider";
 import { PortalInactivityGuard } from "@/components/PortalInactivityGuard";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
-import { company } from "@/data/firmData";
 import { APP_MODE } from "@/config/deployment";
 import { headers } from "next/headers";
 import { loadTenantBranding } from "@/lib/branding/server";

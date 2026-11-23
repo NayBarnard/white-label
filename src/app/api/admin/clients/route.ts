@@ -8,6 +8,10 @@ type ClientPortfolio = PortalDatabase["public"]["Tables"]["client_portfolios"]["
 export async function GET() {
   const access = await authorizeAdminApi();
   if (!access.ok) return access.response;
+  const tenantId = access.user.app_metadata.tenant_id;
+  if (typeof tenantId !== "string") {
+    return NextResponse.json({ error: "Organisation access could not be verified." }, { status: 403 });
+  }
 
   try {
     const users: User[] = [];
@@ -27,7 +31,10 @@ export async function GET() {
     }
 
     const clients = users
-      .filter((user) => user.app_metadata.role !== "admin")
+      .filter((user) =>
+        user.app_metadata.tenant_id === tenantId &&
+        (user.app_metadata.role === "client" || user.app_metadata.role === undefined)
+      )
       .map((user) => ({
         id: user.id,
         email: user.email ?? "",

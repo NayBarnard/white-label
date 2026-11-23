@@ -7,6 +7,10 @@ import { parsePeopleAction } from "@/lib/people/validation";
 export async function GET() {
   const access = await authorizeAdminApi();
   if (!access.ok) return access.response;
+  const tenantId = access.user.app_metadata.tenant_id;
+  if (typeof tenantId !== "string") {
+    return NextResponse.json({ error: "Organisation access could not be verified." }, { status: 403 });
+  }
 
   try {
     const users: User[] = [];
@@ -22,7 +26,9 @@ export async function GET() {
       page += 1;
     }
     return NextResponse.json({
-      people: users.map((user) => ({
+      people: users
+        .filter((user) => user.app_metadata.tenant_id === tenantId)
+        .map((user) => ({
         id: user.id,
         email: user.email ?? "",
         fullName: typeof user.user_metadata.full_name === "string" ? user.user_metadata.full_name : "",
@@ -41,6 +47,10 @@ export async function GET() {
 export async function POST(request: Request) {
   const access = await authorizeAdminApi();
   if (!access.ok) return access.response;
+  const tenantId = access.user.app_metadata.tenant_id;
+  if (typeof tenantId !== "string") {
+    return NextResponse.json({ error: "Organisation access could not be verified." }, { status: 403 });
+  }
 
   const body = await readJsonBody(request, 32 * 1024);
   if (!body.ok) {
@@ -69,7 +79,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "The invitation could not be sent." }, { status: 502 });
       }
       const updated = await access.supabase.auth.admin.updateUserById(invited.data.user.id, {
-        app_metadata: { role: action.role },
+        app_metadata: { role: action.role, tenant_id: tenantId },
       });
       if (updated.error) {
         await access.supabase.auth.admin.updateUserById(invited.data.user.id, {
@@ -99,6 +109,12 @@ export async function POST(request: Request) {
       if (target.error || !target.data.user) {
         return NextResponse.json({ error: "The person could not be found." }, { status: 404 });
       }
+      if (target.data.user.app_metadata.tenant_id !== tenantId) {
+        return NextResponse.json({ error: "The person is outside this organisation." }, { status: 403 });
+      }
+      if (target.data.user.app_metadata.tenant_id !== tenantId) {
+        return NextResponse.json({ error: "The person is outside this organisation." }, { status: 403 });
+      }
       const beforeRole = typeof target.data.user.app_metadata.role === "string"
         ? target.data.user.app_metadata.role
         : "client";
@@ -120,7 +136,7 @@ export async function POST(request: Request) {
         }
       }
       const changed = await access.supabase.auth.admin.updateUserById(action.userId, {
-        app_metadata: { role: action.role },
+        app_metadata: { role: action.role, tenant_id: tenantId },
       });
       if (changed.error) {
         console.error("Person role could not be changed.", changed.error);
@@ -136,7 +152,7 @@ export async function POST(request: Request) {
       );
       if (!audited) {
         await access.supabase.auth.admin.updateUserById(action.userId, {
-          app_metadata: { role: beforeRole },
+          app_metadata: { role: beforeRole, tenant_id: tenantId },
         });
         return NextResponse.json({ error: "The change could not be audited." }, { status: 500 });
       }
