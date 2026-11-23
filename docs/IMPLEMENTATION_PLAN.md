@@ -2,6 +2,14 @@
 
 Status reviewed: 2026-11-22
 
+> **Standalone-first acceptance amendment:** `WEALTH_OS_MASTER_CHECKLIST.md`
+> now controls the current required work order. The application must run
+> locally without Supabase credentials or mandatory external services.
+> Supabase/Vercel setup and live hosted verification remain optional deployment
+> work and are not blockers to standalone acceptance. The roadmap below
+> preserves hosted and acquisition-readiness requirements as a separate track;
+> it does not replace the standalone acceptance checklist.
+
 ## Current verified capability matrix
 
 | Capability | Evidence in this repository | Status | Production boundary |

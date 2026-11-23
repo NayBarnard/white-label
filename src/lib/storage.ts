@@ -124,8 +124,20 @@ export class IndexedDbProvider implements StorageProvider {
     return new Promise<unknown>((resolve, reject) => {
       const transaction = database.transaction(this.storeName, "readonly");
       const request = transaction.objectStore(this.storeName).get(key);
-      request.onsuccess = () => resolve(request.result ?? null);
-      request.onerror = () => reject(request.error ?? new Error("IndexedDB read failed."));
+      let value: unknown = null;
+      request.onsuccess = () => { value = request.result ?? null; };
+      transaction.oncomplete = () => {
+        database.close();
+        resolve(value);
+      };
+      transaction.onerror = () => {
+        database.close();
+        reject(transaction.error ?? request.error ?? new Error("IndexedDB read failed."));
+      };
+      transaction.onabort = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB read was aborted."));
+      };
     });
   }
 
@@ -134,8 +146,18 @@ export class IndexedDbProvider implements StorageProvider {
     await new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(this.storeName, "readwrite");
       transaction.objectStore(this.storeName).put(value, key);
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error ?? new Error("IndexedDB write failed."));
+      transaction.oncomplete = () => {
+        database.close();
+        resolve();
+      };
+      transaction.onerror = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB write failed."));
+      };
+      transaction.onabort = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB write was aborted."));
+      };
     });
   }
 
@@ -144,8 +166,67 @@ export class IndexedDbProvider implements StorageProvider {
     await new Promise<void>((resolve, reject) => {
       const transaction = database.transaction(this.storeName, "readwrite");
       transaction.objectStore(this.storeName).delete(key);
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error ?? new Error("IndexedDB delete failed."));
+      transaction.oncomplete = () => {
+        database.close();
+        resolve();
+      };
+      transaction.onerror = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB delete failed."));
+      };
+      transaction.onabort = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB delete was aborted."));
+      };
+    });
+  }
+
+  async entries() {
+    const database = await this.open();
+    return new Promise<[string, unknown][]>((resolve, reject) => {
+      const transaction = database.transaction(this.storeName, "readonly");
+      const request = transaction.objectStore(this.storeName).openCursor();
+      const entries: [string, unknown][] = [];
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (!cursor) return;
+        if (typeof cursor.key === "string") entries.push([cursor.key, cursor.value]);
+        cursor.continue();
+      };
+      transaction.oncomplete = () => {
+        database.close();
+        resolve(entries);
+      };
+      transaction.onerror = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB listing failed."));
+      };
+      transaction.onabort = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB listing was aborted."));
+      };
+    });
+  }
+
+  async replaceEntries(entries: Array<[string, unknown]>) {
+    const database = await this.open();
+    await new Promise<void>((resolve, reject) => {
+      const transaction = database.transaction(this.storeName, "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      store.clear();
+      for (const [key, value] of entries) store.put(value, key);
+      transaction.oncomplete = () => {
+        database.close();
+        resolve();
+      };
+      transaction.onerror = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB replacement failed."));
+      };
+      transaction.onabort = () => {
+        database.close();
+        reject(transaction.error ?? new Error("IndexedDB replacement was aborted."));
+      };
     });
   }
 }

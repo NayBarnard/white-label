@@ -2060,8 +2060,9 @@ Keep the repository buildable throughout implementation.
 
 Progress tracking
 
-Maintain WEALTH_OS_MASTER_INSTRUCTIONS.md as the master checklist.
-
+Maintain `WEALTH_OS_MASTER_CHECKLIST.md` as the authoritative task order and
+completion register. This file remains the full requirements specification;
+the checklist records current status and exact verification evidence.
 Maintain docs/WEALTH_OS_COMPLETION_REGISTER.md as the evidence register.
 
 For each completed task, record:
@@ -2106,7 +2107,8 @@ Record the next permitted action.
 
 Record any blockers.
 
-When resuming, read these files first.
+When resuming, read the entire `WEALTH_OS_MASTER_CHECKLIST.md` first, then
+consult this specification and the completion register.
 
 Do not repeat completed work unnecessarily.
 
@@ -2128,7 +2130,37 @@ Do not mark tasks complete without evidence.
 
 Do not leave unfinished work behind.
 
-THE OBJECTIVE IS A FULLY FUNCTIONAL, SECURE, HOSTED, MULTI-TENANT, WHITE-LABEL WEALTH MANAGEMENT PLATFORM — NOT A DEMONSTRATION OF ONE.
+The objective is a fully functional, secure, hosted, multi-tenant, white-label wealth management platform — not a demonstration of one.
+
+## USER REQUIREMENT AMENDMENT — STANDALONE-FIRST ACCEPTANCE
+
+The user has subsequently clarified that WEALTH OS must also operate as a
+fully independent standalone application. This amendment supplements the
+hosted multi-tenant requirements above and controls acceptance priority:
+
+- The application must install, build, and run locally without Supabase
+  credentials.
+- Do not run `supabase login`, request credentials or project references, or
+  link, query, or migrate a hosted Supabase project.
+- Supabase remains an optional hosted integration. Missing hosted
+  configuration is not a blocker to standalone work or completion.
+- Local-first workflows must use appropriate browser persistence, including
+  IndexedDB where data/files are stored, and must not require mandatory
+  external services.
+- Local workflows must state their limits: browser/device scope is not
+  authentication, hosted tenant isolation, encryption, or cross-device sync.
+- Keep all original hosted requirements and deployment tasks in the audit
+  trail. Hosted deployment is an optional release track, not a standalone
+  acceptance gate.
+- The root `WEALTH_OS_MASTER_CHECKLIST.md` is authoritative for the current
+  sequential work order. Its standalone acceptance phase and current progress
+  supersede the historical hosted-deployment blocker in earlier progress
+  entries below.
+
+The project is not finished until required standalone workflows, validation,
+and local test/build acceptance are complete. Record genuinely incomplete
+items as incomplete and continue through the ordered checklist; do not relabel
+external hosted setup as a blocker to standalone completion.
 
 ---
 

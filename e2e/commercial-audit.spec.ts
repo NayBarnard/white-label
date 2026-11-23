@@ -21,16 +21,107 @@ function readStoredZip(buffer: Buffer) {
   return entries;
 }
 
-test("standalone client and adviser portals open directly without sign-in", async ({ page }) => {
+test("standalone client and adviser workspaces open without Supabase credentials", async ({ page }) => {
   await page.goto(`${standaloneOrigin}/portal/dashboard`);
   await expect(page).toHaveURL(`${standaloneOrigin}/portal`);
-  await expect(page.getByRole("heading", { name: "Welcome, Alex" })).toBeVisible();
-  await expect(page.getByText("ILLUSTRATIVE DEMONSTRATION")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Client portal" })).toBeVisible();
+  await expect(page.getByText("No client record is available")).toBeVisible();
 
   await page.goto(`${standaloneOrigin}/advisor/login`);
   await expect(page).toHaveURL(`${standaloneOrigin}/advisor`);
-  await expect(page.getByRole("heading", { name: "Adviser dashboard" })).toBeVisible();
-  await expect(page.getByText("LOCAL ADVISER DEMONSTRATION")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Adviser workspace" })).toBeVisible();
+  await expect(page.getByText("No adviser profile is available")).toBeVisible();
+});
+
+test("standalone firm, adviser, and client workflows persist and restore without network services", async ({ page }) => {
+  const externalRequests: string[] = [];
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.hostname !== "127.0.0.1" && url.hostname !== "localhost") externalRequests.push(request.url());
+  });
+
+  await page.goto(`${standaloneOrigin}/admin`);
+  await expect(page.getByRole("heading", { name: "Firm administration" })).toBeVisible();
+  await page.getByLabel("Firm name").fill("North Oak Advisory");
+  await page.getByLabel("Name", { exact: true }).fill("Riley Adviser");
+  await page.getByLabel("Email", { exact: true }).fill("riley@example.test");
+  await page.getByLabel("Role", { exact: true }).selectOption("Adviser");
+  await page.getByRole("button", { name: "Add user record" }).click();
+  await page.getByLabel("Name", { exact: true }).fill("Avery Client");
+  await page.getByLabel("Email", { exact: true }).fill("avery@example.test");
+  await page.getByLabel("Role", { exact: true }).selectOption("Client");
+  await page.getByRole("button", { name: "Add user record" }).click();
+  await page.getByLabel("Adviser for Avery Client").selectOption({ label: "Riley Adviser" });
+
+  await page.getByLabel("Client", { exact: true }).first().selectOption({ label: "Avery Client" });
+  await page.getByLabel("Holding").fill("Global equity fund");
+  await page.getByLabel("Asset class").fill("Equities");
+  await page.getByLabel("Value").fill("12345.67");
+  await page.getByRole("button", { name: "Add holding" }).click();
+
+  await page.getByLabel("Client", { exact: true }).nth(1).selectOption({ label: "Avery Client" });
+  await page.getByLabel("Description").fill("Quarterly contribution");
+  await page.getByLabel("Amount").fill("125.50");
+  await page.getByRole("button", { name: "Add transaction record" }).click();
+
+  await page.getByLabel("Document client").selectOption({ label: "Avery Client" });
+  await page.getByLabel("Upload file").setInputFiles({
+    name: "client-statement.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4 local test document"),
+  });
+  await expect(page.getByText("client-statement.pdf", { exact: true })).toBeVisible();
+  await page.waitForTimeout(300);
+
+  await page.goto(`${standaloneOrigin}/advisor`);
+  await page.getByLabel("Local adviser profile").selectOption({ label: "Riley Adviser" });
+  await page.getByRole("button", { name: /Avery Client/ }).click();
+  await page.getByLabel("Adviser note").fill("Reviewed client-provided information.");
+  await page.getByLabel("Task").fill("Confirm supporting documents");
+  await page.getByRole("button", { name: "Add task" }).click();
+  await page.waitForTimeout(300);
+  await expect(page.getByText("Confirm supporting documents")).toBeVisible();
+
+  await page.goto(`${standaloneOrigin}/portal`);
+  await page.getByRole("button", { name: "Holdings", exact: true }).click();
+  await expect(page.getByText("Global equity fund")).toBeVisible();
+  await expect(page.getByText("$12,345.67")).toBeVisible();
+
+  await page.getByRole("button", { name: "Transactions", exact: true }).click();
+  await expect(page.getByText("Quarterly contribution")).toBeVisible();
+  await page.getByRole("button", { name: "Goals", exact: true }).click();
+  await page.getByLabel("Goal name").fill("Education");
+  await page.getByLabel("Target amount").fill("20000");
+  await page.getByLabel("Current amount", { exact: true }).fill("5000");
+  await page.getByLabel("Target date").fill("2035-01-01");
+  await page.getByRole("button", { name: "Add goal" }).click();
+  await expect(page.getByRole("heading", { name: "Education" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Documents", exact: true }).click();
+  const documentDownload = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download" }).click();
+  expect((await documentDownload).suggestedFilename()).toBe("client-statement.pdf");
+
+  await page.goto(`${standaloneOrigin}/admin`);
+  const backupDownload = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export backup" }).click();
+  const backupPath = await (await backupDownload).path();
+  expect(backupPath).toBeTruthy();
+  const backup = JSON.parse(await fs.readFile(backupPath!, "utf8"));
+  expect(backup.format).toBe("wealth-os-local-workspace");
+  expect(backup.records.some((entry: { key: string }) => entry.key === "wealth-os:workspace:people")).toBe(true);
+  expect(backup.records.some((entry: { key: string; value: { kind?: string } }) => entry.key.startsWith("wealth-os:file:") && entry.value.kind === "blob")).toBe(true);
+
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Reset workspace" }).click();
+  await expect(page.getByText("Your local workspace is empty")).toBeVisible();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.locator('input[type="file"][accept="application/json"]').setInputFiles(backupPath!);
+  await expect(page.getByLabel("Adviser for Avery Client")).toHaveValue(/.+/);
+  await page.goto(`${standaloneOrigin}/portal`);
+  await page.getByRole("button", { name: "Holdings", exact: true }).click();
+  await expect(page.getByText("Global equity fund")).toBeVisible();
+  await expect(externalRequests).toEqual([]);
 });
 
 test("Studio supports create, edit, drag, save, publish, import and export", async ({ page }) => {
@@ -228,7 +319,7 @@ test("template previews, application and local template duplication work", async
   await reusable.click();
 });
 
-test("Planning and adviser reports download as real PDFs", async ({ page }) => {
+test("Planning and data-backed adviser reports download as real PDFs", async ({ page }) => {
   await page.goto(`${standaloneOrigin}/planning`);
   await expect(page.getByRole("heading", { name: "Illustrative growth scenarios" })).toBeVisible();
   const planningDownload = page.waitForEvent("download");
@@ -239,8 +330,22 @@ test("Planning and adviser reports download as real PDFs", async ({ page }) => {
   expect(planningPath).toBeTruthy();
   expect(await fs.readFile(planningPath!, "utf8")).toMatch(/^%PDF-/);
 
+  await page.goto(`${standaloneOrigin}/admin`);
+  await page.getByLabel("Name", { exact: true }).fill("Riley Adviser");
+  await page.getByLabel("Email", { exact: true }).fill("riley@example.test");
+  await page.getByLabel("Role", { exact: true }).selectOption("Adviser");
+  await page.getByRole("button", { name: "Add user record" }).click();
+  await page.getByLabel("Name", { exact: true }).fill("Avery Client");
+  await page.getByLabel("Email", { exact: true }).fill("avery@example.test");
+  await page.getByLabel("Role", { exact: true }).selectOption("Client");
+  await page.getByRole("button", { name: "Add user record" }).click();
+  await page.getByLabel("Adviser for Avery Client").selectOption({ label: "Riley Adviser" });
+  await page.waitForTimeout(250);
+
   await page.goto(`${standaloneOrigin}/advisor`);
-  await expect(page.getByText("Adviser dashboard")).toBeVisible();
+  await expect(page.getByLabel("Local adviser profile")).toHaveValue(/.+/);
+  await page.getByLabel("Local adviser profile").selectOption({ label: "Riley Adviser" });
+  await expect(page.getByRole("button", { name: /Avery Client/ })).toBeVisible();
   const adviserDownload = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export review pack PDF" }).click();
   const adviser = await adviserDownload;
@@ -267,7 +372,7 @@ test("all primary routes respond and local portal screens render", async ({ page
     expect(response.status(), route).toBeLessThan(400);
   }
   await page.goto(`${standaloneOrigin}/client`);
-  await expect(page.getByText("ILLUSTRATIVE DEMONSTRATION", { exact: true })).toBeVisible();
+  await expect(page.getByText("STANDALONE LOCAL WORKSPACE", { exact: true }).first()).toBeVisible();
   await page.goto(`${standaloneOrigin}/advisor`);
   await expect(page.getByText("Adviser dashboard")).toBeVisible();
   await page.goto(`${standaloneOrigin}/admin`);

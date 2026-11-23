@@ -22,13 +22,17 @@
 | 13.1–13.3 — UX/navigation | COMPLETE AND VERIFIED | 51 Playwright tests, responsive/theme/navigation suites | Hosted visual/legal review remains external |
 | 14.1–14.3 — Security/compliance | COMPLETE AND VERIFIED | Central authorization, RLS and audit/compliance migrations | Independent hosted security/legal review remains external |
 | 15.1–15.3 — Testing | COMPLETE AND VERIFIED | 264 Vitest tests; 51 Playwright tests; lint, TypeScript, build and RLS suite | Hosted workflow tests remain external |
-| 16.1–16.2 — Live deployment | BLOCKED | Production build and deployment documentation exist; `npx --yes supabase --version` reports 3.2.0; `npx --yes supabase projects list` could not run without an access token | `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` are unset. No hosted project was linked or queried. Requires secure CLI authentication, confirmation of the intended hosted project, Vercel, domain/DNS, Auth/MFA/SMTP/storage and synthetic identities |
+| 16.1–16.2 — Live deployment | NOT STARTED (OPTIONAL HOSTED TRACK) | Hosted deployment guides and architecture exist; no hosted project was linked or queried | Hosted project, Auth/MFA/SMTP, Vercel and domain setup remain unverified; this is not a standalone blocker |
 | 16.3, 17.1–17.2 — Operations/documentation | COMPLETE AND VERIFIED | README, deployment, security, testing, architecture, route and database docs | Live operational telemetry remains external |
 | 18.1–18.2 — Final local audit | COMPLETE AND VERIFIED | Route/build/UI/test/RLS audit; standalone demo paths are explicit | Hosted audit remains external |
 | SQL migration reorganization — 20260101000001–0003 | COMPLETE AND VERIFIED | Moved base schema, client portal and Puck Studio SQL into `supabase/migrations/`; local reset and RLS suite passed | Hosted project migration push remains external |
 | About page and brand placeholder — employee removal/logo placeholder | COMPLETE AND VERIFIED | Removed leadership cards and team copy from `/about`; switched navbar/splash/layout branding surfaces to `/placeholder-logo.svg`; production build, lint, TypeScript and direct rendered-HTML checks passed | No hosted domain-specific logo has been supplied |
 
-## Inspection evidence
+## Historical pre-amendment verification
+
+The evidence below records previously completed hosted/local project work. It
+does not verify the current standalone changes and must not be used as their
+acceptance evidence.
 
 - Repository routes: 115 files under `src/app`; 300 source files in `src/app`, `src/lib`, and `src/components` inventories.
 - Database: 35 ordered migrations from `20260101000001_schema.sql` through `202611240001_core_wealth_tenant.sql`.
@@ -37,7 +41,10 @@
 - Build: `npm run build` passed; `npm run lint` and `npx tsc --noEmit` passed.
 - RLS: `npm run test:supabase:rls` passed against the local stack, including core portfolio/transaction and tenant assertions.
 - Working tree: `git --no-pager status --short` shows outstanding local modifications; these were preserved. No commit was made.
-- External blockers: Supabase CLI authentication and approved project reference, Vercel project credentials, SMTP/provider credentials, domain/DNS, and MFA/test identities were not available to inspect or verify.
+- At the time of this historical report, hosted Supabase/Vercel credentials,
+  SMTP/provider credentials, domain/DNS, and MFA/test identities were not
+  available to inspect or verify. Hosted deployment is now an optional track,
+  not a blocker to standalone acceptance.
 
 ## Task 4.1 verification
 
@@ -46,4 +53,46 @@
 - Tenant/context and studio tenant tests: 5 assertions passed.
 - Tenant/adviser/admin focused tests: 10 assertions passed.
 - Direct PostgreSQL RLS execution passed for the existing suite and added tenant membership/domain/cross-tenant assertions.
+
+## Current standalone-first work
+
+The user has amended acceptance priority: the application must install, build,
+and run without Supabase credentials; hosted Supabase/Vercel work remains
+optional. No hosted login, linking, query, or migration was performed.
+
+| Task | Status | Current evidence | Remaining work |
+|---|---|---|---|
+| 20.1 — IndexedDB local admin/adviser/client records, documents, backup and restore | IN PROGRESS | `src/lib/local-workspace.test.ts`: 2 tests pass; persistence-hook tests: 2 pass; latest full Vitest: 73 files/270 tests pass; targeted lint/type checks cover modified workspace code | Run standalone browser workflow, including reload and backup/restore; Next.js dev server was terminated before compilation |
+| 20.2 — White-Label Studio local editing/import/export/static ZIP | IN PROGRESS | Studio unit tests: 7 files/21 tests pass; full Vitest includes 270 passing tests; updated `docs/WHITE_LABEL_STUDIO.md`; `e2e/commercial-audit.spec.ts` contains browser acceptance | Browser E2E could not start because no production build ID was available; rerun Studio import/export/ZIP scenarios |
+| 20.3 — Financial twin, risk validation, evidence labeling | COMPLETE AND VERIFIED | Focused Vitest: 3 files/13 tests pass; full suite: 73 files/270 tests pass; targeted ESLint and TypeScript checks pass for changed modules | None for this task; overall build/release gates remain open |
+| 20.4 — Standalone run without Supabase variables or mandatory external requests | IN PROGRESS | No local `.env*` files are present; build command removed environment keys containing `SUPABASE`; 45 routing/backup assertions pass | Default build exited 143, Webpack worker received SIGTERM, dev server exited 143 before compiling; no E2E/network browser verification |
+| 20.5 — Required install/lint/type/unit/build/E2E checks | IN PROGRESS | `npm install` completed (629 packages audited, 0 vulnerabilities); full Vitest: 73 files/270 tests pass; targeted ESLint/TypeScript pass; `next typegen` passes | Full lint and full-project `tsc` exited 143; production build workers were terminated; `npm run test:e2e` could not start without build output |
+| 20.6 — Remaining route/feature audit and documentation | IN PROGRESS | Documentation describes standalone-first behavior; fixed homepage `#funds` link to `/portfolios` (6 tests pass); planning-lab defaults no longer seed surplus/tax inputs or fictional risk, relationship, knowledge, or decision records; 4 focused planning-lab tests pass; no exact TODO/FIXME/XXX/coming-soon markers were found in TS/TSX under `src/app`, `src/components`, and `src/lib` | Continue route/control, import/export, backup, and responsive audit; targeted planning-lab ESLint was terminated with exit 143 |
+| 20.7 — Final standalone acceptance | NOT STARTED | No completion declaration made | Requires all preceding required tasks and tests |
+
+### Current test details
+
+- Passed: earlier full suite — 72 files/267 tests; latest full
+  `npm test -- --reporter=dot` — 73 files/270 tests.
+- Passed: focused workspace/Studio/intelligence/routing tests, including
+  2 workspace backup tests, 2 persistence-hook tests, 21 Studio tests, 13
+  intelligence tests, 45 routing/backup assertions, and 6 homepage config
+  tests.
+- Passed: targeted ESLint for all modified TS/TSX files, targeted TypeScript
+  for workspace/intelligence modules, and `npx next typegen`.
+- Not verified: full `npm run lint` and `npx tsc --noEmit` exited 143 without
+  diagnostics. The default production build exited 143; a Webpack build worker
+  received SIGTERM. `npm run test:e2e` failed to start because `.next` had no
+  production build ID, and a standalone dev server was terminated before
+  compilation.
+- No current unit-test failure remains; one initial overflow test failed,
+  was fixed, and the final full unit suite passes.
+
+### Current status
+
+**NOT FINISHED — IN PROGRESS.** Hosted deployment is optional and is not a
+blocker. Browser/build validation remains unverified because Next.js workers
+were terminated. Continue with the ordered remaining-route audit, keep
+standalone portal/Studio/build tasks incomplete, and retry the browser gates
+when the build/dev server can run to completion.
 

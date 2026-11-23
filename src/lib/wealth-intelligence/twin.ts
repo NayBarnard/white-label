@@ -77,9 +77,21 @@ export function validateTwinAssumptions(input: unknown): TwinAssumptions | null 
     (event.type === "cash_inflow" || event.type === "cash_outflow") &&
     Number.isFinite(event.amount) && event.amount >= 0 &&
     ["verified", "calculated", "uncertain"].includes(event.confidence) &&
-    typeof event.source === "string",
+    typeof event.source === "string" && event.id.length <= 200 && event.source.length <= 500,
   );
-  return eventsValid ? a : null;
+  if (
+    !eventsValid || a.lifeEvents.length > 1000 ||
+    !Number.isInteger(a.horizonYears) || !Number.isInteger(a.iterations) || !Number.isInteger(a.seed)
+  ) return null;
+
+  const eventTotals = new Map<number, number>();
+  for (const event of a.lifeEvents) {
+    const total = (eventTotals.get(event.year) ?? 0) +
+      (event.type === "cash_inflow" ? event.amount : -event.amount);
+    if (!Number.isFinite(total)) return null;
+    eventTotals.set(event.year, total);
+  }
+  return a;
 }
 
 function percentile(values: number[], fraction: number) {
@@ -98,31 +110,44 @@ export function simulateFinancialTwin(input: TwinAssumptions): TwinResult {
   const monthlyRate = assumptions.nominalReturnPercent / 100 / 12;
   const monthlyVolatility = assumptions.volatilityPercent / 100 / Math.sqrt(12);
   const inflationFactor = Math.pow(1 + assumptions.inflationPercent / 100, assumptions.horizonYears);
+  if (!Number.isFinite(inflationFactor)) throw new Error("Financial twin assumptions exceed the supported numerical range.");
   const endings: number[] = [];
   let successful = 0;
   const drawdowns: number[] = [];
+  const eventsByYear = new Map<number, number>();
+  for (const event of assumptions.lifeEvents) {
+    eventsByYear.set(
+      event.year,
+      (eventsByYear.get(event.year) ?? 0) + (event.type === "cash_inflow" ? event.amount : -event.amount),
+    );
+  }
 
   for (let iteration = 0; iteration < assumptions.iterations; iteration += 1) {
     let value = assumptions.startingAmount;
-    let peak = value;
-    let largestDrawdown = 0;
+    let annualPeak = value;
+    let largestAnnualDrawdown = 0;
     for (let month = 1; month <= assumptions.horizonYears * 12; month += 1) {
+      if (month > 1 && (month - 1) % 12 === 0) {
+        drawdowns.push(largestAnnualDrawdown);
+        annualPeak = value;
+        largestAnnualDrawdown = 0;
+      }
       const annualShock = normal(random) * monthlyVolatility;
       const monthlyReturn = monthlyRate + annualShock;
       value *= 1 + monthlyReturn;
       const year = Math.floor((month - 1) / 12);
-      for (const event of assumptions.lifeEvents) {
-        if (event.year === year && month === year * 12 + 1) {
-          value += event.type === "cash_inflow" ? event.amount : -event.amount;
-        }
-      }
+      if (month === year * 12 + 1) value += eventsByYear.get(year) ?? 0;
       value += assumptions.monthlyContribution - assumptions.monthlyWithdrawal;
+      if (!Number.isFinite(value)) throw new Error("Financial twin result exceeds the supported numerical range.");
       value = Math.max(0, value);
-      peak = Math.max(peak, value);
-      largestDrawdown = Math.max(largestDrawdown, peak > 0 ? (peak - value) / peak : 0);
+      annualPeak = Math.max(annualPeak, value);
+      largestAnnualDrawdown = Math.max(
+        largestAnnualDrawdown,
+        annualPeak > 0 ? (annualPeak - value) / annualPeak : 0,
+      );
     }
     endings.push(value);
-    drawdowns.push(largestDrawdown);
+    drawdowns.push(largestAnnualDrawdown);
     if (value >= assumptions.targetAmount) successful += 1;
   }
 

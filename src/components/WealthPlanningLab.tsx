@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useLocalState } from "@/lib/local-store";
 import { downloadPdfReport } from "@/lib/pdf-report";
 import { simulateFinancialTwin, FINANCIAL_TWIN_VERSION, type LifeEvent } from "@/lib/wealth-intelligence/twin";
@@ -10,6 +10,8 @@ import { orchestrateOpportunity, rehearseCrisis, evaluateInnovationProposal } fr
 
 type Scenario = { id: string; name: string; present: number; monthly: number; years: number; rate: number; result: number };
 type HostedRecord = { path: string; payload: object };
+type RelationshipEntity = { id: string; type: string; label: string; verified: boolean };
+type KnowledgeRecord = { id: string; title: string; summary: string; sourceReference: string; approved: boolean };
 
 export function WealthPlanningLab() {
   const [present, setPresent] = useState(100000);
@@ -26,14 +28,27 @@ export function WealthPlanningLab() {
   const [lifeEventAmount, setLifeEventAmount] = useState(100000);
   const [lifeEvents, setLifeEvents] = useState<LifeEvent[]>([]);
   const [twinRuns, setTwinRuns] = useLocalState<Array<{ id: string; name: string; result: ReturnType<typeof simulateFinancialTwin>; assumptions: object }>>("example-wealth.planning.twin-runs", []);
-  const [decisionTitle, setDecisionTitle] = useState("Review retirement contribution");
-  const [decisionContext, setDecisionContext] = useState("Illustrative context: increasing monthly contributions before the next review.");
+  const [decisionTitle, setDecisionTitle] = useState("");
+  const [decisionContext, setDecisionContext] = useState("");
+  const [decisionMessage, setDecisionMessage] = useState("");
   const [decisionHistory, setDecisionHistory] = useLocalState<Array<{ id: string; title: string; events: Array<{ type: string; payload: object; createdAt: string }> }>>("example-wealth.planning.decision-history", []);
-  const [demoHoldings, setDemoHoldings] = useState<Holding[]>([]);
-  const [monthlySurplus, setMonthlySurplus] = useState<number | null>(5000);
-  const [taxAllowance, setTaxAllowance] = useState<number | null>(30000);
-  const [relationshipEntities, setRelationshipEntities] = useLocalState<Array<{ id: string; type: string; label: string; verified: boolean }>>("example-wealth.relationship.entities", []);
-  const [knowledgeRecords, setKnowledgeRecords] = useLocalState<Array<{ id: string; title: string; summary: string; sourceReference: string; approved: boolean }>>("example-wealth.knowledge.records", []);
+  const [riskHoldings, setRiskHoldings] = useState<Holding[]>([]);
+  const [riskHoldingForm, setRiskHoldingForm] = useState({
+    name: "",
+    assetClass: "",
+    currency: "",
+    liquidity: "daily" as Holding["liquidity"],
+    valueZar: "",
+  });
+  const [riskMessage, setRiskMessage] = useState("");
+  const [monthlySurplus, setMonthlySurplus] = useState<number | null>(null);
+  const [taxAllowance, setTaxAllowance] = useState<number | null>(null);
+  const [relationshipEntities, setRelationshipEntities] = useLocalState<RelationshipEntity[]>("example-wealth.relationship.entities", []);
+  const [relationshipForm, setRelationshipForm] = useState({ type: "", label: "", verified: false });
+  const [relationshipMessage, setRelationshipMessage] = useState("");
+  const [knowledgeRecords, setKnowledgeRecords] = useLocalState<KnowledgeRecord[]>("example-wealth.knowledge.records", []);
+  const [knowledgeForm, setKnowledgeForm] = useState({ title: "", summary: "", sourceReference: "", approved: false });
+  const [knowledgeMessage, setKnowledgeMessage] = useState("");
   const [savedEnterpriseRuns, setSavedEnterpriseRuns] = useLocalState<Array<{ id: string; opportunityCount: number; estimatedExposureZar: number | null }>>("example-wealth.planning.enterprise-runs", []);
   const [persistenceNotice, setPersistenceNotice] = useState<{ kind: "pending" | "success" | "error"; message: string } | null>(null);
 
@@ -111,7 +126,7 @@ export function WealthPlanningLab() {
       { id: "higher", name: "Higher assumption", assumptions: { ...base, nominalReturnPercent: 10, volatilityPercent: 18 }, result: simulateFinancialTwin({ ...base, nominalReturnPercent: 10, volatilityPercent: 18 }) },
     ]);
   }, [inflation, lifeEvents, monthly, present, rate, seed, target, volatility, years]);
-  const riskFindings = useMemo(() => analyseHoldingRisk(demoHoldings), [demoHoldings]);
+  const riskFindings = useMemo(() => analyseHoldingRisk(riskHoldings), [riskHoldings]);
   const opportunities = useMemo(() => orchestrateOpportunity({
     verifiedMonthlySurplusZar: monthlySurplus,
     targetShortfallZar: target > twinResult.percentile50 ? target - twinResult.percentile50 : 0,
@@ -212,6 +227,10 @@ export function WealthPlanningLab() {
   }
 
   function addDecisionContext() {
+    if (!decisionTitle.trim() || !decisionContext.trim()) {
+      setDecisionMessage("Enter a decision title and context before recording it.");
+      return;
+    }
     setDecisionHistory((current) => [
       ...current,
       {
@@ -246,14 +265,33 @@ export function WealthPlanningLab() {
           payload: { context: decisionContext, calculationVersion: FINANCIAL_TWIN_VERSION, humanApprovalRequired: true },
       },
     }], "decision context");
+    setDecisionMessage("");
   }
 
-  function loadFictionalRiskDemo() {
-    setDemoHoldings([
-      { id: "demo-equity", name: "Fictional equity fund", assetClass: "Equity", currency: "ZAR", liquidity: "daily", valueZar: 600000 },
-      { id: "demo-private", name: "Fictional private asset", assetClass: "Private", currency: "ZAR", liquidity: "restricted", valueZar: 300000 },
-      { id: "demo-cash", name: "Fictional cash account", assetClass: "Cash", currency: "ZAR", liquidity: "daily", valueZar: 100000 },
-    ]);
+  function addRiskHolding(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const valueZar = Number(riskHoldingForm.valueZar);
+    if (
+      !riskHoldingForm.name.trim() ||
+      !riskHoldingForm.assetClass.trim() ||
+      !/^[A-Za-z]{3}$/.test(riskHoldingForm.currency.trim()) ||
+      !Number.isFinite(valueZar) ||
+      valueZar <= 0 ||
+      !Number.isFinite(riskHoldings.reduce((sum, holding) => sum + holding.valueZar, valueZar))
+    ) {
+      setRiskMessage("Enter a name, asset class, three-letter currency and a positive value within the supported total.");
+      return;
+    }
+    setRiskHoldings((current) => [...current, {
+      id: `holding-${Date.now()}`,
+      name: riskHoldingForm.name.trim(),
+      assetClass: riskHoldingForm.assetClass.trim(),
+      currency: riskHoldingForm.currency.trim().toUpperCase(),
+      liquidity: riskHoldingForm.liquidity,
+      valueZar,
+    }]);
+    setRiskHoldingForm({ name: "", assetClass: "", currency: "", liquidity: "daily", valueZar: "" });
+    setRiskMessage("");
   }
 
   function saveEnterpriseIllustrations() {
@@ -299,24 +337,43 @@ export function WealthPlanningLab() {
     ], "opportunity and crisis scenarios");
   }
 
-  function addFictionalRelationship() {
+  function addRelationshipEntity(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!relationshipForm.label.trim() || !relationshipForm.type.trim()) {
+      setRelationshipMessage("Enter an entity label and relationship type.");
+      return;
+    }
     setRelationshipEntities((current) => [
       ...current,
-      { id: `entity-${Date.now()}`, type: "beneficiary", label: "Fictional beneficiary — needs verification", verified: false },
+      {
+        id: `entity-${Date.now()}`,
+        type: relationshipForm.type.trim(),
+        label: relationshipForm.label.trim(),
+        verified: relationshipForm.verified,
+      },
     ]);
+    setRelationshipForm({ type: "", label: "", verified: false });
+    setRelationshipMessage("");
   }
 
-  function addApprovedKnowledgeDemo() {
+  function addKnowledgeRecord(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!knowledgeForm.title.trim() || !knowledgeForm.summary.trim() || !knowledgeForm.sourceReference.trim()) {
+      setKnowledgeMessage("Enter a title, summary and source reference.");
+      return;
+    }
     setKnowledgeRecords((current) => [
       ...current,
       {
         id: `knowledge-${Date.now()}`,
-        title: "Approved review process",
-        summary: "Every opportunity requires adviser evidence review and explicit human approval.",
-        sourceReference: "WEALTH OS Innovation Register / approved platform rule",
-        approved: true,
+        title: knowledgeForm.title.trim(),
+        summary: knowledgeForm.summary.trim(),
+        sourceReference: knowledgeForm.sourceReference.trim(),
+        approved: knowledgeForm.approved,
       },
     ]);
+    setKnowledgeForm({ title: "", summary: "", sourceReference: "", approved: false });
+    setKnowledgeMessage("");
   }
 
   async function exportPdf() {
@@ -437,42 +494,70 @@ export function WealthPlanningLab() {
         <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">DECISION TIME MACHINE</p>
         <h2 id="decision-heading" className="mt-2 text-xl font-semibold">Append-only decision context</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="text-sm">Decision title<input value={decisionTitle} onChange={(event) => setDecisionTitle(event.target.value)} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
-          <label className="text-sm">Context<textarea value={decisionContext} onChange={(event) => setDecisionContext(event.target.value)} className="mt-2 min-h-24 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] p-3" /></label>
+          <label className="text-sm">Decision title<input required value={decisionTitle} onChange={(event) => setDecisionTitle(event.target.value)} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Context<textarea required value={decisionContext} onChange={(event) => setDecisionContext(event.target.value)} className="mt-2 min-h-24 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] p-3" /></label>
         </div>
         <button type="button" onClick={addDecisionContext} className="mt-4 min-h-11 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Record decision context</button>
+        {decisionMessage ? <p role="alert" className="mt-3 text-sm text-[var(--danger)]">{decisionMessage}</p> : null}
         {decisionHistory.length ? <ul className="mt-5 space-y-3">{decisionHistory.map((decision) => <li key={decision.id} className="rounded-2xl border border-[var(--border)] p-4"><p className="font-semibold">{decision.title}</p>{decision.events.map((event) => <p key={event.createdAt} className="mt-2 text-xs text-[var(--muted)]">{event.type} · {event.createdAt} · alternatives and assumptions preserved</p>)}</li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No decision context has been recorded.</p>}
       </section>
 
       <section className="glass mt-5 rounded-3xl p-5 sm:p-7" aria-labelledby="risk-heading">
         <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">INVISIBLE RISK DISCOVERY</p>
         <h2 id="risk-heading" className="mt-2 text-xl font-semibold">Evidence-first holding risk</h2>
-        <p className="mt-2 text-sm text-[var(--muted)]">No holding data is inferred or imported. Load clearly labelled fictional holdings to demonstrate concentration, currency and liquidity analysis.</p>
-        <button type="button" onClick={loadFictionalRiskDemo} className="mt-4 min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Load fictional demo holdings</button>
-        {riskFindings.length ? <ul className="mt-5 space-y-3">{riskFindings.map((finding) => <li key={`${finding.type}-${finding.label}`} className="rounded-2xl border border-[var(--border)] p-4"><p className="font-semibold">{finding.label}</p><p className="mt-1 text-sm text-[var(--muted)]">{finding.evidence}</p><p className="mt-2 text-xs">Confidence: {finding.confidence} · {finding.percent.toFixed(1)}%</p></li>)}</ul> : demoHoldings.length ? <p className="mt-4 text-sm text-[var(--muted)]">No configured concentration, currency or liquidity threshold was triggered.</p> : null}
+        <p className="mt-2 text-sm text-[var(--muted)]">Enter reported holdings to calculate concentration, currency and liquidity indicators. Values are not independently verified or imported.</p>
+        <form onSubmit={addRiskHolding} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <label className="text-sm">Holding name<input required maxLength={100} value={riskHoldingForm.name} onChange={(event) => setRiskHoldingForm((current) => ({ ...current, name: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Asset class<input required maxLength={60} value={riskHoldingForm.assetClass} onChange={(event) => setRiskHoldingForm((current) => ({ ...current, assetClass: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Holding currency (3-letter code)<input required pattern="[A-Za-z]{3}" maxLength={3} value={riskHoldingForm.currency} onChange={(event) => setRiskHoldingForm((current) => ({ ...current, currency: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Reported value (R)<input required type="number" min="0.01" step="any" value={riskHoldingForm.valueZar} onChange={(event) => setRiskHoldingForm((current) => ({ ...current, valueZar: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Liquidity<select required value={riskHoldingForm.liquidity} onChange={(event) => {
+            const value = event.target.value;
+            if (value === "daily" || value === "monthly" || value === "restricted") {
+              setRiskHoldingForm((current) => ({ ...current, liquidity: value }));
+            }
+          }} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3"><option value="daily">Daily</option><option value="monthly">Monthly</option><option value="restricted">Restricted</option></select></label>
+          <button type="submit" className="min-h-11 self-end rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Add reported holding</button>
+        </form>
+        {riskMessage ? <p role="alert" className="mt-3 text-sm text-[var(--danger)]">{riskMessage}</p> : null}
+        {riskHoldings.length ? <ul className="mt-5 space-y-2" aria-label="Reported holdings">{riskHoldings.map((holding) => <li key={holding.id} className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] p-3 text-sm"><span>{holding.name} · {holding.assetClass} · {holding.currency} · R {holding.valueZar.toLocaleString("en-ZA")}</span><button type="button" onClick={() => setRiskHoldings((current) => current.filter((item) => item.id !== holding.id))} className="min-h-10 rounded-full border border-[var(--border)] px-3 text-xs font-semibold">Remove</button></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No holdings entered; no holding-risk findings are inferred.</p>}
+        {riskFindings.length ? <ul className="mt-5 space-y-3" aria-label="Holding risk findings">{riskFindings.map((finding) => <li key={`${finding.type}-${finding.label}`} className="rounded-2xl border border-[var(--border)] p-4"><p className="font-semibold">{finding.label}</p><p className="mt-1 text-sm text-[var(--muted)]">{finding.evidence}</p><p className="mt-2 text-xs">Confidence: {finding.confidence} · {finding.percent.toFixed(1)}%</p></li>)}</ul> : riskHoldings.length ? <p className="mt-4 text-sm text-[var(--muted)]">No configured concentration, currency or liquidity threshold was triggered.</p> : null}
       </section>
 
       <section className="glass mt-5 rounded-3xl p-5 sm:p-7" aria-labelledby="relationship-heading">
         <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">WEALTH RELATIONSHIP GRAPH</p>
         <h2 id="relationship-heading" className="mt-2 text-xl font-semibold">Household and entity relationships</h2>
         <p className="mt-2 text-sm text-[var(--muted)]">No personal relationships are inferred. Add only verified or clearly unverified entities.</p>
-        <button type="button" onClick={addFictionalRelationship} className="mt-4 min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Add unverified fictional beneficiary</button>
-        {relationshipEntities.length ? <ul className="mt-4 space-y-2">{relationshipEntities.map((entity) => <li key={entity.id} className="rounded-xl border border-[var(--border)] p-3"><p className="text-sm font-semibold">{entity.label}</p><p className="mt-1 text-xs text-[var(--muted)]">Type: {entity.type} · Verification: {entity.verified ? "verified" : "missing human verification"}</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No relationship entities recorded.</p>}
+        <form onSubmit={addRelationshipEntity} className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="text-sm">Entity label<input required maxLength={120} value={relationshipForm.label} onChange={(event) => setRelationshipForm((current) => ({ ...current, label: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Relationship type<input required maxLength={60} value={relationshipForm.type} onChange={(event) => setRelationshipForm((current) => ({ ...current, type: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="flex items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" checked={relationshipForm.verified} onChange={(event) => setRelationshipForm((current) => ({ ...current, verified: event.target.checked }))} />I have independently verified this relationship</label>
+          <button type="submit" className="min-h-11 rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)] sm:col-span-2">Add relationship record</button>
+        </form>
+        {relationshipMessage ? <p role="alert" className="mt-3 text-sm text-[var(--danger)]">{relationshipMessage}</p> : null}
+        {relationshipEntities.length ? <ul className="mt-4 space-y-2">{relationshipEntities.map((entity) => <li key={entity.id} className="rounded-xl border border-[var(--border)] p-3"><p className="text-sm font-semibold">{entity.label}</p><p className="mt-1 text-xs text-[var(--muted)]">Type: {entity.type} · Verification: {entity.verified ? "marked verified by user" : "not verified"}</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No relationship entities recorded.</p>}
       </section>
 
       <section className="glass mt-5 rounded-3xl p-5 sm:p-7" aria-labelledby="knowledge-heading">
         <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">WEALTH INSTITUTION BRAIN</p>
         <h2 id="knowledge-heading" className="mt-2 text-xl font-semibold">Permission-aware approved knowledge</h2>
         <p className="mt-2 text-sm text-[var(--muted)]">Only explicitly approved records are eligible for this local illustration. Answers must retain source references.</p>
-        <button type="button" onClick={addApprovedKnowledgeDemo} className="mt-4 min-h-11 rounded-full border border-[var(--border)] px-5 text-sm font-semibold">Add approved platform record</button>
-        {knowledgeRecords.length ? <ul className="mt-4 space-y-2">{knowledgeRecords.filter((record) => record.approved).map((record) => <li key={record.id} className="rounded-xl border border-[var(--border)] p-3"><p className="text-sm font-semibold">{record.title}</p><p className="mt-1 text-sm text-[var(--muted)]">{record.summary}</p><p className="mt-2 text-xs">Source: {record.sourceReference}</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No approved knowledge records available.</p>}
+        <form onSubmit={addKnowledgeRecord} className="mt-4 grid gap-4">
+          <label className="text-sm">Record title<input required maxLength={120} value={knowledgeForm.title} onChange={(event) => setKnowledgeForm((current) => ({ ...current, title: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Summary<textarea required maxLength={2000} value={knowledgeForm.summary} onChange={(event) => setKnowledgeForm((current) => ({ ...current, summary: event.target.value }))} className="mt-2 min-h-24 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] p-3" /></label>
+          <label className="text-sm">Source reference<input required maxLength={500} value={knowledgeForm.sourceReference} onChange={(event) => setKnowledgeForm((current) => ({ ...current, sourceReference: event.target.value }))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={knowledgeForm.approved} onChange={(event) => setKnowledgeForm((current) => ({ ...current, approved: event.target.checked }))} />I approve this record for use in this local illustration</label>
+          <button type="submit" className="min-h-11 justify-self-start rounded-full bg-[var(--accent-fill)] px-5 text-sm font-bold text-[var(--button-text)]">Add sourced knowledge record</button>
+        </form>
+        {knowledgeMessage ? <p role="alert" className="mt-3 text-sm text-[var(--danger)]">{knowledgeMessage}</p> : null}
+        {knowledgeRecords.length ? <ul className="mt-4 space-y-2">{knowledgeRecords.map((record) => <li key={record.id} className="rounded-xl border border-[var(--border)] p-3"><p className="text-sm font-semibold">{record.title} · {record.approved ? "approved by user" : "not approved"}</p><p className="mt-1 text-sm text-[var(--muted)]">{record.summary}</p><p className="mt-2 text-xs">Source: {record.sourceReference}</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No knowledge records are available.</p>}
       </section>
 
       <section className="glass mt-5 rounded-3xl p-5 sm:p-7" aria-labelledby="opportunity-heading">
         <p className="text-xs font-bold tracking-[0.16em] text-[var(--accent)]">FINANCIAL OPPORTUNITY ORCHESTRATOR</p>
         <h2 id="opportunity-heading" className="mt-2 text-xl font-semibold">Human-review opportunities</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="text-sm">Verified monthly surplus (R)<input type="number" min={0} value={monthlySurplus ?? ""} onChange={(event) => setMonthlySurplus(event.target.value === "" ? null : Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
+          <label className="text-sm">Reported monthly surplus (R; not independently verified)<input type="number" min={0} value={monthlySurplus ?? ""} onChange={(event) => setMonthlySurplus(event.target.value === "" ? null : Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
           <label className="text-sm">Reported remaining tax allowance (R)<input type="number" min={0} value={taxAllowance ?? ""} onChange={(event) => setTaxAllowance(event.target.value === "" ? null : Number(event.target.value))} className="mt-2 min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3" /></label>
         </div>
         {opportunities.length ? <ul className="mt-5 space-y-3">{opportunities.map((opportunity) => <li key={opportunity.title} className="rounded-2xl border border-[var(--border)] p-4"><p className="font-semibold">{opportunity.title}</p><p className="mt-2 text-sm">{opportunity.rationale}</p><p className="mt-3 text-xs text-[var(--muted)]">Evidence: {opportunity.evidence.join(" ")}</p><p className="mt-2 text-xs text-[var(--muted)]">Missing: {opportunity.missingInformation.join("; ")}</p><p className="mt-2 text-xs">Benefits: {opportunity.benefits.join("; ")}</p><p className="mt-1 text-xs">Risks: {opportunity.risks.join("; ")}</p><p className="mt-3 text-xs font-bold">Status: requires human review — no execution</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">No opportunity is triggered by the currently reported values.</p>}

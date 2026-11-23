@@ -36,6 +36,28 @@ describe("financial twin deterministic simulation", () => {
     expect(validateTwinAssumptions({ ...base, horizonYears: 61 })).toBeNull();
     expect(validateTwinAssumptions({ ...base, iterations: 99 })).toBeNull();
     expect(validateTwinAssumptions({ ...base, volatilityPercent: 101 })).toBeNull();
+    expect(validateTwinAssumptions({ ...base, horizonYears: 1.5 })).toBeNull();
+    expect(validateTwinAssumptions({ ...base, lifeEvents: Array.from({ length: 1001 }, (_, index) => ({
+      id: `event-${index}`,
+      year: 1,
+      type: "cash_inflow" as const,
+      amount: 1,
+      confidence: "uncertain" as const,
+      source: "user input",
+    })) })).toBeNull();
+  });
+
+  it("reports annual drawdowns rather than a full-horizon drawdown", () => {
+    const result = simulateFinancialTwin({
+      ...base,
+      startingAmount: 100_000,
+      monthlyContribution: 0,
+      horizonYears: 1,
+      nominalReturnPercent: 0,
+      volatilityPercent: 0,
+      targetAmount: 0,
+    });
+    expect(result.medianAnnualDrawdown).toBe(0);
   });
 
   it("records cash inflows and outflows as exact life-event assumptions", () => {

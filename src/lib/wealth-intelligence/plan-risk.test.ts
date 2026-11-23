@@ -37,5 +37,12 @@ describe("parallel plans and holding risk", () => {
 
   it("returns no risk findings for empty or invalid data", () => {
     expect(analyseHoldingRisk([])).toEqual([]);
+    expect(() => analyseHoldingRisk([
+      { id: "invalid", name: "Invalid", assetClass: "Cash", currency: "ZAR", liquidity: "daily", valueZar: -1 },
+    ])).toThrow(/valid, non-negative/);
+    expect(() => analyseHoldingRisk([
+      { id: "large-a", name: "A", assetClass: "Cash", currency: "ZAR", liquidity: "daily", valueZar: Number.MAX_VALUE },
+      { id: "large-b", name: "B", assetClass: "Cash", currency: "ZAR", liquidity: "daily", valueZar: Number.MAX_VALUE },
+    ])).toThrow(/supported numerical range/);
   });
 });

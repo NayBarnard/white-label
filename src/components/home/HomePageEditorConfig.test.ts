@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { defaultHomePageData, isHomePageData } from "./HomePageEditorConfig";
+import { renderToStaticMarkup } from "react-dom/server";
+import { defaultHomePageData, homePageConfig, isHomePageData } from "./HomePageEditorConfig";
 
 function getSectionProps(data: unknown, type: string): Record<string, unknown> | null {
   if (typeof data !== "object" || data === null || !("content" in data) || !Array.isArray(data.content)) {
@@ -30,6 +31,14 @@ describe("homepage editor data validation", () => {
     expect(serialized).not.toContain("FSP");
     expect(serialized).not.toContain("622");
     expect(serialized).not.toContain("@");
+  });
+
+  it("links the homepage portfolio action to the portfolios route", () => {
+    const hero = homePageConfig.components.Hero;
+    const markup = renderToStaticMarkup(hero.render(hero.defaultProps));
+
+    expect(markup).toContain('href="/portfolios"');
+    expect(markup).not.toContain('href="#funds"');
   });
 
   it("rejects unknown component types and duplicate section identifiers", () => {

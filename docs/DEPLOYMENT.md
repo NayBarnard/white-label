@@ -1,5 +1,9 @@
 # Deployment readiness checklist
 
+This guide covers the optional hosted Supabase/Vercel deployment. It is not
+required to install or run the standalone local workflows; see the root
+README and `WEALTH_OS_MASTER_CHECKLIST.md` for standalone setup and acceptance.
+
 ## Two Vercel deployments
 
 Deploy this repository as two independent Vercel projects. Use the same
@@ -117,18 +121,20 @@ The platform migration creates no seeded platforms, share classes, or codes.
 Populate it only from the firm's verified spreadsheet, after a quarterly
 re-verification owner has been assigned.
 
-The active Studio is a browser-only placeholder demo; it does not require the
-Studio migration and does not read or write Studio records. To open it locally
-without Supabase, run `STUDIO_DEMO_MODE=true npm run dev`; this bypass is
-development-only and must not be enabled in production. Generic drafts are
-stored in the browser, and publishing is disabled.
+The standalone Studio does not require the Studio migration or Supabase
+credentials. In the default public app mode, leave
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` unset and run
+`npm run dev`. Studio projects and drafts are browser-local, uploaded media is
+stored in IndexedDB, and local publishing/export does not deploy a hosted
+website.
 
-The additive Studio migration and protected server routes are reserved for a
-future opt-in CMS mode. If that mode is deliberately enabled with the
-server-only `STUDIO_STORAGE_MODE=supabase` setting, keep `supabase/migrations/20260101000003_puck_studio.sql`
-and the legacy `site_pages` table. The migration grants read access only to
-published default-tenant content and trusted admin reads; server endpoints
-require admin/AAL2 and the service role. Tenant provisioning and public
+The additive Studio migration and protected server routes remain an optional
+hosted CMS mode. If deliberately enabled with the server-only
+`STUDIO_STORAGE_MODE=supabase` setting, keep
+`supabase/migrations/20260101000003_puck_studio.sql` and the legacy
+`site_pages` table. The migration grants read access only to published
+default-tenant content and trusted admin reads; server endpoints require
+admin/AAL2 and the service role. Tenant provisioning and public
 host-to-tenant resolution are not implemented. Do not enable this optional
 mode or apply its Studio migration for the browser-only placeholder demo.
 

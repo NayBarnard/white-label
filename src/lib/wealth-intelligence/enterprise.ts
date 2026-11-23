@@ -20,7 +20,7 @@ export function orchestrateOpportunity(input: {
   ) {
     opportunities.push({
       title: "Review additional monthly contribution",
-      evidence: [`Verified monthly surplus entered: R ${input.verifiedMonthlySurplusZar.toLocaleString("en-ZA")}`],
+      evidence: [`Reported monthly surplus (not independently verified): R ${input.verifiedMonthlySurplusZar.toLocaleString("en-ZA")}`],
       rationale: "A repeatable surplus may support a human-reviewed contribution change.",
       missingInformation: ["Income stability", "Emergency reserve", "Existing contractual obligations"],
       benefits: ["Potentially higher projected progress", "A regular, reviewable contribution"],

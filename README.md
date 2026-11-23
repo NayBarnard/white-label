@@ -1,30 +1,42 @@
 # WEALTH OS
 
-WEALTH OS is a hosted, multi-tenant white-label wealth-management SaaS platform built with Next.js, React, TypeScript and Supabase.
+WEALTH OS is a standalone-first wealth-management application built with
+Next.js, React and TypeScript. Browser-local workflows run without Supabase
+credentials. Supabase remains an optional hosted, multi-tenant deployment
+integration.
 
-## Portals
+## Standalone portals
 
-- `/platform` and `/platform/firms`: WEALTH OS platform operator administration.
-- `/admin` and `/admin/login`: firm administration.
-- `/advisor` and `/advisor/login`: authorised adviser workspace.
-- `/portal` and `/portal/dashboard`: authenticated client portal.
-- `/studio`: website and content studio.
+With Supabase URL and public key unset, the local workspace routes are:
 
-## Architecture
+- `/admin`: firm settings, local user records, client/adviser assignments,
+  holdings, transactions, documents, and workspace backup/restore.
+- `/advisor`: assigned local clients, notes, tasks, holdings, and review-pack
+  export.
+- `/portal`: client profile, holdings, transactions, goals, documents, and
+  locally saved support requests.
+- `/studio`: local website editing, project import/export, and static website
+  ZIP generation.
 
-- Next.js 16 App Router and React 19.
-- Supabase Auth, PostgreSQL, Row Level Security and Storage.
-- Public/staff deployment modes with server-side route protection.
-- Tenant, firm membership, domain and branding tables.
-- Tenant-aware adviser search and core wealth records.
-- Private signed-URL document storage.
-- Browser-local demo workflows only in standalone/development mode.
+The local portals do not authenticate users or isolate records between people
+using the same browser profile. Their IndexedDB data remains on that browser
+and device; it is not synchronized, encrypted by the application, or suitable
+for confidential production records. Workspace backups include the stored
+records and uploaded documents; protect exported backups appropriately.
 
-## Tenant model
+## Optional hosted architecture
 
-Tenant identity must come from trusted Supabase `app_metadata.tenant_id`, not a browser-supplied ID. Membership is stored in `wealth_os_tenant_memberships` and verified on the server.
+Hosted deployments can use Supabase Auth, PostgreSQL, Row Level Security,
+Storage, and tenant-aware server authorization. Tenant identity in hosted
+mode must come from trusted Supabase `app_metadata.tenant_id`, not a
+browser-supplied ID. Membership is stored in
+`wealth_os_tenant_memberships` and checked on the server.
 
-Supported roles include platform operator, firm administrator, compliance officer, financial adviser, adviser support staff and client.
+Supported hosted roles include platform operator, firm administrator,
+compliance officer, financial adviser, adviser support staff, and client.
+Hosted authentication, tenant isolation, and private storage are separate
+from the unauthenticated local workspace and require their own deployment
+configuration and verification.
 
 ## Local development
 
@@ -33,28 +45,27 @@ npm install
 npm run dev
 ```
 
-For browser-only demonstrations, use `/client`, `/advisor`, `/admin` and `/studio` without Supabase credentials.
+In the default public app mode, leave `NEXT_PUBLIC_SUPABASE_URL` and
+`NEXT_PUBLIC_SUPABASE_ANON_KEY` unset to use standalone portal routes. No
+Supabase login, project link, or remote migration is needed for local
+development.
 
-For local Supabase:
+To run the optional local Supabase stack:
 
 ```bash
 npx supabase start
 npx supabase db reset
-npm run dev
-```
-
-Copy `.env.example` to `.env.local` and set hosted or local Supabase values. Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code.
-
-## Database
-
-Apply migrations with the ordered Supabase migration chain:
-
-```bash
-npx supabase db reset
 npm run test:supabase:rls
 ```
 
-The migration set includes the tenant foundation, core wealth tenant isolation, universal search and existing portfolio/document/onboarding migrations.
+Only configure hosted Supabase values when intentionally testing that
+integration. Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code.
+
+## Studio exports
+
+The Studio saves editable projects in the browser and can export a static
+website ZIP. The ZIP is not a deployment, hosted login, or wealth-data
+integration. See [White Label Studio](./docs/WHITE_LABEL_STUDIO.md).
 
 ## Testing
 
@@ -62,9 +73,14 @@ The migration set includes the tenant foundation, core wealth tenant isolation, 
 npm run lint
 npx tsc --noEmit
 npm test
-npm run test:supabase:rls
 npm run build
 npm run test:e2e
+```
+
+Database/RLS tests require the optional local Supabase stack:
+
+```bash
+npm run test:supabase:rls
 ```
 
 Playwright requires Chromium:
@@ -73,23 +89,26 @@ Playwright requires Chromium:
 npx playwright install --with-deps chromium
 ```
 
-## Security
+See [WEALTH OS master checklist](./WEALTH_OS_MASTER_CHECKLIST.md) for the
+authoritative work order and current completion status,
+[Security](./docs/SECURITY.md), and [Testing](./docs/TESTING.md).
 
-- Supabase Auth session verification is server-side.
-- Staff and tenant memberships are checked before privileged operations.
-- RLS protects tenant data.
-- Service-role keys are restricted to server-only routes.
-- Private documents use signed URLs and private buckets.
-- MFA is required for staff sessions in configured deployments.
+## Financial calculations
 
-See [Security](./docs/SECURITY.md) and [Testing](./docs/TESTING.md).
+Portfolio values and performance must come from recorded, authorized data.
+Missing values remain unavailable. Planning and intelligence outputs are
+illustrative, disclose their assumptions, and are not regulated advice or a
+guarantee of investment outcomes.
 
-## Deployment
+In the planning lab, surplus and tax-allowance inputs start blank. Holding-risk,
+relationship, decision, and knowledge records are created only from explicit
+user input; the application does not seed those workflows with fictional
+records.
 
-Set required public and server environment variables in Vercel. Live deployment requires approved Supabase project access, database migrations, Auth URLs/MFA/SMTP, private storage, domains/DNS and a Vercel project.
+## Optional deployment
 
-See [Deployment](./docs/DEPLOYMENT.md).
-
-## Financial data
-
-Portfolio values and performance must come from persisted authorised records. Missing values are reported as unavailable. The platform does not present demo values as real client data. Intelligence outputs are methodology-labelled and are not regulatory advice.
+Hosted operation requires a configured Supabase project, migrations, Auth
+callbacks and MFA policy, private storage, deployment environment, domains,
+and a Vercel project. These are optional hosted-deployment tasks, not
+prerequisites for standalone local workflows. See
+[Deployment](./docs/DEPLOYMENT.md).

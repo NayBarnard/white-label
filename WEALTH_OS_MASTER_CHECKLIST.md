@@ -366,14 +366,22 @@ After creating the checklist:
 
 ## Phase Thirteen — Deployment
 
-- [!] 16.1 Vercel/Supabase/environment/domain configuration.
-  - Status: **BLOCKED**
-  - Evidence: production build and environment/deployment guides exist; local Supabase migration stack passes; `npx --yes supabase --version` reports 3.2.0.
-  - Blocker: `npx --yes supabase projects list` requires a Supabase access token; `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF` are unset. No hosted project was linked or queried. The approved project reference, production domain/DNS, Auth callbacks/MFA/SMTP and Vercel project are still required.
-- [!] 16.2 Production build and live deployment only when credentials are available.
-  - Status: **BLOCKED**
-  - Evidence: production build passes locally.
-  - Blocker: live Vercel/Supabase deployment verification is externally controlled.
+- [ ] 16.1 Vercel/Supabase/environment/domain configuration (optional hosted deployment track).
+  - Status: **NOT STARTED**
+  - Evidence: deployment guides and hosted architecture exist. No hosted project was linked or queried.
+  - Dependencies: optional hosted release approval and deployment configuration.
+  - Tests required: hosted deployment and tenant/auth/storage verification only if this optional track is requested.
+  - Tests executed: none during standalone work.
+  - Result: not required for standalone acceptance.
+  - Remaining issues: hosted deployment is not configured; this is not a standalone blocker.
+- [ ] 16.2 Live deployment verification (optional hosted deployment track).
+  - Status: **NOT STARTED**
+  - Evidence: no live deployment was requested or verified.
+  - Dependencies: optional hosted project, Vercel project, domain, and release approvals.
+  - Tests required: hosted production smoke, auth, tenant isolation, and storage checks if deployed.
+  - Tests executed: none during standalone work.
+  - Result: not required for standalone acceptance.
+  - Remaining issues: optional hosted deployment remains unverified.
 - [x] 16.3 Operational and recovery documentation.
   - Status: **COMPLETE AND VERIFIED**
   - Evidence: deployment, security and testing documentation plus migration and backup/recovery guidance.
@@ -406,13 +414,89 @@ After creating the checklist:
   - Status: **COMPLETE AND VERIFIED**
   - Evidence: `schema.sql`, `client-portal.sql` and `puck-studio.sql` moved to timestamped migration filenames; `npx supabase db reset` and RLS suite passed.
 
-## Progress
+## Requirement-change record — standalone-first acceptance
 
-- Current phase: Phase Thirteen, live deployment gate 16.1.
-- Current status: **NOT FINISHED — BLOCKED**
-- Completed: Repository inspection through Phase Twelve; Phase Fourteen documentation; local final audit.
-- Remaining blockers: Supabase CLI authentication and approved hosted project reference; Vercel/domain; production Auth MFA/SMTP; private storage; legal/security approvals.
-- Exact next permitted action: authenticate the Supabase CLI through the user's secure local terminal, identify and confirm the intended hosted project, then inspect its migration history before any remote change.
-- Completed: Repository Inspection; Phase One tasks 4.1–4.5.
-- Remaining: hosted deployment and external verification gates in Phase Thirteen.
-- Blocked: hosted Supabase/Vercel/SMTP/DNS/MFA credentials and external production approval.
+The user amended the completion requirement after the historical hosted
+deployment report above. The application must work as a standalone product
+without Supabase credentials; Supabase/Vercel deployment remains optional.
+Preserve the hosted tasks above as an optional audit trail, but do not treat
+their missing credentials as blockers or perform hosted project operations.
+The standalone acceptance work below is now the required current work order.
+
+## Phase Sixteen — Standalone acceptance
+
+- [ ] 20.1 IndexedDB-backed local administrator, adviser, and client workflows,
+  including backup, restore, and document persistence.
+  - Description: replace seeded portal records with locally entered workspace data and validate backup/restore relationships and blobs.
+  - Status: **IN PROGRESS**
+  - Files changed: `src/lib/storage.ts`, `src/lib/local-workspace.ts`, `src/lib/use-local-workspace.ts`, `src/lib/local-workspace.test.ts`, `src/lib/use-local-workspace.test.tsx`, `src/components/local/LocalAdminPortal.tsx`, `src/components/local/LocalAdviserPortal.tsx`, `src/components/local/LocalClientPortal.tsx`, `e2e/commercial-audit.spec.ts`.
+  - Dependencies: IndexedDB storage provider.
+  - Tests required: backup validation unit tests, browser workflow and reload/restore checks, no external requests, lint, TypeScript, production build.
+  - Tests executed: workspace backup tests — 2 passed; persistence-hook tests — 2 passed; latest full Vitest — 73 files, 270 tests passed; targeted ESLint and TypeScript checks passed for changed modules.
+  - Test results: local backup validation, full unit suite, lint/type checks for touched files pass; browser persistence/restore remains unverified because the app server was terminated before it could compile.
+  - Remaining issues: complete standalone Playwright run and final lint/type/build checks.
+- [ ] 20.2 White-Label Studio project editing, import/export, media, and static ZIP verification.
+  - Description: verify the existing local editor end-to-end and distinguish a local publish snapshot/static ZIP from hosted deployment.
+  - Status: **IN PROGRESS**
+  - Files changed: `docs/WHITE_LABEL_STUDIO.md`, `README.md`, `e2e/commercial-audit.spec.ts` (acceptance test exists; pending execution).
+  - Dependencies: standalone app build and Playwright browser.
+  - Tests required: Studio editing, persistence, import/export, ZIP contents, local publish, media, mobile navigation, lint, TypeScript, and build.
+  - Tests executed: Studio unit tests — 7 files, 21 tests passed; latest full Vitest — 73 files, 270 tests passed; `npm run test:e2e` could not start because no production build was available after build workers were terminated.
+  - Test results: unit coverage passes; browser import/export and ZIP verification remain unverified.
+  - Remaining issues: retry end-to-end validation when a Next.js production build can complete.
+- [x] 20.3 Financial intelligence validation, risk aggregation, and evidence labeling.
+  - Description: reject unsupported numerical assumptions, calculate annual rather than full-horizon drawdown, reject invalid holdings, and avoid presenting an unverified surplus as verified.
+  - Status: **COMPLETE AND VERIFIED**
+  - Files changed: `src/lib/wealth-intelligence/twin.ts`, `src/lib/wealth-intelligence/twin.test.ts`, `src/lib/wealth-intelligence/plan-risk.ts`, `src/lib/wealth-intelligence/plan-risk.test.ts`, `src/lib/wealth-intelligence/enterprise.ts`, `src/lib/wealth-intelligence/enterprise.test.ts`.
+  - Dependencies: existing intelligence calculation modules.
+  - Tests required: focused calculation tests, lint, TypeScript, and full test suite.
+  - Tests executed: focused Vitest run — 3 files, 13 tests passed; latest full Vitest suite — 73 files, 270 tests passed; targeted ESLint and TypeScript checks passed for changed modules.
+  - Test results: **PASS** for the listed task checks. Whole-project lint/type/build gates remain recorded under 20.5.
+  - Remaining issues: none for the calculation changes; the overall standalone release gate remains open.
+- [ ] 20.4 Standalone launch with Supabase variables absent and no mandatory external requests.
+  - Description: verify local app behavior with Supabase environment variables removed, not merely a linked/hosted project.
+  - Status: **IN PROGRESS**
+  - Files changed: `playwright.config.ts` environment is currently set to empty Supabase values; no hosted credentials or project operations were used.
+  - Dependencies: production build and standalone Playwright server.
+  - Tests required: clean-environment build/start, local route workflows, outbound-request assertion.
+  - Tests executed: attempted default and Webpack builds with Supabase variables removed; the default build exited 143 during optimized compilation, the Webpack worker received SIGTERM, and `npm run test:e2e` failed to start because `.next` has no production build ID. A standalone dev-server attempt also exited 143 before compiling the application.
+  - Test results: not verified. No `.env`, `.env.local`, `.env.development`, or `.env.production` file is present; 45 standalone routing/backup assertions pass.
+  - Remaining issues: retry clean-environment build and E2E when Next.js workers remain available long enough to finish.
+- [ ] 20.5 Run and fix required local validation: install, lint, TypeScript, unit tests, build, and E2E.
+  - Description: complete every available local check and fix code-caused failures.
+  - Status: **IN PROGRESS**
+  - Files changed: project implementation and test files listed above.
+  - Dependencies: installed npm dependencies and Playwright Chromium.
+  - Tests required: `npm install`, `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run build`, `npm run test:e2e`.
+  - Tests executed: `npm install` completed (629 packages audited, 0 vulnerabilities); latest full Vitest suite — 73 files/270 tests passed; focused workspace/Studio/intelligence/routing tests passed; Next `typegen` passed; targeted ESLint and TypeScript checks passed for modified modules. Full `npm run lint`, full `npx tsc --noEmit`, and both build attempts were terminated or had a worker terminated by SIGTERM without code diagnostics. `npm run test:e2e` was attempted and could not start without a production build.
+  - Test results: unit suite passes. Full lint, full-project TypeScript, production build, and E2E remain incomplete.
+  - Remaining issues: complete the full-project validation checks; do not infer success from the targeted checks.
+- [ ] 20.6 Finish remaining standalone features and inspect incomplete controls, import/export, backup, responsiveness, and documentation against the specification.
+  - Description: audit the remaining route/component requirements and implement or explicitly record genuinely incomplete local features.
+  - Status: **IN PROGRESS**
+  - Files changed: `src/components/home/HomePageEditorConfig.tsx`, `src/components/home/HomePageEditorConfig.test.ts`, `src/components/WealthPlanningLab.tsx`, `src/components/WealthPlanningLab.test.tsx`, `README.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/DEPLOYMENT.md`, `docs/TESTING.md`, `docs/SECURITY.md`, `docs/WHITE_LABEL_STUDIO.md`, `.github/copilot-instructions.md`, `WEALTH_OS_MASTER_INSTRUCTIONS.md`.
+  - Dependencies: none; preserve the separate incomplete status of portal/Studio browser verification.
+  - Tests required: relevant focused tests, responsive/browser checks, and documentation review.
+  - Tests executed: homepage config tests — 1 file, 6 tests passed; planning-lab tests — 1 file, 4 tests passed; source search for TODO/FIXME/XXX/coming-soon markers under `src/app`, `src/components`, and `src/lib` returned no matches. Targeted ESLint on planning-lab files was retried and terminated with exit 143.
+  - Test results: fixed the homepage `#funds` link to point to `/portfolios`; removed fabricated default surplus/tax inputs and sample holding, relationship, knowledge, and decision records; those workflows now use explicit user entry. Documentation separates standalone acceptance from optional hosted deployment.
+  - Remaining issues: broader route/control, import/export, backup, and responsive audit remains incomplete; planning-lab lint and browser behavior still need verification.
+- [ ] 20.7 Final standalone acceptance and product declaration.
+  - Description: declare completion only when every required local workflow, documentation item, and applicable test/build gate is verified.
+  - Status: **NOT STARTED**
+  - Files changed: completion register and checklist only after evidence exists.
+  - Dependencies: 20.1–20.6.
+  - Tests required: all mandatory standalone checks pass with Supabase environment variables absent.
+  - Tests executed: none for final acceptance.
+  - Test results: pending.
+  - Remaining issues: standalone acceptance remains incomplete.
+
+## Current progress
+
+- Current phase: Phase Sixteen — Standalone acceptance.
+- Completed this session: 20.3 financial calculation validation; latest full unit suite has 270 passing tests; targeted lint/type checks pass for earlier changes; fixed the homepage portfolio link; removed sample operational records and prefilled surplus/tax figures from the planning lab, with 4 focused tests passing; README and related documentation reflect standalone-first behavior.
+- Remaining required tasks: 20.1–20.2 browser verification; 20.4 standalone build/E2E; 20.5 full validation; 20.6 remaining-route audit; 20.7 final acceptance.
+- Blocked tasks: none. Hosted deployment 16.1–16.2 is optional and is not a blocker.
+- Failed tests: one initial focused risk test failed because an overflowing total returned an empty result; fixed, and the focused 13-test suite now passes. No current focused test failure.
+- Failed/terminated checks: full lint, full TypeScript, and production builds were terminated without compiler diagnostics; the E2E runner could not start without a production build. Reruns are required.
+- Current implementation status: **NOT FINISHED — IN PROGRESS**
+- Exact next task: continue task 20.6 by auditing remaining routes and visible controls for incomplete standalone behavior; leave tasks 20.1, 20.2, 20.4, and 20.5 explicitly incomplete and retry their build/browser gates when the workers can run to completion.

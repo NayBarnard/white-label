@@ -28,14 +28,24 @@ export type Holding = {
 };
 
 export function analyseHoldingRisk(holdings: Holding[]) {
+  if (holdings.some((holding) =>
+    !holding || typeof holding.name !== "string" || !holding.name.trim() ||
+    typeof holding.assetClass !== "string" || !holding.assetClass.trim() ||
+    typeof holding.currency !== "string" || !holding.currency.trim() ||
+    !["daily", "monthly", "restricted"].includes(holding.liquidity) ||
+    !Number.isFinite(holding.valueZar) || holding.valueZar < 0
+  )) throw new Error("Holding risk analysis requires valid, non-negative holding values and classifications.");
   const total = holdings.reduce((sum, holding) => sum + holding.valueZar, 0);
-  if (!Number.isFinite(total) || total <= 0) return [];
+  if (!Number.isFinite(total)) throw new Error("Holding risk totals exceed the supported numerical range.");
+  if (total <= 0) return [];
   const byClass = new Map<string, number>();
   const byCurrency = new Map<string, number>();
   for (const holding of holdings) {
-    if (!Number.isFinite(holding.valueZar) || holding.valueZar < 0) continue;
     byClass.set(holding.assetClass, (byClass.get(holding.assetClass) ?? 0) + holding.valueZar);
     byCurrency.set(holding.currency, (byCurrency.get(holding.currency) ?? 0) + holding.valueZar);
+  }
+  if ([...byClass.values(), ...byCurrency.values()].some((value) => !Number.isFinite(value))) {
+    throw new Error("Holding risk totals exceed the supported numerical range.");
   }
   const findings: Array<{ type: string; label: string; percent: number; evidence: string; confidence: "calculated" | "uncertain" }> = [];
   for (const [assetClass, value] of byClass) {
@@ -44,7 +54,7 @@ export function analyseHoldingRisk(holdings: Holding[]) {
       type: "concentration",
       label: `High ${assetClass} concentration`,
       percent,
-      evidence: `${percent.toFixed(1)}% of reported illustrative value is assigned to ${assetClass}.`,
+      evidence: `${percent.toFixed(1)}% of reported holding value is assigned to ${assetClass}.`,
       confidence: "calculated",
     });
   }
@@ -54,13 +64,14 @@ export function analyseHoldingRisk(holdings: Holding[]) {
       type: "currency_exposure",
       label: `High ${currency} currency exposure`,
       percent,
-      evidence: `${percent.toFixed(1)}% of reported illustrative value is in ${currency}.`,
+      evidence: `${percent.toFixed(1)}% of reported holding value is in ${currency}.`,
       confidence: "calculated",
     });
   }
   const restricted = holdings
     .filter((holding) => holding.liquidity !== "daily")
     .reduce((sum, holding) => sum + holding.valueZar, 0);
+  if (!Number.isFinite(restricted)) throw new Error("Holding liquidity totals exceed the supported numerical range.");
   const restrictedPercent = (restricted / total) * 100;
   if (restrictedPercent >= 20) findings.push({
     type: "liquidity_dependency",

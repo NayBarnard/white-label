@@ -9,6 +9,7 @@ describe("enterprise intelligence modules", () => {
       taxAllowanceRemainingZar: 30000,
     });
     expect(opportunities).toHaveLength(3);
+    expect(opportunities[0].evidence[0]).toContain("not independently verified");
     for (const opportunity of opportunities) {
       expect(opportunity.evidence.length).toBeGreaterThan(0);
       expect(opportunity.risks.length).toBeGreaterThan(0);

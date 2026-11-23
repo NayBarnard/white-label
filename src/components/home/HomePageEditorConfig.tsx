@@ -221,7 +221,7 @@ const homePageConfig: Config<HomePageComponents> = {
                   <Phone size={15} /> {callLabel}
                 </a>
                 <Link
-                  href="#funds"
+                  href="/portfolios"
                   className="inline-flex min-h-12 items-center gap-2 rounded-full border border-[var(--border-strong)] bg-[var(--background)] px-6 text-xs font-bold tracking-[0.08em] text-[var(--foreground)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)]"
                 >
                   {exploreLabel} <ArrowRight size={16} />

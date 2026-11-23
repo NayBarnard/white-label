@@ -1,5 +1,13 @@
 # WEALTH OS Security
 
+## Standalone local workspace boundary
+
+The browser-local administrator, adviser, client, and Studio workflows do not
+authenticate users or provide server-side tenant isolation. IndexedDB data is
+device/browser scoped and is not encrypted by the application. Do not treat
+these workflows as a secure multi-user hosted deployment or store confidential
+production records in them.
+
 ## Authentication
 
 - Supabase Auth provides browser/server sessions.

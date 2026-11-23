@@ -3,17 +3,33 @@
 ## Local checks
 
 ```bash
+npm install
 npm run lint
 npx tsc --noEmit
 npm test
-npm run test:supabase:rls
 npm run build
 npm run test:e2e
 ```
 
+For the standalone acceptance run, execute build and E2E with Supabase
+environment variables unset. The browser acceptance test also checks that
+standalone workflows do not make external requests. See
+`WEALTH_OS_MASTER_CHECKLIST.md` for current results and incomplete gates.
+
 ## Unit and component tests
 
 Vitest covers route guards, role permissions, tenant context, calculations, Supabase environment handling and React portal components.
+
+## Optional hosted integration checks
+
+The local Supabase/RLS suite is an additional hosted-integration check, not a
+requirement for the standalone workflows:
+
+```bash
+npx supabase start
+npx supabase db reset
+npm run test:supabase:rls
+```
 
 ## Database RLS tests
 
@@ -37,4 +53,8 @@ Playwright validates public/staff deployment routing, responsive layouts, portal
 
 ## Release evidence
 
-Production sign-off requires hosted Supabase Auth sessions, MFA and storage tests, live synthetic workflow tests, Vercel deployment verification and external domain/DNS verification.
+Standalone acceptance requires the local install, lint, TypeScript, unit,
+production build, and E2E checks to pass without Supabase credentials. Hosted
+release readiness is a separate optional gate requiring Supabase Auth sessions,
+MFA and storage tests, live synthetic workflow tests, Vercel deployment
+verification, and external domain/DNS verification.
