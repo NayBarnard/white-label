@@ -35,6 +35,7 @@ describe("homepage editor data validation", () => {
 
   it("links the homepage portfolio action to the portfolios route", () => {
     const hero = homePageConfig.components.Hero;
+    if (!hero.defaultProps) throw new Error("The homepage hero requires default props.");
     const markup = renderToStaticMarkup(hero.render(hero.defaultProps));
 
     expect(markup).toContain('href="/portfolios"');

@@ -98,7 +98,9 @@ export async function GET(
   write("your firm perspective", 13, true, navy);
   write(article.perspective);
   write("Published performance context", 13, true, navy);
-  write(`Published cumulative return summary: ${returnSummary.period}; as at ${returnSummary.asAt}. Source: ${returnSummary.source}. This context is not a market quote or forecast.`);
+  write(returnSummary.rows.length && returnSummary.period && returnSummary.asAt && returnSummary.source
+    ? `Published cumulative return summary: ${returnSummary.period}; as at ${returnSummary.asAt}. Source: ${returnSummary.source}. This context is not a market quote or forecast.`
+    : "No verified cumulative return figures have been published.");
   write("Related research", 13, true, navy);
   for (const relatedSlug of article.relatedSlugs) write(`/insights/${relatedSlug}`);
   write(`Source attribution: ${article.source}`);

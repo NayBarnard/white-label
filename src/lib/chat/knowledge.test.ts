@@ -15,13 +15,13 @@ describe("answerLocally", () => {
     ["What is the address?", "100 Demonstration Avenue"],
     ["What is the FSP number?", "no regulatory licence"],
     ["What is the company tagline?", "Genuinely diversified, cost-conscious"],
-    ["What is the your firm Balanced 3-year return?", "43.6%"],
-    ["Give me the Balanced and Cautious performance figures", "12.8%"],
-    ["What are the 5-year annualised returns?", "10.2%"],
-    ["What is the FE Analytics total-return comparison?", "569.70%"],
+    ["What is the Example Balanced 3-year return?", "No verified fund performance figures"],
+    ["Give me the Balanced and Cautious performance figures", "No verified fund performance figures"],
+    ["What are the 5-year annualised returns?", "No verified fund performance figures"],
+    ["What is the FE Analytics total-return comparison?", "No verified fund performance figures"],
     ["What are the investment beliefs?", "Real diversification"],
-    ["Who is the Managing Director?", "Hermann Labuschagne"],
-    ["Tell me about the leadership team", "Simon Morrison"],
+    ["Who is the Managing Director?", "No verified leadership profiles"],
+    ["Tell me about the leadership team", "No verified leadership profiles"],
     ["How do I open an account?", "not KYC/AML"],
     ["What articles and categories are published?", "MARKET COMMENTARY"],
     ["Where is the TFSA form link?", "TFSA application form"],
@@ -50,7 +50,7 @@ describe("answerLocally", () => {
   });
 
   it("reports only the requested empty fund-fact field as not published", () => {
-    const result = answerLocally("What is the your firm Balanced ISIN?");
+    const result = answerLocally("What is the Example Balanced ISIN?");
     expect(result.answer).toContain("ISIN: not published");
     expect(result.answer).not.toContain("JSE code: not published");
     expect(result.answer).not.toContain("Management company: not published");
@@ -111,7 +111,7 @@ describe("answerLocally", () => {
       { role: "assistant", content: "Balanced fees are not published." },
     ]);
 
-    expect(result.answer).toContain("your firm Cautious Strategy");
+    expect(result.answer).toContain("Example Cautious Strategy");
     expect(result.answer).toContain("TER: not published");
   });
 });

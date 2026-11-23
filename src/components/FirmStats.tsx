@@ -3,12 +3,18 @@ import { CountUp } from "@/components/CountUp";
 import { firmStats } from "@/data/firmData";
 
 const statItems = [
-  { value: firmStats.yearsExperience, label: "Years combined investment experience", icon: BriefcaseBusiness },
-  { value: firmStats.investmentStrategies, label: "Investment strategies", icon: ChartNoAxesCombined },
-  ...(firmStats.satisfiedClients === null
-    ? []
-    : [{ value: firmStats.satisfiedClients, label: "Satisfied clients", icon: UsersRound }]),
-  { value: firmStats.distributionPlatforms, label: "Distribution platforms", icon: ChartNoAxesCombined },
+  ...(typeof firmStats.yearsExperience === "number"
+    ? [{ value: firmStats.yearsExperience, label: "Years combined investment experience", icon: BriefcaseBusiness }]
+    : []),
+  ...(typeof firmStats.investmentStrategies === "number"
+    ? [{ value: firmStats.investmentStrategies, label: "Investment strategies", icon: ChartNoAxesCombined }]
+    : []),
+  ...(typeof firmStats.satisfiedClients === "number"
+    ? [{ value: firmStats.satisfiedClients, label: "Satisfied clients", icon: UsersRound }]
+    : []),
+  ...(typeof firmStats.distributionPlatforms === "number"
+    ? [{ value: firmStats.distributionPlatforms, label: "Distribution platforms", icon: ChartNoAxesCombined }]
+    : []),
 ];
 
 export function FirmStats({ className = "" }: { className?: string }) {

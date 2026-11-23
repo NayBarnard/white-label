@@ -8,7 +8,6 @@ import {
   insightCategories,
   leadership,
   performanceDisclosures,
-  returnSummary,
   strategies,
 } from "@/data/firmData";
 
@@ -201,7 +200,7 @@ const intents: KnowledgeIntent[] = [
   {
     id: "company",
     patterns: [/\b(about placeholder|what is placeholder|what does placeholder|company|business|tagline|mission|purpose|who are placeholder)\b/i],
-    answer: () => `${company.legalName} is an illustrative brand. ${company.regulatoryNotice} Firm ownership and service details have not been independently verified.`,
+    answer: () => `${company.legalName} is an illustrative brand. Configured demonstration tagline: “${company.tagline}” ${company.regulatoryNotice} Firm ownership and service details have not been independently verified.`,
     links: [{ label: `About ${company.legalName}`, href: "/about" }],
   },
   {

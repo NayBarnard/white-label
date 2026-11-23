@@ -51,10 +51,11 @@ export function ResearchArticleLayout({ article }: { article: ResearchArticle })
                 <h2 className="text-xl font-semibold">Published fund-performance context</h2>
               </div>
               <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                This is the latest performance snapshot published by your firm, not a market quote or a forecast.
+                Performance information is shown only when supported by published, sourced figures.
               </p>
-              <div className="mt-5 space-y-3" role="img" aria-label={`Cumulative return context for ${returnSummary.period}`}>
-                {returnSummary.rows.map((row) => {
+              {returnSummary.rows.length ? (
+                <div className="mt-5 space-y-3" role="img" aria-label={`Cumulative return context for ${returnSummary.period}`}>
+                  {returnSummary.rows.map((row) => {
                   const width = Math.max(2, Math.min(100, row.value / 6));
                   return (
                     <div key={row.name}>
@@ -66,11 +67,18 @@ export function ResearchArticleLayout({ article }: { article: ResearchArticle })
                       </div>
                     </div>
                   );
-                })}
-              </div>
-              <p className="mt-4 text-xs text-[var(--muted)]">
-                Period: {returnSummary.period} · As at {returnSummary.asAt} · Source: {returnSummary.source}
-              </p>
+                  })}
+                </div>
+              ) : (
+                <p role="status" className="mt-5 rounded-xl border border-dashed border-[var(--border-strong)] p-4 text-sm text-[var(--muted)]">
+                  No verified cumulative return figures have been published.
+                </p>
+              )}
+              {returnSummary.period && returnSummary.asAt && returnSummary.source ? (
+                <p className="mt-4 text-xs text-[var(--muted)]">
+                  Period: {returnSummary.period} · As at {returnSummary.asAt} · Source: {returnSummary.source}
+                </p>
+              ) : null}
             </section>
 
             <section id="takeaways" className="glass rounded-2xl p-6 sm:p-8">

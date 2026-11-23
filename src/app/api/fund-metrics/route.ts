@@ -7,7 +7,7 @@ export async function GET() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url && !key) {
     return NextResponse.json({
-      source: "Published factual data",
+      source: "No published fund metrics",
       updatedAt: null,
       metrics: fundMetricsSnapshot,
     });
