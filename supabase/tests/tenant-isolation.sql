@@ -431,3 +431,65 @@ begin
   end;
 end;
 $tenant_foundation$;
+
+do $core_wealth_foundation$
+declare
+  v_tenant_a text := 'core-wealth-a-' || replace(gen_random_uuid()::text, '-', '');
+  v_tenant_b text := 'core-wealth-b-' || replace(gen_random_uuid()::text, '-', '');
+  v_client_a uuid := gen_random_uuid();
+  v_client_b uuid := gen_random_uuid();
+  v_portfolio_a uuid := gen_random_uuid();
+  v_portfolio_b uuid := gen_random_uuid();
+  v_count integer;
+begin
+  insert into auth.users (
+    id, aud, role, email, encrypted_password, email_confirmed_at,
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+  )
+  values
+    (v_client_a, 'authenticated', 'authenticated',
+     v_tenant_a || '-client@example.test', '', now(),
+     jsonb_build_object('tenant_id', v_tenant_a, 'role', 'client'), '{}', now(), now()),
+    (v_client_b, 'authenticated', 'authenticated',
+     v_tenant_b || '-client@example.test', '', now(),
+     jsonb_build_object('tenant_id', v_tenant_b, 'role', 'client'), '{}', now(), now());
+
+  insert into public.wealth_os_tenants (id, name, trading_name, status, configuration)
+  values
+    (v_tenant_a, v_tenant_a, v_tenant_a, 'active', '{}'),
+    (v_tenant_b, v_tenant_b, v_tenant_b, 'active', '{}');
+
+  insert into public.client_portfolios (id, tenant_id, user_id, label)
+  values
+    (v_portfolio_a, v_tenant_a, v_client_a, 'Tenant A portfolio'),
+    (v_portfolio_b, v_tenant_b, v_client_b, 'Tenant B portfolio');
+
+  insert into public.client_transactions (tenant_id, user_id, transacted_at, description, amount, status)
+  values
+    (v_tenant_a, v_client_a, now(), 'Tenant A transaction', 100, 'Completed'),
+    (v_tenant_b, v_client_b, now(), 'Tenant B transaction', 200, 'Completed');
+
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claim.sub', v_client_a::text, true);
+  perform set_config(
+    'request.jwt.claims',
+    jsonb_build_object(
+      'sub', v_client_a,
+      'role', 'authenticated',
+      'aud', 'authenticated',
+      'app_metadata', jsonb_build_object('tenant_id', v_tenant_a, 'role', 'client')
+    )::text,
+    true
+  );
+
+  select count(*) into v_count from public.client_portfolios;
+  if v_count <> 1 then
+    raise exception 'Tenant A client observed % portfolios, expected 1', v_count;
+  end if;
+
+  select count(*) into v_count from public.client_transactions;
+  if v_count <> 1 then
+    raise exception 'Tenant A client observed % transactions, expected 1', v_count;
+  end if;
+end;
+$core_wealth_foundation$;

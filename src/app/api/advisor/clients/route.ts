@@ -64,7 +64,7 @@ export async function GET() {
       chunks.map((ids) =>
         supabase
           .from("client_portfolios")
-          .select("id,user_id,label,valuation_zar,valuation_as_of,performance_percent,performance_period")
+          .select("id,tenant_id,user_id,label,valuation_zar,valuation_as_of,performance_percent,performance_period")
           .in("user_id", ids)
           .order("created_at", { ascending: false }),
       ),

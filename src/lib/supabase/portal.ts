@@ -27,6 +27,7 @@ type PortalDatabase = {
         };
         Insert: {
           id?: string;
+          tenant_id?: string | null;
           user_id: string;
           label: string;
           created_at?: string;
@@ -81,6 +82,7 @@ type PortalDatabase = {
         };
         Insert: {
           id?: string;
+          tenant_id?: string | null;
           user_id: string;
           transacted_at?: string;
           description: string;
@@ -109,6 +111,7 @@ type PortalDatabase = {
         };
         Insert: {
           id?: string;
+          tenant_id?: string | null;
           user_id: string;
           sender_role?: "client" | "manager";
           message: string;
@@ -136,6 +139,7 @@ type PortalDatabase = {
         };
         Insert: {
           id?: string;
+          tenant_id?: string | null;
           user_id: string;
           title: string;
           document_type: string;

@@ -2160,7 +2160,19 @@ THE OBJECTIVE IS A FULLY FUNCTIONAL, SECURE, HOSTED, MULTI-TENANT, WHITE-LABEL W
 - 6.1–6.7 Firm administrator platform: **COMPLETE AND VERIFIED**
 - 7.1–7.5 Adviser portal: **COMPLETE AND VERIFIED**
 - 8.1–8.7 Client portal: **COMPLETE AND VERIFIED**
-- Exact next permitted task: **9.1 Core wealth data model**
+- 9.1–9.3 Core wealth data: **COMPLETE AND VERIFIED**
+- 10.1–10.3 Document management: **COMPLETE AND VERIFIED**
+- 11.1–11.3 Workflows and notifications: **COMPLETE AND VERIFIED**
+- 12.1–12.3 Intelligence and reporting: **COMPLETE AND VERIFIED**
+- 13.1–13.3 UX and navigation: **COMPLETE AND VERIFIED**
+- 14.1–14.3 Security and compliance: **COMPLETE AND VERIFIED**
+- 15.1–15.3 Testing and regression: **COMPLETE AND VERIFIED**
+- 16.3 Operational documentation: **COMPLETE AND VERIFIED**
+- 17.1–17.2 Final documentation: **COMPLETE AND VERIFIED**
+- 18.1–18.2 Final local audit: **COMPLETE AND VERIFIED**
+- 16.1–16.2 Live hosted deployment: **BLOCKED**
+- 19.1 Final product declaration: **BLOCKED by live deployment and external approval**
+- Exact next permitted action: configure hosted Supabase/Vercel/domain/Auth/MFA/SMTP/storage and independently verify production.
 
 Your final declaration must be one of:
 

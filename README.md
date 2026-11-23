@@ -1,289 +1,95 @@
-# White-Label Wealth Management Platform
+# WEALTH OS
 
-## Standalone demonstration
+WEALTH OS is a hosted, multi-tenant white-label wealth-management SaaS platform built with Next.js, React, TypeScript and Supabase.
 
-This project runs locally without a database, Supabase, API keys, authentication
-provider, or cloud storage. Client, adviser, administration and website projects
-use clearly labelled browser-local demonstration data.
+## Portals
+
+- `/platform` and `/platform/firms`: WEALTH OS platform operator administration.
+- `/admin` and `/admin/login`: firm administration.
+- `/advisor` and `/advisor/login`: authorised adviser workspace.
+- `/portal` and `/portal/dashboard`: authenticated client portal.
+- `/studio`: website and content studio.
+
+## Architecture
+
+- Next.js 16 App Router and React 19.
+- Supabase Auth, PostgreSQL, Row Level Security and Storage.
+- Public/staff deployment modes with server-side route protection.
+- Tenant, firm membership, domain and branding tables.
+- Tenant-aware adviser search and core wealth records.
+- Private signed-URL document storage.
+- Browser-local demo workflows only in standalone/development mode.
+
+## Tenant model
+
+Tenant identity must come from trusted Supabase `app_metadata.tenant_id`, not a browser-supplied ID. Membership is stored in `wealth_os_tenant_memberships` and verified on the server.
+
+Supported roles include platform operator, firm administrator, compliance officer, financial adviser, adviser support staff and client.
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. Product demonstration routes are `/product`,
-`/welcome`, `/licensing` and `/studio`. Portal and adviser demos are available
-at `/client`, `/portal`, `/advisor`, `/admin` and `/planning` when no deployment
-mode or Supabase credentials are configured. Do not enter real or sensitive
-information into browser-only demonstrations.
+For browser-only demonstrations, use `/client`, `/advisor`, `/admin` and `/studio` without Supabase credentials.
 
-For an isolated local Supabase development stack, see
-[`docs/LOCAL_SUPABASE.md`](./docs/LOCAL_SUPABASE.md). It uses the repository's
-ordered migrations and local-only Auth/Storage services; it is not a production
-financial-data environment.
+For local Supabase:
 
-The Studio supports multiple local website projects, visual page and section
-editing, responsive previews, browser-local undo/version history, reusable
-sections, starter and custom templates, deterministic creative suggestions,
-quality checks, and validated JSON project import. Uploaded image/PDF binaries
-are kept in IndexedDB (2 MB per file, 50 MB per project); project metadata stays
-in localStorage. Older embedded media is migrated on load when browser storage
-is available.
+```bash
+npx supabase start
+npx supabase db reset
+npm run dev
+```
 
-Use **Export site** in Studio to download a standalone website ZIP containing
-HTML pages, responsive CSS, menu JavaScript, local image assets, SEO metadata,
-a generated favicon, deployment instructions, and an editable
-`wealth-os-project.json` backup. Extract it and upload the folder contents to
-ordinary static hosting. Import the JSON backup from Studio to resume editing.
-Studio **Publish** is a browser-local preview snapshot; it does not deploy to a
-public domain. Browser storage is not authentication, tenant isolation, or
-cross-device synchronization.
+Copy `.env.example` to `.env.local` and set hosted or local Supabase values. Never expose `SUPABASE_SERVICE_ROLE_KEY` to browser code.
 
-## Customisation
+## Database
 
-Central neutral defaults live in `src/config/brand.ts`. Shared illustrative
-financial records live in `src/data/`. Update these configuration modules rather
-than individual pages for future branding.
+Apply migrations with the ordered Supabase migration chain:
 
-The existing public website remains available. Forms, uploads, documents,
-portfolios, goals, support, adviser tasks, people management and compliance
-screens operate as clearly labelled local demonstrations. No real submission,
-identity verification, regulatory check, or financial transaction occurs.
+```bash
+npx supabase db reset
+npm run test:supabase:rls
+```
 
-## Deployments
+The migration set includes the tenant foundation, core wealth tenant isolation, universal search and existing portfolio/document/onboarding migrations.
 
-Vercel is optional; local development and the Studio placeholder demo do not
-depend on it. If this repository is connected to a Vercel project, that
-project's configured branch and preview settings determine its deployments.
+## Testing
 
-## Environment variables
+```bash
+npm run lint
+npx tsc --noEmit
+npm test
+npm run test:supabase:rls
+npm run build
+npm run test:e2e
+```
 
-Copy `.env.example` to `.env.local` for local work. Configure
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for Supabase
-features that are explicitly enabled. Studio browser-only mode does not need
-these settings. Configure
-`SUPABASE_SERVICE_ROLE_KEY` only in server-side environments for fund data,
-public submissions, rate limiting, and admin operations. `OPENAI_API_KEY` is
-optional; the website chatbot has a knowledge-base fallback. Set
-`NEXT_PUBLIC_SITE_URL` to the canonical deployment origin when it differs from
-the default.
-Set a high-entropy server-side `CRON_SECRET` to enable scheduled research and
-document publishing. The Vercel cron calls `/api/cron/publish-insights` every
-15 minutes; do not expose this secret to browser code.
+Playwright requires Chromium:
 
-Server submission code validates its required environment variables before
-making requests and logs the missing variable names without exposing secret
-values. Browser Supabase access uses a typed client-safe validator that only
-reads the `NEXT_PUBLIC_` variables. Never add a `NEXT_PUBLIC_` prefix to a
-secret key. The optional future Studio database workflow is disabled unless
-`STUDIO_STORAGE_MODE=supabase` is explicitly set server-side.
+```bash
+npx playwright install --with-deps chromium
+```
 
-See [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) for the production domain,
-Supabase migration, Auth redirect, and SMTP checklist.
+## Security
 
-## Fund performance data
+- Supabase Auth session verification is server-side.
+- Staff and tenant memberships are checked before privileged operations.
+- RLS protects tenant data.
+- Service-role keys are restricted to server-only routes.
+- Private documents use signed URLs and private buckets.
+- MFA is required for staff sessions in configured deployments.
 
-Apply [`supabase/schema.sql`](./supabase/schema.sql) to create the fund directory and
-metrics tables. `npm run sync:fund-data` updates the published performance snapshot.
-To populate the interactive NAV comparison, import dated observations into
-`fund_metrics` with `fund_id`, `metric_date`, `nav`, `benchmark_nav`, and
-`benchmark_name`; NAV and benchmark values must use consistent, positive index
-levels for each fund. The comparison reads active funds and up to 5,000 ordered
-observations through the server-side Supabase service role key.
+See [Security](./docs/SECURITY.md) and [Testing](./docs/TESTING.md).
 
-The Insights page reads public RSS feeds from Moneyweb, BusinessTech, and BBC
-Business, classifies stories into Industry News and Market Commentary, and
-revalidates cached feed data every 15 minutes. A source that blocks automated
-requests is skipped while the other available feeds remain in use.
+## Deployment
 
-## Client portal
+Set required public and server environment variables in Vercel. Live deployment requires approved Supabase project access, database migrations, Auth URLs/MFA/SMTP, private storage, domains/DNS and a Vercel project.
 
-Apply [`supabase/client-portal.sql`](./supabase/client-portal.sql) to the same
-Supabase project after configuring `NEXT_PUBLIC_SUPABASE_URL` and
-`NEXT_PUBLIC_SUPABASE_ANON_KEY`. Enable the desired Supabase Auth sign-up and
-email-confirmation settings before inviting clients. The dashboard is at
-`/portal` is the authenticated, server-guarded client experience; unauthenticated
-visitors are sent to `/portal/dashboard` to sign in. The portal uses the
-authenticated browser session and database RLS. When no portfolio records are
-assigned, clearly labeled illustrative demo figures and documents are shown;
-they are not persisted as client data or presented as actual holdings. Assign
-portfolio and transaction records to the client's Supabase Auth user ID using a
-trusted administrative process. Do not expose `SUPABASE_SERVICE_ROLE_KEY` to
-the browser. The service role bypasses RLS and must only be used by trusted
-server-side administration.
+See [Deployment](./docs/DEPLOYMENT.md).
 
-The client portal request tracker also uses the RLS-protected
-`client_portal_requests` table in `client-portal.sql`. Apply the updated SQL
-script to enable persistent request submission and status tracking. If that
-table is not yet available, the portal reports that a request is retained only
-in the current browser session and has not been sent.
+## Financial data
 
-Enable Supabase Auth email sign-ups and configure its Site URL and Redirect URLs
-to include the application origin and its `/auth/callback` path (for example,
-`http://localhost:3000/auth/callback` for local development and
-`https://your-domain.example/auth/callback` for production). Client Portal
-registration uses Supabase's one-time email sign-in link; the callback verifies
-the link, stores the session in cookies, and redirects to `/portal`. Users can
-set a password after signing in or request a secure password setup link. Do not
-send temporary passwords by email. Configure Supabase's Auth email templates
-and SMTP settings to customize and deliver these links reliably.
-
-Client support messages are stored in `client_support_messages`; authenticated
-clients may read their own thread and create client messages, while manager
-responses must be written through a trusted server-side process. Portfolio
-valuations and performance snapshots are also account-specific. The document
-vault uses the private `client-documents` Storage bucket and signed links; store
-each object under a first-level folder matching the client's Auth user ID, then
-add its metadata to `client_documents` through a trusted administrative process.
-
-### Evidence renewal packs and tax allowances
-
-For Supabase deployments, apply the renewal-pack migration
-[`supabase/migrations/202611210002_renewal_packs.sql`](./supabase/migrations/202611210002_renewal_packs.sql)
-after the client portal and adviser/client relationship migrations. Apply
-[`supabase/migrations/202611220001_tax_allowance_tracker.sql`](./supabase/migrations/202611220001_tax_allowance_tracker.sql)
-to seed the default South African TFSA tax years and create tenant-scoped
-allowance and contribution tables. The shared authenticated API rate-limit
-migration
-[`supabase/migrations/202611160002_api_rate_limits.sql`](./supabase/migrations/202611160002_api_rate_limits.sql)
-must also be applied for contribution and rule writes.
-
-Renewal links are time-limited, revocable bearer credentials; share them only
-with the intended client. Evidence uploads are private and accessed through
-short-lived signed URLs. The tax tracker combines completed on-platform
-transactions with externally declared contributions. Default rules are
-system-wide; an administrator can save a tenant override from the secure
-allowance-rule API. Verify configured limits and declared external amounts
-before using the estimate to make a financial decision.
-
-## Website studio
-
-The existing staff Puck homepage editor remains available through its
-authenticated deployment configuration. The standalone WEALTH OS Studio
-demonstration at `/studio` runs without external credentials in standalone
-mode. These are distinct workflows.
-
-The local website builder supports independent browser projects, pages,
-navigation, brand tokens, responsive section layouts, media management,
-reusable sections and local template save/duplicate/import/export. Static
-website exports are independent of Studio and include an editable JSON source
-backup. Templates are stored in the browser; built-in wealth-management
-templates are starter content, not approved financial or compliance language.
-
-Product details and boundaries are at `/product` and `/licensing`; new-business
-setup is at `/welcome`. Local mode does not provide production login, tenant
-isolation, secure client-data hosting, commercial licence terms, domain
-deployment, transactional forms, or public publishing infrastructure.
-
-## Optional WEALTH OS Supabase storage
-
-The browser-only application remains the default. To enable authenticated
-Supabase persistence, configure `NEXT_PUBLIC_SUPABASE_URL`,
-`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
-`STUDIO_STORAGE_MODE=supabase`, and
-`NEXT_PUBLIC_STUDIO_STORAGE_MODE=supabase`; apply
-`supabase/migrations/202611210001_wealth_os_local_sync.sql`.
-
-The migration provides tenant, Studio project, scenario, request, task and
-adviser-note tables with tenant/user-scoped RLS foundations. Supabase is
-optional: if credentials or the migration are absent, Studio saves and planning
-remain in browser localStorage and the application continues to function.
-
-The onboarding questionnaire generates a preliminary PDF locally in the
-browser. It does not collect identity or banking details, perform KYC/AML
-verification, submit an application, or replace official forms.
-
-## Client administration
-
-The restricted back office is available at `/admin`. The page and every
-`/api/admin/*` request verify the authenticated user's trusted
-`app_metadata.role === "admin"` claim. Apply
-[`supabase/migrations/202611160001_admin_audit_log.sql`](./supabase/migrations/202611160001_admin_audit_log.sql)
-after `supabase/client-portal.sql`, then apply
-[`supabase/migrations/202611160005_admin_audit_logs.sql`](./supabase/migrations/202611160005_admin_audit_logs.sql)
-to create the plural service-role-only audit table used by admin mutations.
-Configure `SUPABASE_SERVICE_ROLE_KEY` only as a server-side Vercel environment
-variable. The back office supports portfolio assignment, private PDF uploads
-to the existing `client-documents` bucket, manager support replies, and client
-request status updates. Only approved account values should be entered; blank
-financial fields remain unreported.
-
-## Public API protections
-
-The enquiry, newsletter signup, and chat endpoints use Supabase-backed fixed
-windows keyed by an HMAC of the request IP: 5 enquiries per 15 minutes, 3
-newsletter signups per hour, 20 unsubscribe attempts per hour, and 30 chat requests per minute. Apply
-[`supabase/migrations/202611160002_api_rate_limits.sql`](./supabase/migrations/202611160002_api_rate_limits.sql)
-after the base schema to enable the shared rate-limit store. Apply
-[`supabase/migrations/202611160003_newsletter_consent_timestamps.sql`](./supabase/migrations/202611160003_newsletter_consent_timestamps.sql)
-to record the timestamp of each new newsletter consent. The rate-limited
-endpoints fail closed in production if Supabase or the rate-limit RPC is
-unavailable; local development uses an in-memory limiter.
-
-Apply
-[`supabase/migrations/202611160004_portal_data_deletion_request.sql`](./supabase/migrations/202611160004_portal_data_deletion_request.sql)
-after `supabase/client-portal.sql` to add the authenticated portal's POPIA
-personal-data deletion request option. These requests are submitted to the
-existing client request tracker for review; they do not automatically delete
-records.
-
-Apply
-[`supabase/migrations/202611160006_enquiry_consent_timestamps.sql`](./supabase/migrations/202611160006_enquiry_consent_timestamps.sql)
-to store the ISO timestamp of enquiry POPIA consent separately from the
-submission's creation timestamp.
-
-Apply
-[`supabase/migrations/202611190001_insights_research_workflow.sql`](./supabase/migrations/202611190001_insights_research_workflow.sql)
-after the published-document and manager-update migrations to add the four-stage
-review workflow, scheduled publishing metadata, and the versioned research
-library. Public research pages reference canonical records; archived document
-versions remain visible for audit context but are not downloadable.
-
-All three endpoints cap the request body size. Enquiry and newsletter forms
-also include a hidden honeypot field. Required server-side environment
-variables remain `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`;
-the service-role key must only be configured in server-side environments.
-
-## Financial intelligence programme
-
-The standalone `/planning` journey includes a seeded financial twin,
-consequence graph, append-only decision context, parallel plan comparison,
-holding-risk demonstration, evidence-first opportunity review, relationship
-verification, approved-source knowledge, crisis rehearsal and innovation lab.
-The browser implementation clearly identifies all demo and hypothetical data.
-These are prototypes, not complete hosted financial workflows: the consequence
-graph, arbitrary saved plan comparison, holdings-level evidence, relationship
-authorization and permission-aware knowledge search are incomplete.
-
-The optional authenticated WEALTH OS APIs require a cookie-backed Supabase
-session and an explicitly provisioned, non-default `app_metadata.tenant_id`.
-Financial row reads and writes use the authenticated user's Supabase client so
-database RLS applies; these routes do not use the service-role key for financial
-records. The shared authenticated rate-limit store still requires the
-server-only service-role key and the rate-limit migration. Apply the financial
-intelligence migrations in this order:
-
-`supabase/migrations/202611220002_financial_intelligence.sql`,
-`supabase/migrations/202611220003_decisions_plans_risk.sql`,
-`supabase/migrations/202611220004_enterprise_intelligence.sql`, and
-`supabase/migrations/202611220005_wealth_intelligence_security.sql`, after
-`202611210001_wealth_os_local_sync.sql` and the rate-limit migration. Do not
-apply these migrations to production without explicit human approval. They
-have been applied successfully to a fresh local Supabase stack with the full
-migration set. `npm run test:supabase:rls` passes selected two-tenant,
-multiple-role SQL isolation assertions against that local stack; the test uses
-simulated JWT claims in Postgres and is not an Auth-issued-session, API-route,
-or hosted isolation test.
-The security migration adds a default-disabled tenant readiness gate. Its
-service-role-only record must remain absent/disabled until a trusted operator
-has independently verified every required checklist item; never treat
-attestation fields as proof by themselves.
-
-These calculations are not guarantees or regulated advice. They must not be
-used for real financial decisions until authorised data, legal review,
-tenant/role isolation tests, storage controls and human verification are
-complete. Browser-local data is not secure production financial storage. See
-[`docs/INNOVATION_CAPABILITY_AUDIT.md`](./docs/INNOVATION_CAPABILITY_AUDIT.md),
-[`docs/DIFFERENTIATION_MATRIX.md`](./docs/DIFFERENTIATION_MATRIX.md), and
-[`docs/INNOVATION_REGISTER.md`](./docs/INNOVATION_REGISTER.md), and
-[`docs/IMPLEMENTATION_PLAN.md`](./docs/IMPLEMENTATION_PLAN.md).
+Portfolio values and performance must come from persisted authorised records. Missing values are reported as unavailable. The platform does not present demo values as real client data. Intelligence outputs are methodology-labelled and are not regulatory advice.
